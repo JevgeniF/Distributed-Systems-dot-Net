@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using App.Domain.Cast;
 using App.Domain.MovieStandardDetails;
 using Base.Domain;
+using Type = App.Domain.MovieStandardDetails.Type;
 
 namespace App.Domain.Movie;
 
@@ -18,14 +20,16 @@ public class MovieDetails : DomainEntityMetaId
     public AgeRating? AgeRating { get; set; }
     
     public Guid MovieTypeId { get; set; }
-    public MovieType? MovieType { get; set; }
+    public Type? MovieType { get; set; }
     
     public Guid MovieDbScoreId { get; set; }
     public MovieDbScore? MovieMovieDbScore { get; set; }
 
-    public ICollection<MovieGenre>? MovieGenresCollection { get; set; }
+    public ICollection<Genre>? Genres { get; set; }
 
-    public ICollection<Video>? VideosCollection { get; set; }
+    public ICollection<Video>? Videos { get; set; }
     
-    public ICollection<UserRating>? UserRatingsCollection { get; set; }
+    public ICollection<UserRating>? UserRatings { get; set; }
+    
+    public ICollection<CastInMovie>? CastInMovie { get; set; }
 }

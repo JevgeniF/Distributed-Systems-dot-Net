@@ -4,5 +4,6 @@ namespace App.Domain.Movie;
 
 public class MovieDbScore : DomainEntityMetaId
 {
-    public double Score { get; set; }
+    public string ImdbId { get; set; } = default!;
+    public double? Score { get; set; }
 }

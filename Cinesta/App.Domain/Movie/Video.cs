@@ -10,4 +10,7 @@ public class Video : DomainEntityMetaId
     [MaxLength(100)] public string FileUri { get; set; } = default!;
     public TimeOnly Duration { get; set; }
     [MaxLength(250)] public string Description { get; set; } = default!;
+    
+    public Guid? MovieDetailsId { get; set; }
+    public MovieDetails? MovieDetails { get; set; }
 }

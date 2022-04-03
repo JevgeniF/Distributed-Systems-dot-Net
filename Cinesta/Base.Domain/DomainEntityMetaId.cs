@@ -3,7 +3,7 @@ using Base.Contracts.Domain;
 
 namespace Base.Domain;
 
-public abstract class DomainEntityMetaId : DomainEntityId<Guid>, IDomainEntityId
+public abstract class DomainEntityMetaId : DomainEntityMetaId<Guid>, IDomainEntityId
 {
 }
 

@@ -3,10 +3,11 @@ using Base.Domain;
 
 namespace App.Domain.Profile;
 
-public class MoviesInProfileLibrary : DomainEntityMetaId
+public class ProfileMovie : DomainEntityMetaId
 {
     public Guid UserProfileId { get; set;}
     public UserProfile? UserProfile { get; set; }
     
-    public ICollection<MovieDetails>? MovieDetailsCollection { get; set; }
+    public Guid MovieDetailsId { get; set; }
+    public MovieDetails? MovieDetails { get; set; }
 }

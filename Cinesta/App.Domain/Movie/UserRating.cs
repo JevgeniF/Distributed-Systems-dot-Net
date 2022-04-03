@@ -11,4 +11,7 @@ public class UserRating : DomainEntityMetaId
     
     public Guid AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
+    
+    public Guid MovieDetailsId { get; set; }
+    public MovieDetails? MovieDetails { get; set; }
 }

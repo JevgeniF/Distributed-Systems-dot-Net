@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using App.Domain.Cast;
 using Base.Domain;
 
 namespace App.Domain.Common;

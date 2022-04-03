@@ -12,5 +12,5 @@ public class AppUser : BaseUser
     public Guid? PersonId { get; set; } = default!;
     public  Person? Person { get; set; }
     
-    public ICollection<UserProfile>? UserProfilesCollection { get; set; }
+    public ICollection<UserProfile>? UserProfiles { get; set; }
 }

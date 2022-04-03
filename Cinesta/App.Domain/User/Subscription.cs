@@ -10,7 +10,7 @@ public class Subscription : DomainEntityMetaId
     public string Naming { get; set; } = default!;
     [MaxLength(250)]
     public string Description { get; set; } = default!;
-    public  double Price { get; set; } = default!;
+    public  double Price { get; set; }
     
     public Guid AppUserId { get; set; }
     public AppUser? AppUser { get; set; }

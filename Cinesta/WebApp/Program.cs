@@ -1,5 +1,5 @@
-using DAL.App;
-using Domain.Identity;
+using App.DAL.EF;
+using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -17,11 +17,18 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 */
 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
-    {
-        options.SignIn.RequireConfirmedAccount = false;
-    })
+        {
+            options.SignIn.RequireConfirmedAccount = false;
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequiredUniqueChars = 0;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 1;
+        }
+    )
     .AddDefaultUI()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddControllersWithViews();

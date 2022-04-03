@@ -1,0 +1,54 @@
+﻿@model WebApp.ViewModels.MovieDetailsCreateEditVM
+
+<div class="form-group">
+                <label asp-for="MovieDetails.PosterUri" class="control-label"></label>
+                <input asp-for="MovieDetails.PosterUri" class="form-control" />
+                <span asp-validation-for="MovieDetails.PosterUri" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.Title" class="control-label"></label>
+                <input asp-for="MovieDetails.Title" class="form-control" />
+                <span asp-validation-for="MovieDetails.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.Released" class="control-label"></label>
+                <input asp-for="MovieDetails.Released" class="form-control" />
+                <span asp-validation-for="MovieDetails.Released" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.Description" class="control-label"></label>
+                <input asp-for="MovieDetails.Description" class="form-control" />
+                <span asp-validation-for="MovieDetails.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.AgeRatingId" class="control-label"></label>
+                <select asp-for="MovieDetails.AgeRatingId" class ="form-control" asp-items="Model.AgeRatingSelectList"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.MovieTypeId" class="control-label"></label>
+                <select asp-for="MovieDetails.MovieTypeId" class ="form-control" asp-items="Model.MovieTypeSelectList"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.MovieDbScoreId" class="control-label"></label>
+                <select asp-for="MovieDetails.MovieDbScoreId" class ="form-control" asp-items="Model.MovieDbScoreSelectList"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.CreatedBy" class="control-label"></label>
+                <input asp-for="MovieDetails.CreatedBy" class="form-control" />
+                <span asp-validation-for="MovieDetails.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.CreatedAt" class="control-label"></label>
+                <input asp-for="MovieDetails.CreatedAt" class="form-control" />
+                <span asp-validation-for="MovieDetails.CreatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.UpdatedBy" class="control-label"></label>
+                <input asp-for="MovieDetails.UpdatedBy" class="form-control" />
+                <span asp-validation-for="MovieDetails.UpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MovieDetails.UpdatedAt" class="control-label"></label>
+                <input asp-for="MovieDetails.UpdatedAt" class="form-control" />
+                <span asp-validation-for="MovieDetails.UpdatedAt" class="text-danger"></span>
+            </div>

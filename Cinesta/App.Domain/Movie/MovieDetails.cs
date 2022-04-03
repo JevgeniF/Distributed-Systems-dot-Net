@@ -2,7 +2,6 @@
 using App.Domain.Cast;
 using App.Domain.MovieStandardDetails;
 using Base.Domain;
-using Type = App.Domain.MovieStandardDetails.Type;
 
 namespace App.Domain.Movie;
 
@@ -20,7 +19,7 @@ public class MovieDetails : DomainEntityMetaId
     public AgeRating? AgeRating { get; set; }
     
     public Guid MovieTypeId { get; set; }
-    public Type? MovieType { get; set; }
+    public MovieType? MovieType { get; set; }
     
     public Guid MovieDbScoreId { get; set; }
     public MovieDbScore? MovieMovieDbScore { get; set; }

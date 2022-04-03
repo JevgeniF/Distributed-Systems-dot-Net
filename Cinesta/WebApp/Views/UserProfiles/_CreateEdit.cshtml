@@ -1,0 +1,26 @@
+﻿@model WebApp.ViewModels.UserProfileCreateEditVM
+
+<div class="form-group">
+                <label asp-for="UserProfile.IconUri" class="control-label"></label>
+                <input asp-for="UserProfile.IconUri" class="form-control" />
+                <span asp-validation-for="UserProfile.IconUri" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserProfile.Name" class="control-label"></label>
+                <input asp-for="UserProfile.Name" class="form-control" />
+                <span asp-validation-for="UserProfile.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserProfile.Age" class="control-label"></label>
+                <input asp-for="UserProfile.Age" class="form-control" />
+                <span asp-validation-for="UserProfile.Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserProfile.AppUserId" class="control-label"></label>
+                <select asp-for="UserProfile.AppUserId" class ="form-control" asp-items="Model.AppUserSelectList"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserProfile.CreatedAt" class="control-label"></label>
+                <input asp-for="UserProfile.CreatedAt" class="form-control" />
+                <span asp-validation-for="UserProfile.CreatedAt" class="text-danger"></span>
+            </div>

@@ -7,7 +7,6 @@ using App.Domain.Profile;
 using App.Domain.User;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Type = App.Domain.MovieStandardDetails.Type;
 
 namespace App.DAL.EF;
 
@@ -21,12 +20,13 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     //movie
     public DbSet<MovieDbScore> MovieDbScores { get; set; } = default!;
     public DbSet<MovieDetails> MovieDetails { get; set; } = default!;
+    public DbSet<MovieGenre> MovieGenres { get; set; } = default!;
     public DbSet<UserRating> UserRatings { get; set; } = default!;
     public DbSet<Video> Videos { get; set; } = default!;
     //movie standardized details
     public DbSet<AgeRating> AgeRatings { get; set; } = default!;
-    public DbSet<Genre> MovieGenres { get; set; } = default!;
-    public DbSet<Type> MovieTypes { get; set; } = default!;
+    public DbSet<Genre> Genres { get; set; } = default!;
+    public DbSet<MovieType> MovieTypes { get; set; } = default!;
     //profile
     public DbSet<ProfileMovie> ProfileMovies { get; set; } = default!;
     public DbSet<ProfileFavoriteMovie> ProfileFavoriteMovies { get; set; } = default!;

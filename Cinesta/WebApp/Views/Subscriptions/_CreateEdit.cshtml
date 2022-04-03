@@ -1,0 +1,41 @@
+﻿@model WebApp.ViewModels.SubscriptionCreateEditVM
+
+<div class="form-group">
+                <label asp-for="Subscription.Naming" class="control-label"></label>
+                <input asp-for="Subscription.Naming" class="form-control" />
+                <span asp-validation-for="Subscription.Naming" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.Description" class="control-label"></label>
+                <input asp-for="Subscription.Description" class="form-control" />
+                <span asp-validation-for="Subscription.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.Price" class="control-label"></label>
+                <input asp-for="Subscription.Price" class="form-control" />
+                <span asp-validation-for="Subscription.Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.AppUserId" class="control-label"></label>
+                <select asp-for="Subscription.AppUserId" class ="form-control" asp-items="Model.AppUserSelectList"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CreatedBy" class="control-label"></label>
+                <input asp-for="Subscription.CreatedBy" class="form-control" />
+                <span asp-validation-for="Subscription.CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.CreatedAt" class="control-label"></label>
+                <input asp-for="Subscription.CreatedAt" class="form-control" />
+                <span asp-validation-for="Subscription.CreatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.UpdatedBy" class="control-label"></label>
+                <input asp-for="Subscription.UpdatedBy" class="form-control" />
+                <span asp-validation-for="Subscription.UpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Subscription.UpdatedAt" class="control-label"></label>
+                <input asp-for="Subscription.UpdatedAt" class="form-control" />
+                <span asp-validation-for="Subscription.UpdatedAt" class="text-danger"></span>
+            </div>

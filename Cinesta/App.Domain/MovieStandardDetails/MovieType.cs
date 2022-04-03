@@ -3,7 +3,7 @@ using Base.Domain;
 
 namespace App.Domain.MovieStandardDetails;
 
-public class Type : DomainEntityMetaId
+public class MovieType : DomainEntityMetaId
 {
     [MaxLength(20)] public string Naming { get; set; } = default!;
 }

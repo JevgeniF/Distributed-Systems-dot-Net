@@ -8,6 +8,5 @@ public class MovieDetailsCreateEditVM
     public MovieDetails MovieDetails { get; set; } = default!;
     
     public SelectList? AgeRatingSelectList { get; set; }
-    public SelectList? MovieDbScoreSelectList { get; set; }
     public SelectList? MovieTypeSelectList { get; set; }
 }

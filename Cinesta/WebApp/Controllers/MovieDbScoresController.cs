@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Movie;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
@@ -23,7 +24,8 @@ namespace WebApp.Controllers
         // GET: MovieDbScores
         public async Task<IActionResult> Index()
         {
-            return View(await _context.MovieDbScores.ToListAsync());
+            var appDbContext = _context.MovieDbScores.Include(m => m.MovieDetails);
+            return View(await appDbContext.ToListAsync());
         }
 
         // GET: MovieDbScores/Details/5
@@ -35,6 +37,7 @@ namespace WebApp.Controllers
             }
 
             var movieDbScore = await _context.MovieDbScores
+                .Include(m => m.MovieDetails)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movieDbScore == null)
             {
@@ -45,9 +48,13 @@ namespace WebApp.Controllers
         }
 
         // GET: MovieDbScores/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var vm = new MovieDbScoreCreateEditVM();
+            vm.MovieDetailsSelectList = new SelectList(
+                await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
+                nameof(MovieDetails.Id), nameof(MovieDetails.Title));
+            return View(vm);
         }
 
         // POST: MovieDbScores/Create
@@ -55,16 +62,18 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ImdbId,Score,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] MovieDbScore movieDbScore)
+        public async Task<IActionResult> Create(MovieDbScoreCreateEditVM vm)
         {
             if (ModelState.IsValid)
             {
-                movieDbScore.Id = Guid.NewGuid();
-                _context.Add(movieDbScore);
+                _context.Add(vm.MovieDbScore);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(movieDbScore);
+            vm.MovieDetailsSelectList = new SelectList(
+                await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
+                nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
+            return View(vm);
         }
 
         // GET: MovieDbScores/Edit/5
@@ -80,7 +89,13 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            return View(movieDbScore);
+
+            var vm = new MovieDbScoreCreateEditVM();
+            vm.MovieDbScore = movieDbScore;
+            vm.MovieDetailsSelectList = new SelectList(
+                await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
+                nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
+            return View(vm);
         }
 
         // POST: MovieDbScores/Edit/5
@@ -88,7 +103,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ImdbId,Score,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] MovieDbScore movieDbScore)
+        public async Task<IActionResult> Edit(Guid id, MovieDbScore movieDbScore)
         {
             if (id != movieDbScore.Id)
             {
@@ -115,7 +130,12 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(movieDbScore);
+            var vm = new MovieDbScoreCreateEditVM();
+            vm.MovieDbScore = movieDbScore;
+            vm.MovieDetailsSelectList = new SelectList(
+                await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
+                nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
+            return View(vm);
         }
 
         // GET: MovieDbScores/Delete/5
@@ -127,6 +147,7 @@ namespace WebApp.Controllers
             }
 
             var movieDbScore = await _context.MovieDbScores
+                .Include(m => m.MovieDetails)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movieDbScore == null)
             {

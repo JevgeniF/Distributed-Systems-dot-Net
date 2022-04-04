@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220403172545_Initial")]
+    [Migration("20220404094437_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -238,6 +238,9 @@ namespace App.DAL.EF.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("MovieDetailsId")
+                        .HasColumnType("TEXT");
+
                     b.Property<double?>("Score")
                         .HasColumnType("REAL");
 
@@ -249,6 +252,8 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MovieDetailsId");
 
                     b.ToTable("MovieDbScores");
                 });
@@ -272,9 +277,6 @@ namespace App.DAL.EF.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("MovieDbScoreId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("MovieTypeId")
@@ -303,8 +305,6 @@ namespace App.DAL.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AgeRatingId");
-
-                    b.HasIndex("MovieDbScoreId");
 
                     b.HasIndex("MovieTypeId");
 
@@ -677,9 +677,10 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("SecurityCode")
+                    b.Property<string>("SecurityCode")
+                        .IsRequired()
                         .HasMaxLength(3)
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
@@ -876,17 +877,22 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Person");
                 });
 
+            modelBuilder.Entity("App.Domain.Movie.MovieDbScore", b =>
+                {
+                    b.HasOne("App.Domain.Movie.MovieDetails", "MovieDetails")
+                        .WithMany("MovieDbScores")
+                        .HasForeignKey("MovieDetailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MovieDetails");
+                });
+
             modelBuilder.Entity("App.Domain.Movie.MovieDetails", b =>
                 {
                     b.HasOne("App.Domain.MovieStandardDetails.AgeRating", "AgeRating")
                         .WithMany()
                         .HasForeignKey("AgeRatingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("App.Domain.Movie.MovieDbScore", "MovieMovieDbScore")
-                        .WithMany()
-                        .HasForeignKey("MovieDbScoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -897,8 +903,6 @@ namespace App.DAL.EF.Migrations
                         .IsRequired();
 
                     b.Navigation("AgeRating");
-
-                    b.Navigation("MovieMovieDbScore");
 
                     b.Navigation("MovieType");
                 });
@@ -1085,6 +1089,8 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("CastInMovie");
 
                     b.Navigation("Genres");
+
+                    b.Navigation("MovieDbScores");
 
                     b.Navigation("UserRatings");
 

@@ -21,8 +21,7 @@ public class MovieDetails : DomainEntityMetaId
     public Guid MovieTypeId { get; set; }
     public MovieType? MovieType { get; set; }
     
-    public Guid MovieDbScoreId { get; set; }
-    public MovieDbScore? MovieMovieDbScore { get; set; }
+    public ICollection<MovieDbScore>? MovieDbScores { get; set; }
 
     public ICollection<Genre>? Genres { get; set; }
 

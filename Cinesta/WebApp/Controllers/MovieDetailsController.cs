@@ -25,7 +25,7 @@ namespace WebApp.Controllers
         // GET: MovieDetails
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.MovieDetails.Include(m => m.AgeRating).Include(m => m.MovieMovieDbScore).Include(m => m.MovieType);
+            var appDbContext = _context.MovieDetails.Include(m => m.AgeRating).Include(m => m.MovieType);
             return View(await appDbContext.ToListAsync());
         }
 
@@ -39,7 +39,6 @@ namespace WebApp.Controllers
 
             var movieDetails = await _context.MovieDetails
                 .Include(m => m.AgeRating)
-                .Include(m => m.MovieMovieDbScore)
                 .Include(m => m.MovieType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movieDetails == null)
@@ -55,13 +54,10 @@ namespace WebApp.Controllers
         {
             var vm = new MovieDetailsCreateEditVM();
             vm.AgeRatingSelectList = new SelectList(
-                await _context.AgeRatings.Select(a => new { a.Id, a.Naming}).ToListAsync(),
+                await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
                 nameof(AgeRating.Id), nameof(AgeRating.Naming));
-            vm.MovieDbScoreSelectList = new SelectList(
-                await _context.MovieDbScores.Select(i => new {i.Id, i.Score}).ToListAsync(),
-                nameof(MovieDbScore.Id), nameof(MovieDbScore.Score));
             vm.MovieTypeSelectList = new SelectList(
-                await _context.MovieTypes.Select(t => new { t.Id, t.Naming}).ToListAsync(),
+                await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
                 nameof(MovieType.Id), nameof(MovieType.Naming));
             return View(vm);
         }
@@ -80,13 +76,10 @@ namespace WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             vm.AgeRatingSelectList = new SelectList(
-                await _context.AgeRatings.Select(a => new { a.Id, a.Naming}).ToListAsync(),
+                await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
                 nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-            vm.MovieDbScoreSelectList = new SelectList(
-                await _context.MovieDbScores.Select(i => new {i.Id, i.Score}).ToListAsync(),
-                nameof(MovieDbScore.Id), nameof(MovieDbScore.Score), vm.MovieDetails.MovieDbScoreId);
             vm.MovieTypeSelectList = new SelectList(
-                await _context.MovieTypes.Select(t => new { t.Id, t.Naming}).ToListAsync(),
+                await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
                 nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
             return View(vm);
         }
@@ -108,16 +101,12 @@ namespace WebApp.Controllers
             var vm = new MovieDetailsCreateEditVM();
             vm.MovieDetails = movieDetails;
             vm.AgeRatingSelectList = new SelectList(
-                await _context.AgeRatings.Select(a => new { a.Id, a.Naming}).ToListAsync(),
+                await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
                 nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-            vm.MovieDbScoreSelectList = new SelectList(
-                await _context.MovieDbScores.Select(i => new {i.Id, i.Score}).ToListAsync(),
-                nameof(MovieDbScore.Id), nameof(MovieDbScore.Score), vm.MovieDetails.MovieDbScoreId);
             vm.MovieTypeSelectList = new SelectList(
-                await _context.MovieTypes.Select(t => new { t.Id, t.Naming}).ToListAsync(),
+                await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
                 nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
             return View(vm);
-
         }
 
         // POST: MovieDetails/Edit/5
@@ -155,13 +144,10 @@ namespace WebApp.Controllers
             var vm = new MovieDetailsCreateEditVM();
             vm.MovieDetails = movieDetails;
             vm.AgeRatingSelectList = new SelectList(
-                await _context.AgeRatings.Select(a => new { a.Id, a.Naming}).ToListAsync(),
+                await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
                 nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-            vm.MovieDbScoreSelectList = new SelectList(
-                await _context.MovieDbScores.Select(i => new {i.Id, i.Score}).ToListAsync(),
-                nameof(MovieDbScore.Id), nameof(MovieDbScore.Score), vm.MovieDetails.MovieDbScoreId);
             vm.MovieTypeSelectList = new SelectList(
-                await _context.MovieTypes.Select(t => new { t.Id, t.Naming}).ToListAsync(),
+                await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
                 nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
             return View(vm);
         }
@@ -176,7 +162,6 @@ namespace WebApp.Controllers
 
             var movieDetails = await _context.MovieDetails
                 .Include(m => m.AgeRating)
-                .Include(m => m.MovieMovieDbScore)
                 .Include(m => m.MovieType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movieDetails == null)

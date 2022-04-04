@@ -57,23 +57,6 @@ namespace App.DAL.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MovieDbScores",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ImdbId = table.Column<string>(type: "TEXT", nullable: false),
-                    Score = table.Column<double>(type: "REAL", nullable: true),
-                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MovieDbScores", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MovieTypes",
                 columns: table => new
                 {
@@ -138,7 +121,6 @@ namespace App.DAL.EF.Migrations
                     Description = table.Column<string>(type: "TEXT", maxLength: 250, nullable: false),
                     AgeRatingId = table.Column<Guid>(type: "TEXT", nullable: false),
                     MovieTypeId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    MovieDbScoreId = table.Column<Guid>(type: "TEXT", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
@@ -151,12 +133,6 @@ namespace App.DAL.EF.Migrations
                         name: "FK_MovieDetails_AgeRatings_AgeRatingId",
                         column: x => x.AgeRatingId,
                         principalTable: "AgeRatings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MovieDetails_MovieDbScores_MovieDbScoreId",
-                        column: x => x.MovieDbScoreId,
-                        principalTable: "MovieDbScores",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -254,6 +230,30 @@ namespace App.DAL.EF.Migrations
                         column: x => x.MovieDetailsId,
                         principalTable: "MovieDetails",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MovieDbScores",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ImdbId = table.Column<string>(type: "TEXT", nullable: false),
+                    Score = table.Column<double>(type: "REAL", nullable: true),
+                    MovieDetailsId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MovieDbScores", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MovieDbScores_MovieDetails_MovieDetailsId",
+                        column: x => x.MovieDetailsId,
+                        principalTable: "MovieDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -622,14 +622,14 @@ namespace App.DAL.EF.Migrations
                 column: "MovieDetailsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MovieDbScores_MovieDetailsId",
+                table: "MovieDbScores",
+                column: "MovieDetailsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MovieDetails_AgeRatingId",
                 table: "MovieDetails",
                 column: "AgeRatingId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MovieDetails_MovieDbScoreId",
-                table: "MovieDetails",
-                column: "MovieDbScoreId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MovieDetails_MovieTypeId",
@@ -718,6 +718,9 @@ namespace App.DAL.EF.Migrations
                 name: "CastInMovies");
 
             migrationBuilder.DropTable(
+                name: "MovieDbScores");
+
+            migrationBuilder.DropTable(
                 name: "MovieGenres");
 
             migrationBuilder.DropTable(
@@ -758,9 +761,6 @@ namespace App.DAL.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "AgeRatings");
-
-            migrationBuilder.DropTable(
-                name: "MovieDbScores");
 
             migrationBuilder.DropTable(
                 name: "MovieTypes");

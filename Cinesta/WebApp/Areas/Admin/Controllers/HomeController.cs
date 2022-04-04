@@ -6,7 +6,7 @@ namespace WebApp.Areas.Admin.Controllers;
 public class HomeController : Controller
 {
     // GET
-    public IActionResult Index()
+    public IActionResult Index ()
     {
         return View();
     }

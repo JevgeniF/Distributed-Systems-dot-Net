@@ -1,0 +1,25 @@
+﻿@model WebApp.Areas.Admin.ViewModels.UserRatingCreateEditVM
+
+<div class="form-group">
+    <label asp-for="UserRating.Rating" class="control-label"></label>
+    <input asp-for="UserRating.Rating" class="form-control" />
+    <span asp-validation-for="UserRating.Rating" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="UserRating.Comment" class="control-label"></label>
+    <input asp-for="UserRating.Comment" class="form-control" />
+    <span asp-validation-for="UserRating.Comment" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="UserRating.AppUserId" class="control-label"></label>
+    <select asp-for="UserRating.AppUserId" class ="form-control" asp-items="Model.AppUserSelectList"></select>
+</div>
+<div class="form-group">
+    <label asp-for="UserRating.MovieDetailsId" class="control-label"></label>
+    <select asp-for="UserRating.MovieDetailsId" class ="form-control" asp-items="Model.MovieDetailsSelectList"></select>
+</div>
+<div class="form-group">
+    <label asp-for="UserRating.CreatedAt" class="control-label"></label>
+    <input asp-for="UserRating.CreatedAt" class="form-control" />
+    <span asp-validation-for="UserRating.CreatedAt" class="text-danger"></span>
+</div>

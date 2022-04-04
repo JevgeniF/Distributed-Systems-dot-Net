@@ -17,6 +17,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -111,6 +112,19 @@
       <_ContentIncludedByDefault Remove="Views\Genres\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Views\MovieDetails\_CreateEdit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\MovieDbScores\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\CastInMovies\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\CastRoles\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Genres\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\MovieGenres\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\MovieTypes\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\PaymentDetails\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Persons\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ProfileFavoriteMovies\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\ProfileMovies\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Subscriptions\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\UserProfiles\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\UserRatings\_CreateEdit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Videos\_CreateEdit.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -274,11 +288,81 @@
       <UpToDateCheckInput Remove="Views\MovieDbScores\Details.cshtml" />
       <UpToDateCheckInput Remove="Views\MovieDbScores\Edit.cshtml" />
       <UpToDateCheckInput Remove="Views\MovieDbScores\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastInMovies\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastInMovies\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastInMovies\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastInMovies\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastInMovies\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastRoles\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastRoles\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastRoles\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastRoles\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\CastRoles\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Genres\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Genres\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Genres\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Genres\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Genres\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieDbScores\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieDbScores\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieDbScores\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieDbScores\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieDbScores\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieDbScores\_CreateEdit.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieGenres\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieGenres\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieGenres\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieGenres\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieGenres\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieTypes\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieTypes\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieTypes\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieTypes\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\MovieTypes\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentDetails\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentDetails\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentDetails\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentDetails\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\PaymentDetails\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Persons\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileFavoriteMovies\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileFavoriteMovies\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileFavoriteMovies\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileFavoriteMovies\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileFavoriteMovies\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileMovies\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileMovies\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileMovies\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileMovies\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\ProfileMovies\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Subscriptions\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Subscriptions\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Subscriptions\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Subscriptions\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Subscriptions\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserProfiles\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserProfiles\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserProfiles\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserProfiles\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserProfiles\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserRatings\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserRatings\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserRatings\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserRatings\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\UserRatings\Index.cshtml" />
+      <UpToDateCheckInput Remove="Views\Videos\Create.cshtml" />
+      <UpToDateCheckInput Remove="Views\Videos\Delete.cshtml" />
+      <UpToDateCheckInput Remove="Views\Videos\Details.cshtml" />
+      <UpToDateCheckInput Remove="Views\Videos\Edit.cshtml" />
+      <UpToDateCheckInput Remove="Views\Videos\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Areas\Admin\ViewModels" />
-      <Folder Include="Areas\Admin\Views" />
+      <Folder Include="Areas\Admin\Controllers" />
     </ItemGroup>
 
 </Project>

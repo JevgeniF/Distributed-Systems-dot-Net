@@ -1,0 +1,16 @@
+﻿@model WebApp.Areas.Admin.ViewModels.MovieDbScoreCreateEditVM
+
+<div class="form-group">
+    <label asp-for="MovieDbScore.ImdbId" class="control-label"></label>
+    <input asp-for="MovieDbScore.ImdbId" class="form-control" />
+    <span asp-validation-for="MovieDbScore.ImdbId" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="MovieDbScore.Score" class="control-label"></label>
+    <input asp-for="MovieDbScore.Score" class="form-control" />
+    <span asp-validation-for="MovieDbScore.Score" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="MovieDbScore.MovieDetailsId" class="control-label"></label>
+    <select asp-for="MovieDbScore.MovieDetailsId" class ="form-control" asp-items="Model.MovieDetailsSelectList"></select>
+</div>

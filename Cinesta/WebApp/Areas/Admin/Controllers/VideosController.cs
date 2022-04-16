@@ -92,6 +92,7 @@ namespace WebApp.Areas.Admin.Controllers
             }
 
             var vm = new VideoCreateEditVM();
+            vm.Video = video;
             vm.MovieDetailsSelectList = new SelectList(
                 await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
                 nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
@@ -113,8 +114,21 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var videoFromDb = await _context.Videos.AsNoTracking()
+                    .FirstOrDefaultAsync(v => v.Id == video.Id);
+                if (videoFromDb == null)
+                {
+                    return NotFound();
+                }
+                
                 try
                 {
+                    videoFromDb.Title.SetTranslation(video.Title);
+                    video.Title = videoFromDb.Title;
+                    
+                    videoFromDb.Description.SetTranslation(video.Description);
+                    video.Description = videoFromDb.Description;
+                    
                     _context.Update(video);
                     await _context.SaveChangesAsync();
                 }

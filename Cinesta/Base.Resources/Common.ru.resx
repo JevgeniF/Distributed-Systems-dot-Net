@@ -75,9 +75,18 @@
         <value>Привет</value>
     </data>
     <data name="Login" xml:space="preserve">
-        <value>Залогинься</value>
+        <value>Войти</value>
     </data>
     <data name="Register" xml:space="preserve">
-        <value>Зарегистрируйся</value>
+        <value>Зарегистрироваться</value>
+    </data>
+    <data name="Admin" xml:space="preserve">
+        <value>Админ</value>
+    </data>
+    <data name="LanguageRegion" xml:space="preserve">
+        <value>Язык (Регион)</value>
+    </data>
+    <data name="Language" xml:space="preserve">
+        <value>Язык</value>
     </data>
 </root>

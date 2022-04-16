@@ -40,7 +40,7 @@
                 @Html.DisplayFor(modelItem => item.Season)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @item.Title
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FileUri)
@@ -49,10 +49,10 @@
                 @Html.DisplayFor(modelItem => item.Duration)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @item.Description
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MovieDetails!.Title)
+                @item.MovieDetails!.Title
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">@Base.Resources.Common.Edit</a> |

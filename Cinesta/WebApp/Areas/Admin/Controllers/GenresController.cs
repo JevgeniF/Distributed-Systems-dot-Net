@@ -98,8 +98,18 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var genreFromDb = await _context.Genres.AsNoTracking()
+                    .FirstOrDefaultAsync(g => g.Id == genre.Id);
+                if (genreFromDb == null)
+                {
+                    return NotFound();
+                }
+                
                 try
                 {
+                    genreFromDb.Naming.SetTranslation(genre.Naming);
+                    genre.Naming = genreFromDb.Naming;
+                    
                     _context.Update(genre);
                     await _context.SaveChangesAsync();
                 }

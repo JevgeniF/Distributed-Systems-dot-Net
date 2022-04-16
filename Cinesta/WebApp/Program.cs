@@ -1,6 +1,7 @@
 using System.Globalization;
 using App.DAL.EF;
 using App.Domain.Identity;
+using Helpers.WebApp;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -37,7 +38,9 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(
+    options => { options.ModelBinderProviders.Insert(0, new CustomLanguageStringBinderProvider()); }
+    );
 
 var supportedCultures = builder.Configuration
     .GetSection("SupportedCultures")

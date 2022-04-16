@@ -34,13 +34,13 @@
                 @Html.DisplayFor(modelItem => item.Rating)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Comment)
+                @item.Comment
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUser!.Id)
+                @Html.DisplayFor(modelItem => item.AppUser!.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MovieDetails!.Title)
+                @item.MovieDetails!.Title
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">@Base.Resources.Common.Edit</a> |

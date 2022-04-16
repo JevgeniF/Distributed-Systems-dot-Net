@@ -28,7 +28,7 @@
                 @Html.DisplayFor(modelItem => item.UserProfile!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MovieDetails!.Title)
+                @item.MovieDetails!.Title
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">@Base.Resources.Common.Edit</a> |

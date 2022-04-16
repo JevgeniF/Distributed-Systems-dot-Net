@@ -28,7 +28,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.CastRole!.Naming)
+                @item.CastRole!.Naming
             </td>
             <td>
                 @{
@@ -37,7 +37,7 @@
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MovieDetails!.Title)
+                @item.MovieDetails!.Title
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">@Base.Resources.Common.Edit</a> |

@@ -124,8 +124,20 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var movieDetailsFromDb = await _context.MovieDetails.AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.Id == movieDetails.Id);
+                if (movieDetailsFromDb == null)
+                {
+                    return NotFound();
+                }
                 try
                 {
+                    movieDetailsFromDb.Title.SetTranslation(movieDetails.Title);
+                    movieDetails.Title = movieDetailsFromDb.Title;
+                    
+                    movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
+                    movieDetails.Description = movieDetailsFromDb.Description;
+                    
                     _context.Update(movieDetails);
                     await _context.SaveChangesAsync();
                 }

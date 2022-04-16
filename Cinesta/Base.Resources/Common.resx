@@ -87,4 +87,13 @@
     <data name="Register" xml:space="preserve">
         <value>Register</value>
     </data>
+    <data name="Admin" xml:space="preserve">
+        <value>Admin</value>
+    </data>
+    <data name="LanguageRegion" xml:space="preserve">
+        <value>Language (Region)</value>
+    </data>
+    <data name="Language" xml:space="preserve">
+        <value>Language</value>
+    </data>
 </root>

@@ -124,8 +124,18 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var userRatingsFromDb = await _context.UserRatings.AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Id == userRating.Id);
+                if (userRatingsFromDb == null)
+                {
+                    return NotFound();
+                }
+                
                 try
                 {
+                    userRatingsFromDb.Comment.SetTranslation(userRating.Comment);
+                    userRating.Comment = userRatingsFromDb.Comment;
+                    
                     _context.Update(userRating);
                     await _context.SaveChangesAsync();
                 }

@@ -61,6 +61,15 @@ namespace Base.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Admin.
+        /// </summary>
+        public static string Admin {
+            get {
+                return ResourceManager.GetString("Admin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back to List.
         /// </summary>
         public static string BackToList {
@@ -129,6 +138,24 @@ namespace Base.Resources {
         public static string Index {
             get {
                 return ResourceManager.GetString("Index", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string Language {
+            get {
+                return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language (Region).
+        /// </summary>
+        public static string LanguageRegion {
+            get {
+                return ResourceManager.GetString("LanguageRegion", resourceCulture);
             }
         }
         

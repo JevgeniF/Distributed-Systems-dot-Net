@@ -113,8 +113,21 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var subscriptionFromDb = await _context.Subscriptions.AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.Id == subscription.Id);
+                if (subscriptionFromDb == null)
+                {
+                    return NotFound();
+                }
+                
                 try
                 {
+                    subscriptionFromDb.Naming.SetTranslation(subscription.Naming);
+                    subscription.Naming = subscriptionFromDb.Naming;
+                    
+                    subscriptionFromDb.Description.SetTranslation(subscription.Description);
+                    subscription.Description = subscriptionFromDb.Description;
+                    
                     _context.Update(subscription);
                     await _context.SaveChangesAsync();
                 }

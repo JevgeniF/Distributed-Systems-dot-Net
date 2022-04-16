@@ -40,19 +40,19 @@
                 @Html.DisplayFor(modelItem => item.PosterUri)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @item.Title
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Released)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @item.Description
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.AgeRating!.Naming)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MovieType!.Naming)
+                @item.MovieType!.Naming
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">@Base.Resources.Common.Edit</a> |

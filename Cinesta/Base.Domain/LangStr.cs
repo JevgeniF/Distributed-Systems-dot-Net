@@ -4,10 +4,9 @@ public class LangStr : Dictionary<string, string>
 {
     private const string DefaultCulture = "en";
 
-    public new string this[string key]
+    private string GetCultureName(string culture)
     {
-        get {return base[key]; }
-        set { base[key] = value; }
+        return culture.Split("-")[0];
     }
 
     public LangStr(string value) : this(value, Thread.CurrentThread.CurrentUICulture.Name)
@@ -20,12 +19,12 @@ public class LangStr : Dictionary<string, string>
 
     public LangStr(string value, string culture)
     {
-        this[culture] = value;
+        this[GetCultureName(culture)] = value;
     }
 
     public void SetTranslation(string value)
     {
-        this[Thread.CurrentThread.CurrentUICulture.Name] = value;
+        this[GetCultureName(Thread.CurrentThread.CurrentUICulture.Name)] = value;
     }
 
     public string? Translate(string? culture = null)
@@ -33,33 +32,30 @@ public class LangStr : Dictionary<string, string>
         // if there is exact match
         if (this.Count == 0) return null;
         culture = culture?.Trim() ?? Thread.CurrentThread.CurrentUICulture.Name;
+        culture = GetCultureName(culture);
 
         if (this.ContainsKey(culture))
         {
             return this[culture];
         }
+
+        var neutralCulture = culture.Split("-")[0];
+        if (ContainsKey(neutralCulture))
+        {
+            return this[neutralCulture];
+        }
+
+        if (ContainsKey(DefaultCulture))
+        {
+            return this[DefaultCulture];
+        }
         
-        // if there is match without region
-        var key = this.Keys.FirstOrDefault(s => culture.StartsWith(s));
-        if (key != null)
-        {
-            return this[key];
-        }
-
-        //try to find default culture
-        key = this.Keys.FirstOrDefault(s => culture.StartsWith(DefaultCulture));
-        if (key != null)
-        {
-            return this[key];
-        }
-
-        // return first in list or null
         return null;
     }
 
     public override string ToString()
     {
-        return Translate() ?? "????";
+        return Translate() ?? "???";
     }
     
     public static implicit operator string(LangStr? l) => l?.ToString() ?? "null";

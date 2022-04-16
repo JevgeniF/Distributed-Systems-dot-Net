@@ -98,8 +98,18 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var castRoleFromDb = await _context.CastRoles.AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == castRole.Id);
+                if (castRoleFromDb == null)
+                {
+                    return NotFound();
+                }
+                
                 try
                 {
+                    castRoleFromDb.Naming.SetTranslation(castRole.Naming);
+                    castRole.Naming = castRoleFromDb.Naming;
+                    
                     _context.Update(castRole);
                     await _context.SaveChangesAsync();
                 }

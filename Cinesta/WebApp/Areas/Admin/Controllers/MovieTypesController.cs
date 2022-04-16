@@ -98,8 +98,18 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var movieTypeFromDb = await _context.MovieTypes.AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.Id == movieType.Id);
+                if (movieTypeFromDb == null)
+                {
+                    return NotFound();
+                }
+                
                 try
                 {
+                    movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
+                    movieType.Naming = movieTypeFromDb.Naming;
+                    
                     _context.Update(movieType);
                     await _context.SaveChangesAsync();
                 }

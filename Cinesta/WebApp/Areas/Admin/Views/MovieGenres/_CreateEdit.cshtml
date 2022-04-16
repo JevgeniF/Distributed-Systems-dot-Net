@@ -1,10 +1,14 @@
 ﻿@model WebApp.Areas.Admin.ViewModels.MovieGenreCreateEditVM
 
 <div class="form-group">
-    <label asp-for="MovieGenre.MovieDetailsId" class="control-label"></label>
-    <select asp-for="MovieGenre.MovieDetailsId" class ="form-control" asp-items="Model.MovieDetailsSelectList"></select>
+    <label asp-for="MovieGenre.MovieDetailsId" class="control-label">@App.Resources.App.Domain.Movie.MovieGenre.MovieDetails</label>
+    <select asp-for="MovieGenre.MovieDetailsId" class="form-control" asp-items="Model.MovieDetailsSelectList">
+        <option value="wrongData">--- @Base.Resources.Common.SelectMovie ----</option>
+    </select>
 </div>
 <div class="form-group">
-    <label asp-for="MovieGenre.GenreId" class="control-label"></label>
-    <select asp-for="MovieGenre.GenreId" class ="form-control" asp-items="Model.GenreSelectList"></select>
+    <label asp-for="MovieGenre.GenreId" class="control-label">@App.Resources.App.Domain.Movie.MovieGenre.Genre</label>
+    <select asp-for="MovieGenre.GenreId" class="form-control" asp-items="Model.GenreSelectList">
+        <option value="wrongData">--- @Base.Resources.Common.SelectGenre ----</option>
+    </select>
 </div>

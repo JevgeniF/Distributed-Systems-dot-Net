@@ -16,6 +16,8 @@
     <span asp-validation-for="UserProfile.Age" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="UserProfile.AppUserId" class="control-label"></label>
-    <select asp-for="UserProfile.AppUserId" class ="form-control" asp-items="Model.AppUserSelectList"></select>
+    <label asp-for="UserProfile.AppUserId" class="control-label">@App.Resources.App.Domain.Profile.UserProfile.AppUser</label>
+    <select asp-for="UserProfile.AppUserId" class="form-control" asp-items="Model.AppUserSelectList">
+        <option value="wrongData">--- @Base.Resources.Common.SelectUser ---</option>
+    </select>
 </div>

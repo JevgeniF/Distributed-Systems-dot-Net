@@ -4,11 +4,10 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1>@Base.Resources.Common.Delete</h1>
 
-<h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>PaymentDetails</h4>
+    <h4>@App.Resources.App.Domain.User.PaymentDetails.PaymentDetailsString</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -45,7 +44,7 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="@Base.Resources.Common.Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">@Base.Resources.Common.BackToList</a>
     </form>
 </div>

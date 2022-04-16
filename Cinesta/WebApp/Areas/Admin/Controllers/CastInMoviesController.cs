@@ -63,9 +63,9 @@ namespace WebApp.Areas.Admin.Controllers
                 await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
                 nameof(MovieDetails.Id), nameof(MovieDetails.Title));
             vm.PersonSelectList = new SelectList(
-                await _context.Persons.Select(p => new {p.Id, p.Name})
+                await _context.Persons.Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)})
                     .ToListAsync(), nameof(Person.Id),
-                nameof(Person.Name));
+                "FullName");
             return View(vm);
         }
 
@@ -90,9 +90,9 @@ namespace WebApp.Areas.Admin.Controllers
                 await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
                 nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
             vm.PersonSelectList = new SelectList(
-                await _context.Persons.Select(p => new {p.Id, p.Name})
+                await _context.Persons.Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)})
                     .ToListAsync(), nameof(Person.Id),
-                nameof(Person.Name), vm.CastInMovie.PersonId);
+                "FullName", vm.CastInMovie.PersonId);
             return View(vm);
         }
 
@@ -118,9 +118,9 @@ namespace WebApp.Areas.Admin.Controllers
                 await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
                 nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
             vm.PersonSelectList = new SelectList(
-                await _context.Persons.Select(p => new {p.Id, p.Name})
+                await _context.Persons.Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)})
                     .ToListAsync(), nameof(Person.Id),
-                nameof(Person.Name), vm.CastInMovie.PersonId);
+                "FullName", vm.CastInMovie.PersonId);
             return View(vm);
         }
 
@@ -165,9 +165,9 @@ namespace WebApp.Areas.Admin.Controllers
                 await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
                 nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
             vm.PersonSelectList = new SelectList(
-                await _context.Persons.Select(p => new {p.Id, p.Name})
+                await _context.Persons.Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)})
                     .ToListAsync(), nameof(Person.Id),
-                nameof(Person.Name), vm.CastInMovie.PersonId);
+                "FullName", vm.CastInMovie.PersonId);
             return View(vm);
         }
 

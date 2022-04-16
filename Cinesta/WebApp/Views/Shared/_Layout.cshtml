@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - WebApp</title>
+    <title>@ViewData["Title"] - Cinesta</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true"/>
@@ -12,7 +12,7 @@
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebApp</a>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Cinesta</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -20,11 +20,11 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@Base.Resources.Common.Home</a>
                     </li>
-                    <li class="nav-item">
+                    @*<li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
+                    </li>*@
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -33,56 +33,56 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="CastInMovies" asp-action="Index">Cast In Movies</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="CastInMovies" asp-action="Index">@App.Resources.App.Domain.Cast.CastInMovie.CastInMovieString</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="CastRoles" asp-action="Index">Cast Roles</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Persons" asp-action="Index">Persons</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="CastRoles" asp-action="Index">@App.Resources.App.Domain.Cast.CastRole.CastRoleString</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="MovieDbScores" asp-action="Index">MovieDB Scores</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="MovieDetails" asp-action="Index">Movie Details</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="MovieGenres" asp-action="Index">Movie Genres</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="UserRatings" asp-action="Index">User's Ratings</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Videos" asp-action="Index">Videos</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Persons" asp-action="Index">@App.Resources.App.Domain.Common.Person.PesronString</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="AgeRatings" asp-action="Index">Age Ratings</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="MovieDbScores" asp-action="Index">@App.Resources.App.Domain.Movie.MovieDbScore.MovieDbScoreString</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Genres" asp-action="Index">Genres</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="MovieDetails" asp-action="Index">@App.Resources.App.Domain.Movie.MovieDetails.MovieDetailsString</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="MovieTypes" asp-action="Index">Movie Types</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="MovieGenres" asp-action="Index">@App.Resources.App.Domain.Movie.MovieGenre.MovieGenreString</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="ProfileFavoriteMovies" asp-action="Index">Profile Favorite Movies</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="UserRatings" asp-action="Index">@App.Resources.App.Domain.Movie.UserRating.UserRatingString</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="ProfileMovies" asp-action="Index">Movies in Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="UserProfiles" asp-action="Index">User Profiles</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Videos" asp-action="Index">@App.Resources.App.Domain.Movie.Video.VideoString</a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Subscriptions" asp-action="Index">Subscriptions</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="AgeRatings" asp-action="Index">@App.Resources.App.Domain.MovieStandardDetails.AgeRating.AgeRatingString</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="PaymentDetails" asp-action="Index">Payment Details</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Genres" asp-action="Index">@App.Resources.App.Domain.MovieStandardDetails.Genre.GenreString</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="MovieTypes" asp-action="Index">@App.Resources.App.Domain.MovieStandardDetails.MovieType.MovieTypeString</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="ProfileFavoriteMovies" asp-action="Index">@App.Resources.App.Domain.Profile.ProfileFavoriteMovie.ProfileFavoriteMovieString</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="ProfileMovies" asp-action="Index">@App.Resources.App.Domain.Profile.ProfileMovie.ProfileMovieString</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="UserProfiles" asp-action="Index">@App.Resources.App.Domain.Profile.UserProfile.UserProfileString</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Subscriptions" asp-action="Index">@App.Resources.App.Domain.User.Subscription.SubscriptionString</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="PaymentDetails" asp-action="Index">@App.Resources.App.Domain.User.PaymentDetails.PaymentDetailsString</a>
                             </li>
                         </ul>
                     </li>
@@ -100,7 +100,7 @@
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2022 - WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2022 - Cinesta WebApp | UICulture: @Thread.CurrentThread.CurrentUICulture.Name | Culture: @Thread.CurrentThread.CurrentCulture.Name
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,4 +1,5 @@
 ﻿using System;
+using Base.Domain;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -46,7 +47,7 @@ namespace App.DAL.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Naming = table.Column<string>(type: "character varying(35)", maxLength: 35, nullable: false),
+                    Naming = table.Column<LangStr>(type: "jsonb", nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
@@ -62,7 +63,7 @@ namespace App.DAL.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Naming = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Naming = table.Column<LangStr>(type: "jsonb", nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
@@ -117,9 +118,9 @@ namespace App.DAL.EF.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PosterUri = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Released = table.Column<DateOnly>(type: "date", nullable: false),
-                    Description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    Title = table.Column<LangStr>(type: "jsonb", nullable: false),
+                    Released = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Description = table.Column<LangStr>(type: "jsonb", maxLength: 250, nullable: false),
                     AgeRatingId = table.Column<Guid>(type: "uuid", nullable: false),
                     MovieTypeId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
@@ -216,7 +217,7 @@ namespace App.DAL.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Naming = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Naming = table.Column<LangStr>(type: "jsonb", nullable: false),
                     MovieDetailsId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -263,10 +264,10 @@ namespace App.DAL.EF.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Season = table.Column<int>(type: "integer", nullable: true),
-                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Title = table.Column<LangStr>(type: "jsonb", nullable: false),
                     FileUri = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Duration = table.Column<TimeOnly>(type: "time without time zone", nullable: false),
-                    Description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    Description = table.Column<LangStr>(type: "jsonb", nullable: false),
                     MovieDetailsId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -375,7 +376,7 @@ namespace App.DAL.EF.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CardType = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: false),
                     CardNumber = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    ValidDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ValidDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     SecurityCode = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     AppUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
@@ -399,8 +400,8 @@ namespace App.DAL.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Naming = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: false),
-                    Description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    Naming = table.Column<LangStr>(type: "jsonb", nullable: false),
+                    Description = table.Column<LangStr>(type: "jsonb", nullable: false),
                     Price = table.Column<double>(type: "double precision", nullable: false),
                     AppUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
@@ -450,7 +451,7 @@ namespace App.DAL.EF.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Rating = table.Column<int>(type: "integer", nullable: false),
-                    Comment = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    Comment = table.Column<LangStr>(type: "jsonb", nullable: false),
                     AppUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     MovieDetailsId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),

@@ -1,10 +1,14 @@
 ﻿@model WebApp.Areas.Admin.ViewModels.ProfileMovieCreateEditVM
 
 <div class="form-group">
-    <label asp-for="ProfileMovie.UserProfileId" class="control-label"></label>
-    <select asp-for="ProfileMovie.UserProfileId" class ="form-control" asp-items="Model.UserProfileSelectList"></select>
+    <label asp-for="ProfileMovie.UserProfileId" class="control-label">@App.Resources.App.Domain.Profile.ProfileMovie.UserProfile</label>
+    <select asp-for="ProfileMovie.UserProfileId" class="form-control" asp-items="Model.UserProfileSelectList">
+        <option value="wrongData">--- @Base.Resources.Common.SelectUserProfile ----</option>
+    </select>
 </div>
 <div class="form-group">
-    <label asp-for="ProfileMovie.MovieDetailsId" class="control-label"></label>
-    <select asp-for="ProfileMovie.MovieDetailsId" class ="form-control" asp-items="Model.MovieDetailsSelectList"></select>
+    <label asp-for="ProfileMovie.MovieDetailsId" class="control-label">@App.Resources.App.Domain.Profile.ProfileMovie.MovieDetails</label>
+    <select asp-for="ProfileMovie.MovieDetailsId" class="form-control" asp-items="Model.MovieDetailsSelectList">
+        <option value="wrongData">--- @Base.Resources.Common.SelectMovie ---</option>
+    </select>
 </div>

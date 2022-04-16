@@ -16,6 +16,8 @@
     <span asp-validation-for="Subscription.Price" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="Subscription.AppUserId" class="control-label"></label>
-    <select asp-for="Subscription.AppUserId" class ="form-control" asp-items="Model.AppUserSelectList"></select>
+    <label asp-for="Subscription.AppUserId" class="control-label">@App.Resources.App.Domain.User.Subscription.AppUser</label>
+    <select asp-for="Subscription.AppUserId" class="form-control" asp-items="Model.AppUserSelectList">
+        <option value="wrongData">--- @Base.Resources.Common.SelectUser ---</option>
+    </select>
 </div>

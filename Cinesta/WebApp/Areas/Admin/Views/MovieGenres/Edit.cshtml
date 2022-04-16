@@ -4,9 +4,9 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>@Base.Resources.Common.Edit</h1>
 
-<h4>MovieGenre</h4>
+<h4>@App.Resources.App.Domain.Movie.MovieGenre.MovieGenreString</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -17,14 +17,14 @@
             
             <input type="hidden" asp-for="MovieGenre.Id" />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="@Base.Resources.Common.Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@Base.Resources.Common.BackToList</a>
 </div>
 
 @section Scripts {

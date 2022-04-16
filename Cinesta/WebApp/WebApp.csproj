@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
+      <ProjectReference Include="..\Base.Resources\Base.Resources.csproj" />
     </ItemGroup>
 
     <ItemGroup>

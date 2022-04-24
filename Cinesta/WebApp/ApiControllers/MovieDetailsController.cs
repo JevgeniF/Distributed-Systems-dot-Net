@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Movie;
 using WebApp.DTO;
 
@@ -16,18 +11,18 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class MovieDetailsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public MovieDetailsController(AppDbContext context)
+        public MovieDetailsController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/MovieDetails
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovieDetailsDto>>> GetMovieDetails()
         {
-            var res = (await _context.MovieDetails.ToListAsync())
+            var res = (await _uow.MovieDetails.GetAllAsync())
                 .Select(m => new MovieDetailsDto()
                 {
                     Id = m.Id,
@@ -53,7 +48,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MovieDetails>> GetMovieDetails(Guid id)
         {
-            var movieDetails = await _context.MovieDetails.FindAsync(id);
+            var movieDetails = await _uow.MovieDetails.FirstOrDefaultAsync(id);
 
             if (movieDetails == null)
             {
@@ -73,24 +68,22 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
             
-            var movieDetailsFromDb = await _context.MovieDetails.FindAsync(id);
+            var movieDetailsFromDb = await _uow.MovieDetails.FirstOrDefaultAsync(id);
             if (movieDetailsFromDb == null)
             {
                 return NotFound();
             }
-            
-            movieDetailsFromDb.Title.SetTranslation(movieDetails.Title);
-            movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
-
-            _context.Entry(movieDetailsFromDb).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                movieDetailsFromDb.Title.SetTranslation(movieDetails.Title);
+                movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
+                _uow.MovieDetails.Update(movieDetailsFromDb);
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieDetailsExists(id))
+                if (!await MovieDetailsExists(id))
                 {
                     return NotFound();
                 }
@@ -108,8 +101,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<MovieDetails>> PostMovieDetails(MovieDetails movieDetails)
         {
-            _context.MovieDetails.Add(movieDetails);
-            await _context.SaveChangesAsync();
+            _uow.MovieDetails.Add(movieDetails);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetMovieDetails", new { id = movieDetails.Id }, movieDetails);
         }
@@ -118,21 +111,15 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovieDetails(Guid id)
         {
-            var movieDetails = await _context.MovieDetails.FindAsync(id);
-            if (movieDetails == null)
-            {
-                return NotFound();
-            }
-
-            _context.MovieDetails.Remove(movieDetails);
-            await _context.SaveChangesAsync();
+            await _uow.MovieDetails.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MovieDetailsExists(Guid id)
+        private async Task<bool> MovieDetailsExists(Guid id)
         {
-            return _context.MovieDetails.Any(e => e.Id == id);
+            return await _uow.MovieDetails.ExistsAsync(id);
         }
     }
 }

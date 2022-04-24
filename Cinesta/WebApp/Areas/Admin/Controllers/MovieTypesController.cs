@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.MovieStandardDetails;
 
 namespace WebApp.Areas.Admin.Controllers
@@ -14,17 +9,17 @@ namespace WebApp.Areas.Admin.Controllers
     [Area("Admin")]
     public class MovieTypesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public MovieTypesController(AppDbContext context)
+        public MovieTypesController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Admin/MovieTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.MovieTypes.ToListAsync());
+            return View(await _uow.MovieType.GetAllAsync());
         }
 
         // GET: Admin/MovieTypes/Details/5
@@ -35,8 +30,8 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieType = await _context.MovieTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var movieType = await _uow.MovieType
+                .FirstOrDefaultAsync(id.Value);
             if (movieType == null)
             {
                 return NotFound();
@@ -61,8 +56,8 @@ namespace WebApp.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 movieType.Id = Guid.NewGuid();
-                _context.Add(movieType);
-                await _context.SaveChangesAsync();
+                _uow.MovieType.Add(movieType);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(movieType);
@@ -76,7 +71,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieType = await _context.MovieTypes.FindAsync(id);
+            var movieType = await _uow.MovieType.FirstOrDefaultAsync(id.Value);
             if (movieType == null)
             {
                 return NotFound();
@@ -98,8 +93,7 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var movieTypeFromDb = await _context.MovieTypes.AsNoTracking()
-                    .FirstOrDefaultAsync(m => m.Id == movieType.Id);
+                var movieTypeFromDb = await _uow.MovieType.FirstOrDefaultAsync(id);
                 if (movieTypeFromDb == null)
                 {
                     return NotFound();
@@ -110,12 +104,12 @@ namespace WebApp.Areas.Admin.Controllers
                     movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
                     movieType.Naming = movieTypeFromDb.Naming;
                     
-                    _context.Update(movieType);
-                    await _context.SaveChangesAsync();
+                    _uow.MovieType.Update(movieType);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MovieTypeExists(movieType.Id))
+                    if (!await MovieTypeExists(movieType.Id))
                     {
                         return NotFound();
                     }
@@ -137,8 +131,8 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var movieType = await _context.MovieTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var movieType = await _uow.MovieType
+                .FirstOrDefaultAsync(id.Value);
             if (movieType == null)
             {
                 return NotFound();
@@ -152,15 +146,14 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var movieType = await _context.MovieTypes.FindAsync(id);
-            _context.MovieTypes.Remove(movieType);
-            await _context.SaveChangesAsync();
+            await _uow.MovieType.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MovieTypeExists(Guid id)
+        private async Task<bool> MovieTypeExists(Guid id)
         {
-            return _context.MovieTypes.Any(e => e.Id == id);
+            return await _uow.MovieType.ExistsAsync(id);
         }
     }
 }

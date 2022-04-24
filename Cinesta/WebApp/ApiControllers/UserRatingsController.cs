@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Movie;
 using WebApp.DTO;
 
@@ -16,18 +11,18 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class UserRatingsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public UserRatingsController(AppDbContext context)
+        public UserRatingsController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/UserRatings
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserRatingDto>>> GetUserRatings()
         {
-            var res = (await _context.UserRatings.ToListAsync())
+            var res = (await _uow.UserRating.GetAllAsync())
                 .Select(u => new UserRatingDto()
                 {
                     Id = u.Id,
@@ -46,7 +41,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserRating>> GetUserRating(Guid id)
         {
-            var userRating = await _context.UserRatings.FindAsync(id);
+            var userRating = await _uow.UserRating.FirstOrDefaultAsync(id);
 
             if (userRating == null)
             {
@@ -66,23 +61,21 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var userRatingsFromDb = await _context.UserRatings.FindAsync(id);
+            var userRatingsFromDb = await _uow.UserRating.FirstOrDefaultAsync(id);
             if (userRatingsFromDb == null)
             {
                 return NotFound();
             }
 
-            userRatingsFromDb.Comment.SetTranslation(userRating.Comment);
-            _context.Entry(userRatingsFromDb).State = EntityState.Modified;
-
-
             try
             {
-                await _context.SaveChangesAsync();
+                userRatingsFromDb.Comment.SetTranslation(userRating.Comment);
+                _uow.UserRating.Update(userRatingsFromDb);
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserRatingExists(id))
+                if (!await UserRatingExists(id))
                 {
                     return NotFound();
                 }
@@ -100,8 +93,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<UserRating>> PostUserRating(UserRating userRating)
         {
-            _context.UserRatings.Add(userRating);
-            await _context.SaveChangesAsync();
+            _uow.UserRating.Add(userRating);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetUserRating", new { id = userRating.Id }, userRating);
         }
@@ -110,21 +103,15 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserRating(Guid id)
         {
-            var userRating = await _context.UserRatings.FindAsync(id);
-            if (userRating == null)
-            {
-                return NotFound();
-            }
-
-            _context.UserRatings.Remove(userRating);
-            await _context.SaveChangesAsync();
+            await _uow.UserRating.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool UserRatingExists(Guid id)
+        private async Task<bool> UserRatingExists(Guid id)
         {
-            return _context.UserRatings.Any(e => e.Id == id);
+            return await _uow.UserRating.ExistsAsync(id);
         }
     }
 }

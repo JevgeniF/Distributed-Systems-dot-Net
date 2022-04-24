@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Movie;
 using WebApp.DTO;
 
@@ -16,18 +11,18 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class VideosController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public VideosController(AppDbContext context)
+        public VideosController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Videos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VideoDto>>> GetVideos()
         {
-            var res = (await _context.Videos.ToListAsync())
+            var res = (await _uow.Video.GetAllAsync())
                 .Select(v => new VideoDto()
                 {
                     Id = v.Id,
@@ -47,7 +42,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Video>> GetVideo(Guid id)
         {
-            var video = await _context.Videos.FindAsync(id);
+            var video = await _uow.Video.FirstOrDefaultAsync(id);
 
             if (video == null)
             {
@@ -67,24 +62,22 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var videoFromDb = await _context.Videos.FindAsync(id);
+            var videoFromDb = await _uow.Video.FirstOrDefaultAsync(id);
             if (videoFromDb == null)
             {
                 return NotFound();
             }
             
-            videoFromDb.Title.SetTranslation(video.Title);
-            videoFromDb.Description.SetTranslation(video.Description);
-
-            _context.Entry(videoFromDb).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                videoFromDb.Title.SetTranslation(video.Title);
+                videoFromDb.Description.SetTranslation(video.Description);
+                _uow.Video.Update(videoFromDb);
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VideoExists(id))
+                if (!await VideoExists(id))
                 {
                     return NotFound();
                 }
@@ -102,8 +95,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<Video>> PostVideo(Video video)
         {
-            _context.Videos.Add(video);
-            await _context.SaveChangesAsync();
+            _uow.Video.Add(video);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetVideo", new { id = video.Id }, video);
         }
@@ -112,21 +105,15 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVideo(Guid id)
         {
-            var video = await _context.Videos.FindAsync(id);
-            if (video == null)
-            {
-                return NotFound();
-            }
-
-            _context.Videos.Remove(video);
-            await _context.SaveChangesAsync();
+            await _uow.Video.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool VideoExists(Guid id)
+        private async Task<bool> VideoExists(Guid id)
         {
-            return _context.Videos.Any(e => e.Id == id);
+            return await _uow.Video.ExistsAsync(id);
         }
     }
 }

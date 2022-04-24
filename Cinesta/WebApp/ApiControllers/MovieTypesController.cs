@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.MovieStandardDetails;
 using WebApp.DTO;
 
@@ -16,18 +11,18 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class MovieTypesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public MovieTypesController(AppDbContext context)
+        public MovieTypesController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/MovieTypes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovieTypeDto>>> GetMovieTypes()
         {
-            var res = (await _context.MovieTypes.ToListAsync())
+            var res = (await _uow.MovieType.GetAllAsync())
                 .Select(m => new MovieTypeDto()
                 {
                     Id = m.Id,
@@ -41,7 +36,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MovieType>> GetMovieType(Guid id)
         {
-            var movieType = await _context.MovieTypes.FindAsync(id);
+            var movieType = await _uow.MovieType.FirstOrDefaultAsync(id);
 
             if (movieType == null)
             {
@@ -61,23 +56,21 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var movieTypeFromDb = await _context.MovieTypes.FindAsync(id);
+            var movieTypeFromDb = await _uow.MovieType.FirstOrDefaultAsync(id);
             if (movieTypeFromDb == null)
             {
                 return NotFound();
             }
-            
-            movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
-            
-            _context.Entry(movieTypeFromDb).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
+                _uow.MovieType.Update(movieTypeFromDb);
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieTypeExists(id))
+                if (!await MovieTypeExists(id))
                 {
                     return NotFound();
                 }
@@ -95,8 +88,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<MovieType>> PostMovieType(MovieType movieType)
         {
-            _context.MovieTypes.Add(movieType);
-            await _context.SaveChangesAsync();
+            _uow.MovieType.Add(movieType);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetMovieType", new { id = movieType.Id }, movieType);
         }
@@ -105,21 +98,15 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovieType(Guid id)
         {
-            var movieType = await _context.MovieTypes.FindAsync(id);
-            if (movieType == null)
-            {
-                return NotFound();
-            }
-
-            _context.MovieTypes.Remove(movieType);
-            await _context.SaveChangesAsync();
+            _uow.MovieType.Remove(id);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MovieTypeExists(Guid id)
+        private async Task<bool> MovieTypeExists(Guid id)
         {
-            return _context.MovieTypes.Any(e => e.Id == id);
+            return await _uow.MovieType.ExistsAsync(id);
         }
     }
 }

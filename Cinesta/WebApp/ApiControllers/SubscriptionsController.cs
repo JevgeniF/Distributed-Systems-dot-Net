@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.User;
 using WebApp.DTO;
 
@@ -16,18 +11,18 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class SubscriptionsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public SubscriptionsController(AppDbContext context)
+        public SubscriptionsController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/Subscriptions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubscriptionDto>>> GetSubscriptions()
         {
-            var res = (await _context.Subscriptions.ToListAsync())
+            var res = (await _uow.Subscription.GetAllAsync())
                 .Select(s => new SubscriptionDto()
                 {
                     Id = s.Id,
@@ -45,7 +40,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Subscription>> GetSubscription(Guid id)
         {
-            var subscription = await _context.Subscriptions.FindAsync(id);
+            var subscription = await _uow.Subscription.FirstOrDefaultAsync(id);
 
             if (subscription == null)
             {
@@ -65,24 +60,22 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            var subscriptionFromDb = await _context.Subscriptions.FindAsync(id);
+            var subscriptionFromDb = await _uow.Subscription.FirstOrDefaultAsync(id);
             if (subscriptionFromDb == null)
             {
                 return NotFound();
             }
-            
-            subscriptionFromDb.Naming.SetTranslation(subscription.Naming);
-            subscriptionFromDb.Description.SetTranslation(subscription.Description);
-
-            _context.Entry(subscriptionFromDb).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                subscriptionFromDb.Naming.SetTranslation(subscription.Naming);
+                subscriptionFromDb.Description.SetTranslation(subscription.Description);
+                _uow.Subscription.Update(subscriptionFromDb);
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubscriptionExists(id))
+                if (!await SubscriptionExists(id))
                 {
                     return NotFound();
                 }
@@ -100,8 +93,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<Subscription>> PostSubscription(Subscription subscription)
         {
-            _context.Subscriptions.Add(subscription);
-            await _context.SaveChangesAsync();
+            _uow.Subscription.Add(subscription);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetSubscription", new { id = subscription.Id }, subscription);
         }
@@ -110,21 +103,15 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSubscription(Guid id)
         {
-            var subscription = await _context.Subscriptions.FindAsync(id);
-            if (subscription == null)
-            {
-                return NotFound();
-            }
-
-            _context.Subscriptions.Remove(subscription);
-            await _context.SaveChangesAsync();
+            await _uow.Subscription.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool SubscriptionExists(Guid id)
+        private async Task<bool> SubscriptionExists(Guid id)
         {
-            return _context.Subscriptions.Any(e => e.Id == id);
+            return await _uow.Subscription.ExistsAsync(id);
         }
     }
 }

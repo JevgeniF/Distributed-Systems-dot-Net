@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Cast;
 using WebApp.DTO;
 
@@ -16,11 +11,11 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class CastRolesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public CastRolesController(AppDbContext context)
+        public CastRolesController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: api/CastRoles
@@ -28,7 +23,7 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<CastRoleDto>>> GetFooBars()
         {
 
-            var res = (await _context.CastRoles.ToListAsync())
+            var res = (await _uow.CastRole.GetAllAsync())
                 .Select(c => new CastRoleDto()
                 {
                     Id = c.Id,
@@ -43,7 +38,7 @@ namespace WebApp.ApiControllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CastRole>> GetCastRole(Guid id)
         {
-            var castRole = await _context.CastRoles.FindAsync(id);
+            var castRole = await _uow.CastRole.FirstOrDefaultAsync(id);
 
             if (castRole == null)
             {
@@ -63,23 +58,21 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
             
-            var castRoleFromDb = await _context.CastRoles.FindAsync(id);
+            var castRoleFromDb = await _uow.CastRole.FirstOrDefaultAsync(id);
             if (castRoleFromDb == null)
             {
                 return NotFound();
             }
-            
-            castRoleFromDb.Naming.SetTranslation(castRole.Naming);
-
-            _context.Entry(castRoleFromDb).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                castRoleFromDb.Naming.SetTranslation(castRole.Naming);
+                _uow.CastRole.Update(castRoleFromDb);
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CastRoleExists(id))
+                if (!await CastRoleExists(id))
                 {
                     return NotFound();
                 }
@@ -97,8 +90,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<CastRole>> PostCastRole(CastRole castRole)
         {
-            _context.CastRoles.Add(castRole);
-            await _context.SaveChangesAsync();
+            _uow.CastRole.Add(castRole);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetCastRole", new { id = castRole.Id }, castRole);
         }
@@ -107,21 +100,16 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCastRole(Guid id)
         {
-            var castRole = await _context.CastRoles.FindAsync(id);
-            if (castRole == null)
-            {
-                return NotFound();
-            }
 
-            _context.CastRoles.Remove(castRole);
-            await _context.SaveChangesAsync();
+            await _uow.CastRole.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool CastRoleExists(Guid id)
+        private async Task<bool> CastRoleExists(Guid id)
         {
-            return _context.CastRoles.Any(e => e.Id == id);
+            return await _uow.CastRole.ExistsAsync(id);
         }
     }
 }

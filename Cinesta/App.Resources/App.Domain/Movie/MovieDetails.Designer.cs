@@ -22,7 +22,8 @@ namespace App.Resources.App.Domain.Movie {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class MovieDetails {
+    public class MovieDetails
+    {
         
         private static global::System.Resources.ResourceManager resourceMan;
         

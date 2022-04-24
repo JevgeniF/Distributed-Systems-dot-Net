@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.MovieStandardDetails;
 
 namespace WebApp.Areas.Admin.Controllers
@@ -14,17 +9,18 @@ namespace WebApp.Areas.Admin.Controllers
     [Area("Admin")]
     public class AgeRatingsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public AgeRatingsController(AppDbContext context)
+        public AgeRatingsController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Admin/AgeRatings
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AgeRatings.ToListAsync());
+            var result = await _uow.AgeRating.GetAllAsync();
+            return View(result);
         }
 
         // GET: Admin/AgeRatings/Details/5
@@ -35,8 +31,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var ageRating = await _context.AgeRatings
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id.Value);
             if (ageRating == null)
             {
                 return NotFound();
@@ -61,8 +56,8 @@ namespace WebApp.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 ageRating.Id = Guid.NewGuid();
-                _context.Add(ageRating);
-                await _context.SaveChangesAsync();
+                _uow.AgeRating.Add(ageRating);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(ageRating);
@@ -76,7 +71,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var ageRating = await _context.AgeRatings.FindAsync(id);
+            var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id.Value);
             if (ageRating == null)
             {
                 return NotFound();
@@ -100,12 +95,12 @@ namespace WebApp.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(ageRating);
-                    await _context.SaveChangesAsync();
+                    _uow.AgeRating.Update(ageRating);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AgeRatingExists(ageRating.Id))
+                    if (!await AgeRatingExists(ageRating.Id))
                     {
                         return NotFound();
                     }
@@ -127,8 +122,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var ageRating = await _context.AgeRatings
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id.Value);
             if (ageRating == null)
             {
                 return NotFound();
@@ -142,15 +136,14 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var ageRating = await _context.AgeRatings.FindAsync(id);
-            _context.AgeRatings.Remove(ageRating);
-            await _context.SaveChangesAsync();
+            await _uow.AgeRating.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AgeRatingExists(Guid id)
+        private async Task<bool> AgeRatingExists(Guid id)
         {
-            return _context.AgeRatings.Any(e => e.Id == id);
+            return await _uow.AgeRating.ExistsAsync(id);
         }
     }
 }

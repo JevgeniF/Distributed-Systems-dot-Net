@@ -1,12 +1,7 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using App.Contracts.DAL;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.MovieStandardDetails;
 
 namespace WebApp.Areas.Admin.Controllers
@@ -14,17 +9,17 @@ namespace WebApp.Areas.Admin.Controllers
     [Area("Admin")]
     public class GenresController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUOW _uow;
 
-        public GenresController(AppDbContext context)
+        public GenresController(IAppUOW uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Admin/Genres
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Genres.ToListAsync());
+            return View(await _uow.Genre.GetAllAsync());
         }
 
         // GET: Admin/Genres/Details/5
@@ -35,8 +30,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genres
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var genre = await _uow.Genre.FirstOrDefaultAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -61,8 +55,8 @@ namespace WebApp.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 genre.Id = Guid.NewGuid();
-                _context.Add(genre);
-                await _context.SaveChangesAsync();
+                _uow.Genre.Add(genre);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(genre);
@@ -76,7 +70,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genres.FindAsync(id);
+            var genre = await _uow.Genre.FirstOrDefaultAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -98,8 +92,7 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var genreFromDb = await _context.Genres.AsNoTracking()
-                    .FirstOrDefaultAsync(g => g.Id == genre.Id);
+                var genreFromDb = await _uow.Genre.FirstOrDefaultAsync(id);
                 if (genreFromDb == null)
                 {
                     return NotFound();
@@ -110,12 +103,12 @@ namespace WebApp.Areas.Admin.Controllers
                     genreFromDb.Naming.SetTranslation(genre.Naming);
                     genre.Naming = genreFromDb.Naming;
                     
-                    _context.Update(genre);
-                    await _context.SaveChangesAsync();
+                    _uow.Genre.Update(genre);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GenreExists(genre.Id))
+                    if (!await GenreExists(genre.Id))
                     {
                         return NotFound();
                     }
@@ -137,8 +130,7 @@ namespace WebApp.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genres
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var genre = await _uow.Genre.FirstOrDefaultAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -152,15 +144,14 @@ namespace WebApp.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var genre = await _context.Genres.FindAsync(id);
-            _context.Genres.Remove(genre);
-            await _context.SaveChangesAsync();
+            await _uow.Genre.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GenreExists(Guid id)
+        private async Task<bool> GenreExists(Guid id)
         {
-            return _context.Genres.Any(e => e.Id == id);
+            return await _uow.Genre.ExistsAsync(id);
         }
     }
 }

@@ -4,11 +4,6 @@ public class LangStr : Dictionary<string, string>
 {
     private const string DefaultCulture = "en";
 
-    private string GetCultureName(string culture)
-    {
-        return culture.Split("-")[0];
-    }
-
     public LangStr(string value) : this(value, Thread.CurrentThread.CurrentUICulture.Name)
     {
     }
@@ -22,6 +17,11 @@ public class LangStr : Dictionary<string, string>
         this[GetCultureName(culture)] = value;
     }
 
+    private string GetCultureName(string culture)
+    {
+        return culture.Split("-")[0];
+    }
+
     public void SetTranslation(string value)
     {
         this[GetCultureName(Thread.CurrentThread.CurrentUICulture.Name)] = value;
@@ -30,26 +30,17 @@ public class LangStr : Dictionary<string, string>
     public string? Translate(string? culture = null)
     {
         // if there is exact match
-        if (this.Count == 0) return null;
+        if (Count == 0) return null;
         culture = culture?.Trim() ?? Thread.CurrentThread.CurrentUICulture.Name;
         culture = GetCultureName(culture);
 
-        if (this.ContainsKey(culture))
-        {
-            return this[culture];
-        }
+        if (ContainsKey(culture)) return this[culture];
 
         var neutralCulture = culture.Split("-")[0];
-        if (ContainsKey(neutralCulture))
-        {
-            return this[neutralCulture];
-        }
+        if (ContainsKey(neutralCulture)) return this[neutralCulture];
 
-        if (ContainsKey(DefaultCulture))
-        {
-            return this[DefaultCulture];
-        }
-        
+        if (ContainsKey(DefaultCulture)) return this[DefaultCulture];
+
         return null;
     }
 
@@ -57,7 +48,14 @@ public class LangStr : Dictionary<string, string>
     {
         return Translate() ?? "???";
     }
-    
-    public static implicit operator string(LangStr? l) => l?.ToString() ?? "null";
-    public static implicit operator LangStr(string s) => new LangStr(s);
+
+    public static implicit operator string(LangStr? l)
+    {
+        return l?.ToString() ?? "null";
+    }
+
+    public static implicit operator LangStr(string s)
+    {
+        return new(s);
+    }
 }

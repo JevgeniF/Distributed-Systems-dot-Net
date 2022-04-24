@@ -4,7 +4,7 @@ using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories.Cast;
 
-public class CastRoleRepository: BaseEntityRepository<CastRole, AppDbContext>, ICastRoleRepository 
+public class CastRoleRepository : BaseEntityRepository<CastRole, AppDbContext>, ICastRoleRepository
 {
     public CastRoleRepository(AppDbContext dbContext) : base(dbContext)
     {

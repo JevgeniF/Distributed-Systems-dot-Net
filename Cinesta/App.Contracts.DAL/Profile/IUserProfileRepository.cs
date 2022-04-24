@@ -3,7 +3,6 @@ using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL.Profile;
 
-public interface IUserProfileRepository: IEntityRepository<UserProfile>
+public interface IUserProfileRepository : IEntityRepository<UserProfile>
 {
-    
 }

@@ -1,34 +1,36 @@
-﻿@model WebApp.Areas.Admin.ViewModels.MovieDetailsCreateEditVM
+﻿@using App.Resources.App.Domain.Movie
+@using Base.Resources
+@model WebApp.Areas.Admin.ViewModels.MovieDetailsCreateEditVM
 
 <div class="form-group">
     <label asp-for="MovieDetails.PosterUri" class="control-label"></label>
-    <input asp-for="MovieDetails.PosterUri" class="form-control" />
+    <input asp-for="MovieDetails.PosterUri" class="form-control"/>
     <span asp-validation-for="MovieDetails.PosterUri" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="MovieDetails.Title" class="control-label"></label>
-    <input asp-for="MovieDetails.Title" class="form-control" />
+    <input asp-for="MovieDetails.Title" class="form-control"/>
     <span asp-validation-for="MovieDetails.Title" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="MovieDetails.Released" class="control-label"></label>
-    <input asp-for="MovieDetails.Released" class="form-control" />
+    <input asp-for="MovieDetails.Released" class="form-control"/>
     <span asp-validation-for="MovieDetails.Released" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="MovieDetails.Description" class="control-label"></label>
-    <input asp-for="MovieDetails.Description" class="form-control" />
+    <input asp-for="MovieDetails.Description" class="form-control"/>
     <span asp-validation-for="MovieDetails.Description" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="MovieDetails.AgeRatingId" class="control-label">@App.Resources.App.Domain.Movie.MovieDetails.AgeRating</label>
+    <label asp-for="MovieDetails.AgeRatingId" class="control-label">@MovieDetails.AgeRating</label>
     <select asp-for="MovieDetails.AgeRatingId" class="form-control" asp-items="Model.AgeRatingSelectList">
-        <option value="wrongData">--- @Base.Resources.Common.SelectAgeRating ----</option>
+        <option value="wrongData">--- @Common.SelectAgeRating ----</option>
     </select>
 </div>
 <div class="form-group">
-    <label asp-for="MovieDetails.MovieTypeId" class="control-label">@App.Resources.App.Domain.Movie.MovieDetails.MovieType</label>
+    <label asp-for="MovieDetails.MovieTypeId" class="control-label">@MovieDetails.MovieType</label>
     <select asp-for="MovieDetails.MovieTypeId" class="form-control" asp-items="Model.MovieTypeSelectList">
-        <option value="wrongData">--- @Base.Resources.Common.SelectMovieType ----</option>
+        <option value="wrongData">--- @Common.SelectMovieType ----</option>
     </select>
 </div>

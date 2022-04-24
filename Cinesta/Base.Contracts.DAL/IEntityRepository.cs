@@ -5,7 +5,6 @@ namespace Base.Contracts.DAL;
 public interface IEntityRepository<TEntity> : IEntityRepository<TEntity, Guid>
     where TEntity : class, IDomainEntityId
 {
-    
 }
 
 // TODO: check for user ownership
@@ -19,9 +18,9 @@ public interface IEntityRepository<TEntity, TKey>
     TEntity Remove(TEntity entity);
     TEntity Remove(TKey id);
     TEntity? FirstOrDefault(TKey id, bool noTracking = true);
-    IEnumerable<TEntity> GetAll(bool noTracking = true);               
+    IEnumerable<TEntity> GetAll(bool noTracking = true);
     bool Exists(TKey id);
-    
+
     //async
     Task<TEntity?> FirstOrDefaultAsync(TKey id, bool noTracking = true);
     Task<IEnumerable<TEntity>> GetAllAsync(bool noTracking = true);

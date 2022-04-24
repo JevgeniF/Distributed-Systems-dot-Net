@@ -7,16 +7,16 @@
 <h1>@Base.Resources.Common.Create</h1>
 
 <h4>@App.Resources.App.Domain.MovieStandardDetails.Genre.GenreString</h4>
-<hr />
+<hr/>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
+
             <partial name="_CreateEdit" model="Model"/>
-            
+
             <div class="form-group">
-                <input type="submit" value="@Base.Resources.Common.Create" class="btn btn-primary" />
+                <input type="submit" value="@Base.Resources.Common.Create" class="btn btn-primary"/>
             </div>
         </form>
     </div>
@@ -27,5 +27,5 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

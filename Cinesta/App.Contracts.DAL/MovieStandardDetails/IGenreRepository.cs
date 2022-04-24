@@ -3,7 +3,7 @@ using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL.MovieStandardDetails;
 
-public interface IGenreRepository: IEntityRepository<Genre>
+public interface IGenreRepository : IEntityRepository<Genre>
 {
     // custom methods
 }

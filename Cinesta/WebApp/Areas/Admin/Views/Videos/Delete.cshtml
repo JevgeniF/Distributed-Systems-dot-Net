@@ -1,56 +1,58 @@
+@using App.Resources.App.Domain.Movie
+@using Base.Resources
 @model App.Domain.Movie.Video
 
 @{
     ViewData["Title"] = "Delete";
 }
 
-<h1>@Base.Resources.Common.Delete</h1>
+<h1>@Common.Delete</h1>
 
 <div>
-    <h4>@App.Resources.App.Domain.Movie.Video.VideoString</h4>
-    <hr />
+    <h4>@Video.VideoString</h4>
+    <hr/>
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Season)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Season)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.Title
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FileUri)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FileUri)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Duration)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Duration)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.Description
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MovieDetails)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.MovieDetails!.Title
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="@Base.Resources.Common.Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">@Base.Resources.Common.BackToList</a>
+        <input type="hidden" asp-for="Id"/>
+        <input type="submit" value="@Common.Delete" class="btn btn-danger"/> |
+        <a asp-action="Index">@Common.BackToList</a>
     </form>
 </div>

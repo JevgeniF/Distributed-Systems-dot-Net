@@ -1,97 +1,85 @@
 #nullable disable
 using App.Contracts.DAL;
+using App.Domain.MovieStandardDetails;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.Domain.MovieStandardDetails;
 
-namespace WebApp.ApiControllers
+namespace WebApp.ApiControllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class AgeRatingsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AgeRatingsController : ControllerBase
+    private readonly IAppUOW _uow;
+
+    public AgeRatingsController(IAppUOW uow)
     {
-        private readonly IAppUOW _uow;
+        _uow = uow;
+    }
 
-        public AgeRatingsController(IAppUOW uow)
+    // GET: api/AgeRatings
+    [HttpGet]
+    public async Task<IEnumerable<AgeRating>> GetAgeRatings()
+    {
+        var result = await _uow.AgeRating.GetAllAsync();
+        return result;
+    }
+
+    // GET: api/AgeRatings/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AgeRating>> GetAgeRating(Guid id)
+    {
+        var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id);
+
+        if (ageRating == null) return NotFound();
+
+        return ageRating;
+    }
+
+    // PUT: api/AgeRatings/5
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutAgeRating(Guid id, AgeRating ageRating)
+    {
+        if (id != ageRating.Id) return BadRequest();
+        try
         {
-            _uow = uow;
+            _uow.AgeRating.Update(ageRating);
+            await _uow.SaveChangesAsync();
         }
-
-        // GET: api/AgeRatings
-        [HttpGet]
-        public async Task<IEnumerable<AgeRating>> GetAgeRatings()
+        catch (DbUpdateConcurrencyException)
         {
-            var result = await _uow.AgeRating.GetAllAsync();
-            return result;
-        }
-
-        // GET: api/AgeRatings/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AgeRating>> GetAgeRating(Guid id)
-        {
-            var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id);
-
-            if (ageRating == null)
-            {
+            if (!await AgeRatingExists(id))
                 return NotFound();
-            }
-
-            return ageRating;
+            throw;
         }
 
-        // PUT: api/AgeRatings/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAgeRating(Guid id, AgeRating ageRating)
-        {
-            if (id != ageRating.Id)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                _uow.AgeRating.Update(ageRating);
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await AgeRatingExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        return NoContent();
+    }
 
-            return NoContent();
-        }
+    // POST: api/AgeRatings
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPost]
+    public async Task<ActionResult<AgeRating>> PostAgeRating(AgeRating ageRating)
+    {
+        _uow.AgeRating.Add(ageRating);
+        await _uow.SaveChangesAsync();
 
-        // POST: api/AgeRatings
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<AgeRating>> PostAgeRating(AgeRating ageRating)
-        {
-            _uow.AgeRating.Add(ageRating);
-            await _uow.SaveChangesAsync();
+        return CreatedAtAction("GetAgeRating", new {id = ageRating.Id}, ageRating);
+    }
 
-            return CreatedAtAction("GetAgeRating", new { id = ageRating.Id }, ageRating);
-        }
+    // DELETE: api/AgeRatings/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAgeRating(Guid id)
+    {
+        await _uow.AgeRating.RemoveAsync(id);
+        await _uow.SaveChangesAsync();
 
-        // DELETE: api/AgeRatings/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAgeRating(Guid id)
-        {
-            await _uow.AgeRating.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+        return NoContent();
+    }
 
-            return NoContent();
-        }
-
-        private async Task<bool> AgeRatingExists(Guid id)
-        {
-            return await _uow.AgeRating.ExistsAsync(id);
-        }
+    private async Task<bool> AgeRatingExists(Guid id)
+    {
+        return await _uow.AgeRating.ExistsAsync(id);
     }
 }

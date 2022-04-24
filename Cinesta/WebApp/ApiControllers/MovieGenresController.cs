@@ -1,103 +1,85 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using App.Contracts.DAL;
-using Microsoft.AspNetCore.Http;
+using App.Domain.Movie;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain.Movie;
 
-namespace WebApp.ApiControllers
+namespace WebApp.ApiControllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class MovieGenresController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MovieGenresController : ControllerBase
+    private readonly IAppUOW _uow;
+
+    public MovieGenresController(IAppUOW uow)
     {
-        private readonly IAppUOW _uow;
+        _uow = uow;
+    }
 
-        public MovieGenresController(IAppUOW uow)
+    // GET: api/MovieGenres
+    [HttpGet]
+    public async Task<IEnumerable<MovieGenre>> GetMovieGenres()
+    {
+        return await _uow.MovieGenre.GetAllAsync();
+    }
+
+    // GET: api/MovieGenres/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<MovieGenre>> GetMovieGenre(Guid id)
+    {
+        var movieGenre = await _uow.MovieGenre.FirstOrDefaultAsync(id);
+
+        if (movieGenre == null) return NotFound();
+
+        return movieGenre;
+    }
+
+    // PUT: api/MovieGenres/5
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutMovieGenre(Guid id, MovieGenre movieGenre)
+    {
+        if (id != movieGenre.Id) return BadRequest();
+
+        try
         {
-            _uow = uow;
+            _uow.MovieGenre.Update(movieGenre);
+            await _uow.SaveChangesAsync();
         }
-
-        // GET: api/MovieGenres
-        [HttpGet]
-        public async Task<IEnumerable<MovieGenre>> GetMovieGenres()
+        catch (DbUpdateConcurrencyException)
         {
-            return await _uow.MovieGenre.GetAllAsync();
-        }
-
-        // GET: api/MovieGenres/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MovieGenre>> GetMovieGenre(Guid id)
-        {
-            var movieGenre = await _uow.MovieGenre.FirstOrDefaultAsync(id);
-
-            if (movieGenre == null)
-            {
+            if (!await MovieGenreExists(id))
                 return NotFound();
-            }
-
-            return movieGenre;
+            throw;
         }
 
-        // PUT: api/MovieGenres/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMovieGenre(Guid id, MovieGenre movieGenre)
-        {
-            if (id != movieGenre.Id)
-            {
-                return BadRequest();
-            }
+        return NoContent();
+    }
 
-            try
-            {
-                _uow.MovieGenre.Update(movieGenre);
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await MovieGenreExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+    // POST: api/MovieGenres
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPost]
+    public async Task<ActionResult<MovieGenre>> PostMovieGenre(MovieGenre movieGenre)
+    {
+        _uow.MovieGenre.Add(movieGenre);
+        await _uow.SaveChangesAsync();
 
-            return NoContent();
-        }
+        return CreatedAtAction("GetMovieGenre", new {id = movieGenre.Id}, movieGenre);
+    }
 
-        // POST: api/MovieGenres
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<MovieGenre>> PostMovieGenre(MovieGenre movieGenre)
-        {
-            _uow.MovieGenre.Add(movieGenre);
-            await _uow.SaveChangesAsync();
+    // DELETE: api/MovieGenres/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteMovieGenre(Guid id)
+    {
+        await _uow.MovieGenre.RemoveAsync(id);
+        await _uow.SaveChangesAsync();
 
-            return CreatedAtAction("GetMovieGenre", new { id = movieGenre.Id }, movieGenre);
-        }
+        return NoContent();
+    }
 
-        // DELETE: api/MovieGenres/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMovieGenre(Guid id)
-        {
-            await _uow.MovieGenre.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private async Task<bool> MovieGenreExists(Guid id)
-        {
-            return await _uow.MovieGenre.ExistsAsync(id);
-        }
+    private async Task<bool> MovieGenreExists(Guid id)
+    {
+        return await _uow.MovieGenre.ExistsAsync(id);
     }
 }

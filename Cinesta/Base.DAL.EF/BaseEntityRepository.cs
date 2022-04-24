@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Base.DAL.EF;
 
-public class BaseEntityRepository<TEntity, TDbContext> : BaseEntityRepository<TEntity, Guid, TDbContext> 
+public class BaseEntityRepository<TEntity, TDbContext> : BaseEntityRepository<TEntity, Guid, TDbContext>
     where TEntity : class, IDomainEntityId<Guid>
     where TDbContext : DbContext
 {
@@ -20,24 +20,11 @@ public class BaseEntityRepository<TEntity, TKey, TDbContext> : IEntityRepository
 {
     protected readonly TDbContext RepoDbContext;
     protected readonly DbSet<TEntity> RepoDbSet;
-    
+
     public BaseEntityRepository(TDbContext dbContext)
     {
         RepoDbContext = dbContext;
         RepoDbSet = dbContext.Set<TEntity>();
-    }
-
-    protected virtual IQueryable<TEntity> CreateQuery(bool noTracking = true)
-    {
-        // TODO: entity ownership control
-        
-        var query = RepoDbSet.AsQueryable();
-        if (noTracking)
-        {
-            query = query.AsNoTracking();
-        }
-
-        return query;
     }
 
     public virtual TEntity Add(TEntity entity)
@@ -59,10 +46,8 @@ public class BaseEntityRepository<TEntity, TKey, TDbContext> : IEntityRepository
     {
         var entity = FirstOrDefault(id);
         if (entity == null)
-        {
             // TODO: implement custom exception for entity not found
             throw new NullReferenceException($"Entity {typeof(TEntity).Name} was not found");
-        }
         return Remove(entity);
     }
 
@@ -100,10 +85,18 @@ public class BaseEntityRepository<TEntity, TKey, TDbContext> : IEntityRepository
     {
         var entity = await FirstOrDefaultAsync(id);
         if (entity == null)
-        {
             // TODO: implement custom exception for entity not found
             throw new NullReferenceException($"Entity {typeof(TEntity).Name} was not found");
-        }
         return Remove(entity);
+    }
+
+    protected virtual IQueryable<TEntity> CreateQuery(bool noTracking = true)
+    {
+        // TODO: entity ownership control
+
+        var query = RepoDbSet.AsQueryable();
+        if (noTracking) query = query.AsNoTracking();
+
+        return query;
     }
 }

@@ -3,7 +3,6 @@ using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL.Movie;
 
-public interface IMovieDetailsRepository: IEntityRepository<MovieDetails>
+public interface IMovieDetailsRepository : IEntityRepository<MovieDetails>
 {
-    
 }

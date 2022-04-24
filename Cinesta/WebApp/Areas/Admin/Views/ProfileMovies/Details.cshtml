@@ -1,30 +1,32 @@
+@using App.Resources.App.Domain.Profile
+@using Base.Resources
 @model App.Domain.Profile.ProfileMovie
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>@Base.Resources.Common.Details</h1>
+<h1>@Common.Details</h1>
 
 <div>
-    <h4>@App.Resources.App.Domain.Profile.ProfileMovie.ProfileMovieString</h4>
-    <hr />
+    <h4>@ProfileMovie.ProfileMovieString</h4>
+    <hr/>
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.UserProfile)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.UserProfile!.Name)
         </dd>
-        <dt class = "col-sm-2">
-            @App.Resources.App.Domain.Profile.ProfileMovie.MovieDetails
+        <dt class="col-sm-2">
+            @ProfileMovie.MovieDetails
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Model.MovieDetails!.Title
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">@Base.Resources.Common.Edit</a> |
-    <a asp-action="Index">@Base.Resources.Common.BackToList</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">@Common.Edit</a> |
+    <a asp-action="Index">@Common.BackToList</a>
 </div>

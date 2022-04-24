@@ -7,10 +7,7 @@ public class CustomLanguageStringBinderProvider : IModelBinderProvider
 {
     public IModelBinder? GetBinder(ModelBinderProviderContext context)
     {
-        if (context.Metadata.ModelType == typeof(LangStr))
-        {
-            return new LangStrBinderProvider();
-        }
+        if (context.Metadata.ModelType == typeof(LangStr)) return new LangStrBinderProvider();
 
         return null;
     }

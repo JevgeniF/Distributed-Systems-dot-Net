@@ -1,18 +1,20 @@
-﻿@model WebApp.Areas.Admin.ViewModels.MovieDbScoreCreateEditVM
+﻿@using App.Resources.App.Domain.Movie
+@using Base.Resources
+@model WebApp.Areas.Admin.ViewModels.MovieDbScoreCreateEditVM
 
 <div class="form-group">
-    <label asp-for="MovieDbScore.ImdbId" class="control-label">@App.Resources.App.Domain.Movie.MovieDbScore.ImdbId</label>
-    <input asp-for="MovieDbScore.ImdbId" class="form-control" />
+    <label asp-for="MovieDbScore.ImdbId" class="control-label">@MovieDbScore.ImdbId</label>
+    <input asp-for="MovieDbScore.ImdbId" class="form-control"/>
     <span asp-validation-for="MovieDbScore.ImdbId" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="MovieDbScore.Score" class="control-label">@App.Resources.App.Domain.Movie.MovieDbScore.Score</label>
-    <input asp-for="MovieDbScore.Score" class="form-control" />
+    <label asp-for="MovieDbScore.Score" class="control-label">@MovieDbScore.Score</label>
+    <input asp-for="MovieDbScore.Score" class="form-control"/>
     <span asp-validation-for="MovieDbScore.Score" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="MovieDbScore.MovieDetailsId" class="control-label">@App.Resources.App.Domain.Movie.MovieDbScore.MovieDetails</label>
+    <label asp-for="MovieDbScore.MovieDetailsId" class="control-label">@MovieDbScore.MovieDetails</label>
     <select asp-for="MovieDbScore.MovieDetailsId" class="form-control" asp-items="Model.MovieDetailsSelectList">
-        <option value="wrongData">--- @Base.Resources.Common.SelectMovie ----</option>
+        <option value="wrongData">--- @Common.SelectMovie ----</option>
     </select>
 </div>

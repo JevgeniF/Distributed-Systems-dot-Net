@@ -1,103 +1,85 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using App.Contracts.DAL;
-using Microsoft.AspNetCore.Http;
+using App.Domain.Profile;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain.Profile;
 
-namespace WebApp.ApiControllers
+namespace WebApp.ApiControllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class ProfileMoviesController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProfileMoviesController : ControllerBase
+    private readonly IAppUOW _uow;
+
+    public ProfileMoviesController(IAppUOW uow)
     {
-        private readonly IAppUOW _uow;
+        _uow = uow;
+    }
 
-        public ProfileMoviesController(IAppUOW uow)
+    // GET: api/ProfileMovies
+    [HttpGet]
+    public async Task<IEnumerable<ProfileMovie>> GetProfileMovies()
+    {
+        return await _uow.ProfileMovie.GetAllAsync();
+    }
+
+    // GET: api/ProfileMovies/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProfileMovie>> GetProfileMovie(Guid id)
+    {
+        var profileMovie = await _uow.ProfileMovie.FirstOrDefaultAsync(id);
+
+        if (profileMovie == null) return NotFound();
+
+        return profileMovie;
+    }
+
+    // PUT: api/ProfileMovies/5
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutProfileMovie(Guid id, ProfileMovie profileMovie)
+    {
+        if (id != profileMovie.Id) return BadRequest();
+
+        try
         {
-            _uow = uow;
+            _uow.ProfileMovie.Update(profileMovie);
+            await _uow.SaveChangesAsync();
         }
-
-        // GET: api/ProfileMovies
-        [HttpGet]
-        public async Task<IEnumerable<ProfileMovie>> GetProfileMovies()
+        catch (DbUpdateConcurrencyException)
         {
-            return await _uow.ProfileMovie.GetAllAsync();
-        }
-
-        // GET: api/ProfileMovies/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProfileMovie>> GetProfileMovie(Guid id)
-        {
-            var profileMovie = await _uow.ProfileMovie.FirstOrDefaultAsync(id);
-
-            if (profileMovie == null)
-            {
+            if (!await ProfileMovieExists(id))
                 return NotFound();
-            }
-
-            return profileMovie;
+            throw;
         }
 
-        // PUT: api/ProfileMovies/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProfileMovie(Guid id, ProfileMovie profileMovie)
-        {
-            if (id != profileMovie.Id)
-            {
-                return BadRequest();
-            }
+        return NoContent();
+    }
 
-            try
-            {
-                _uow.ProfileMovie.Update(profileMovie);
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await ProfileMovieExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+    // POST: api/ProfileMovies
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPost]
+    public async Task<ActionResult<ProfileMovie>> PostProfileMovie(ProfileMovie profileMovie)
+    {
+        _uow.ProfileMovie.Add(profileMovie);
+        await _uow.SaveChangesAsync();
 
-            return NoContent();
-        }
+        return CreatedAtAction("GetProfileMovie", new {id = profileMovie.Id}, profileMovie);
+    }
 
-        // POST: api/ProfileMovies
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ProfileMovie>> PostProfileMovie(ProfileMovie profileMovie)
-        {
-            _uow.ProfileMovie.Add(profileMovie);
-            await _uow.SaveChangesAsync();
+    // DELETE: api/ProfileMovies/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProfileMovie(Guid id)
+    {
+        await _uow.ProfileMovie.RemoveAsync(id);
+        await _uow.SaveChangesAsync();
 
-            return CreatedAtAction("GetProfileMovie", new { id = profileMovie.Id }, profileMovie);
-        }
+        return NoContent();
+    }
 
-        // DELETE: api/ProfileMovies/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProfileMovie(Guid id)
-        {
-            await _uow.ProfileMovie.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private async Task<bool> ProfileMovieExists(Guid id)
-        {
-            return await _uow.ProfileMovie.ExistsAsync(id);
-        }
+    private async Task<bool> ProfileMovieExists(Guid id)
+    {
+        return await _uow.ProfileMovie.ExistsAsync(id);
     }
 }

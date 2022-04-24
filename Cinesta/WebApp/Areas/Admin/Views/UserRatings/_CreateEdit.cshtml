@@ -1,24 +1,26 @@
-﻿@model WebApp.Areas.Admin.ViewModels.UserRatingCreateEditVM
+﻿@using App.Resources.App.Domain.Movie
+@using Base.Resources
+@model WebApp.Areas.Admin.ViewModels.UserRatingCreateEditVM
 
 <div class="form-group">
-    <label asp-for="UserRating.Rating" class="control-label">@App.Resources.App.Domain.Movie.UserRating.Rating</label>
-    <input asp-for="UserRating.Rating" class="form-control" />
+    <label asp-for="UserRating.Rating" class="control-label">@UserRating.Rating</label>
+    <input asp-for="UserRating.Rating" class="form-control"/>
     <span asp-validation-for="UserRating.Rating" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="UserRating.Comment" class="control-label">@App.Resources.App.Domain.Movie.UserRating.Comment</label>
-    <input asp-for="UserRating.Comment" class="form-control" />
+    <label asp-for="UserRating.Comment" class="control-label">@UserRating.Comment</label>
+    <input asp-for="UserRating.Comment" class="form-control"/>
     <span asp-validation-for="UserRating.Comment" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="UserRating.AppUserId" class="control-label">@App.Resources.App.Domain.Movie.UserRating.AppUser</label>
+    <label asp-for="UserRating.AppUserId" class="control-label">@UserRating.AppUser</label>
     <select asp-for="UserRating.AppUserId" class="form-control" asp-items="Model.AppUserSelectList">
-        <option value="wrongData">--- @Base.Resources.Common.SelectPerson ----</option>
+        <option value="wrongData">--- @Common.SelectPerson ----</option>
     </select>
 </div>
 <div class="form-group">
-    <label asp-for="UserRating.MovieDetailsId" class="control-label">@App.Resources.App.Domain.Movie.UserRating.MovieDetails</label>
+    <label asp-for="UserRating.MovieDetailsId" class="control-label">@UserRating.MovieDetails</label>
     <select asp-for="UserRating.MovieDetailsId" class="form-control" asp-items="Model.MovieDetailsSelectList">
-        <option value="wrongData">--- @Base.Resources.Common.SelectMovie ----</option>
+        <option value="wrongData">--- @Common.SelectMovie ----</option>
     </select>
 </div>

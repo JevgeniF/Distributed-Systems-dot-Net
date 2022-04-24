@@ -4,7 +4,7 @@ using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories.Common;
 
-public class PersonRepository: BaseEntityRepository<Person, AppDbContext>, IPersonRepository
+public class PersonRepository : BaseEntityRepository<Person, AppDbContext>, IPersonRepository
 {
     public PersonRepository(AppDbContext dbContext) : base(dbContext)
     {

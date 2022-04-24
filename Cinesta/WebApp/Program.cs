@@ -42,7 +42,7 @@ builder.Services.AddIdentity<AppUser, AppRole>(options =>
 
 builder.Services.AddControllersWithViews(
     options => { options.ModelBinderProviders.Insert(0, new CustomLanguageStringBinderProvider()); }
-    );
+);
 
 var supportedCultures = builder.Configuration
     .GetSection("SupportedCultures")
@@ -91,18 +91,18 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseRequestLocalization(options: app.Services.GetService<IOptions<RequestLocalizationOptions>>()?.Value!);
+app.UseRequestLocalization(app.Services.GetService<IOptions<RequestLocalizationOptions>>()?.Value!);
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+    "areas",
+    "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    "default",
+    "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();

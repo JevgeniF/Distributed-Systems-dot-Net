@@ -1,23 +1,25 @@
-﻿@model WebApp.Areas.Admin.ViewModels.SubscriptionCreateEditVM
+﻿@using App.Resources.App.Domain.User
+@using Base.Resources
+@model WebApp.Areas.Admin.ViewModels.SubscriptionCreateEditVM
 
 <div class="form-group">
     <label asp-for="Subscription.Naming" class="control-label"></label>
-    <input asp-for="Subscription.Naming" class="form-control" />
+    <input asp-for="Subscription.Naming" class="form-control"/>
     <span asp-validation-for="Subscription.Naming" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Subscription.Description" class="control-label"></label>
-    <input asp-for="Subscription.Description" class="form-control" />
+    <input asp-for="Subscription.Description" class="form-control"/>
     <span asp-validation-for="Subscription.Description" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Subscription.Price" class="control-label"></label>
-    <input asp-for="Subscription.Price" class="form-control" />
+    <input asp-for="Subscription.Price" class="form-control"/>
     <span asp-validation-for="Subscription.Price" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="Subscription.AppUserId" class="control-label">@App.Resources.App.Domain.User.Subscription.AppUser</label>
+    <label asp-for="Subscription.AppUserId" class="control-label">@Subscription.AppUser</label>
     <select asp-for="Subscription.AppUserId" class="form-control" asp-items="Model.AppUserSelectList">
-        <option value="wrongData">--- @Base.Resources.Common.SelectUser ---</option>
+        <option value="wrongData">--- @Common.SelectUser ---</option>
     </select>
 </div>

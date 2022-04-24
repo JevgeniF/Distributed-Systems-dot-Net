@@ -4,7 +4,7 @@ using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories.User;
 
-public class PaymentDetailsRepository: BaseEntityRepository<PaymentDetails, AppDbContext>, IPaymentDetailsRepository
+public class PaymentDetailsRepository : BaseEntityRepository<PaymentDetails, AppDbContext>, IPaymentDetailsRepository
 {
     public PaymentDetailsRepository(AppDbContext dbContext) : base(dbContext)
     {

@@ -7,6 +7,6 @@ namespace App.Domain.MovieStandardDetails;
 public class Genre : DomainEntityMetaId
 {
     [Column(TypeName = "jsonb")]
-    [Display(ResourceType = typeof(App.Resources.App.Domain.MovieStandardDetails.Genre), Name = nameof(Naming))]
+    [Display(ResourceType = typeof(Resources.App.Domain.MovieStandardDetails.Genre), Name = nameof(Naming))]
     public LangStr Naming { get; set; } = new();
 }

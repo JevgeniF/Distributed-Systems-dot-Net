@@ -1,9 +1,8 @@
-﻿using App.Domain.Identity;
-using App.Domain.User;
+﻿using App.Domain.User;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL.User;
 
-public interface ISubscriptionRepository: IEntityRepository<Subscription>
+public interface ISubscriptionRepository : IEntityRepository<Subscription>
 {
 }

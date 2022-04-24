@@ -8,37 +8,39 @@ namespace App.Domain.Movie;
 
 public class MovieDetails : DomainEntityMetaId
 {
-    [MaxLength (100)]
-    [Display(ResourceType = typeof(App.Resources.App.Domain.Movie.MovieDetails), Name = nameof(PosterUri))]
+    [MaxLength(100)]
+    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(PosterUri))]
     public string PosterUri { get; set; } = default!;
-    
+
     [Column(TypeName = "jsonb")]
-    [Display(ResourceType = typeof(App.Resources.App.Domain.Movie.MovieDetails), Name = nameof(Title))]
+    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Title))]
     public LangStr Title { get; set; } = new();
-    
-    [Display(ResourceType = typeof(App.Resources.App.Domain.Movie.MovieDetails), Name = nameof(Released))]
+
+    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Released))]
     public DateTime Released { get; set; }
-    [MaxLength (250)]
-    
+
+    [MaxLength(250)]
     [Column(TypeName = "jsonb")]
-    [Display(ResourceType = typeof(App.Resources.App.Domain.Movie.MovieDetails), Name = nameof(Description))]
+    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Description))]
     public LangStr Description { get; set; } = new();
-    
+
     public Guid AgeRatingId { get; set; }
-    [Display(ResourceType = typeof(App.Resources.App.Domain.Movie.MovieDetails), Name = nameof(AgeRating))]
+
+    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(AgeRating))]
     public AgeRating? AgeRating { get; set; }
-    
+
     public Guid MovieTypeId { get; set; }
-    [Display(ResourceType = typeof(App.Resources.App.Domain.Movie.MovieDetails), Name = nameof(MovieType))]
+
+    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(MovieType))]
     public MovieType? MovieType { get; set; }
-    
+
     public ICollection<MovieDbScore>? MovieDbScores { get; set; }
 
     public ICollection<Genre>? Genres { get; set; }
 
     public ICollection<Video>? Videos { get; set; }
-    
+
     public ICollection<UserRating>? UserRatings { get; set; }
-    
+
     public ICollection<CastInMovie>? CastInMovie { get; set; }
 }

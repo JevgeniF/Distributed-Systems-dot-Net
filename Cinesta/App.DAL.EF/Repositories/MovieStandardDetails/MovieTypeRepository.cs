@@ -4,7 +4,7 @@ using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories.MovieStandardDetails;
 
-public class MovieTypeRepository: BaseEntityRepository<MovieType, AppDbContext>, IMovieTypeRepository
+public class MovieTypeRepository : BaseEntityRepository<MovieType, AppDbContext>, IMovieTypeRepository
 {
     public MovieTypeRepository(AppDbContext dbContext) : base(dbContext)
     {

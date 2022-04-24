@@ -3,7 +3,6 @@ using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL.Movie;
 
-public interface IMovieGenreRepository: IEntityRepository<MovieGenre>
+public interface IMovieGenreRepository : IEntityRepository<MovieGenre>
 {
-    
 }

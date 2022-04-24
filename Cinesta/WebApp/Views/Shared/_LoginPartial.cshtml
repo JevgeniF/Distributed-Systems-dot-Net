@@ -1,5 +1,6 @@
-@using Microsoft.AspNetCore.Identity
 @using App.Domain.Identity
+@using Base.Resources
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<AppUser> _signInManager
 @inject UserManager<AppUser> _userManager
 
@@ -7,7 +8,7 @@
     @if (_signInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@Base.Resources.Common.Hello @User.Identity?.Name!</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@Common.Hello @User.Identity?.Name!</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new {area = ""})">
@@ -18,10 +19,10 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">@Base.Resources.Common.Register</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">@Common.Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">@Base.Resources.Common.Login</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">@Common.Login</a>
         </li>
     }
 </ul>

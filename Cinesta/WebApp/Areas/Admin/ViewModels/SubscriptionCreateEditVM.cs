@@ -6,7 +6,6 @@ namespace WebApp.Areas.Admin.ViewModels;
 public class SubscriptionCreateEditVM
 {
     public Subscription Subscription { get; set; } = default!;
-    
-    public SelectList? AppUserSelectList { get; set; }
 
+    public SelectList? AppUserSelectList { get; set; }
 }

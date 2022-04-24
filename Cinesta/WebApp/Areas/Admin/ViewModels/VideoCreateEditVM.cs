@@ -6,7 +6,6 @@ namespace WebApp.Areas.Admin.ViewModels;
 public class VideoCreateEditVM
 {
     public Video Video { get; set; } = default!;
-    
-    public SelectList? MovieDetailsSelectList { get; set; }
 
+    public SelectList? MovieDetailsSelectList { get; set; }
 }

@@ -9,5 +9,4 @@ public class ProfileMovieCreateEditVM
 
     public SelectList? MovieDetailsSelectList { get; set; }
     public SelectList? UserProfileSelectList { get; set; }
-
 }

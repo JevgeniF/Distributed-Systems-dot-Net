@@ -1,28 +1,30 @@
-﻿@model WebApp.Areas.Admin.ViewModels.PaymentDetailsCreateEditVM
+﻿@using App.Resources.App.Domain.User
+@using Base.Resources
+@model WebApp.Areas.Admin.ViewModels.PaymentDetailsCreateEditVM
 
 <div class="form-group">
     <label asp-for="PaymentDetails.CardType" class="control-label"></label>
-    <input asp-for="PaymentDetails.CardType" class="form-control" />
+    <input asp-for="PaymentDetails.CardType" class="form-control"/>
     <span asp-validation-for="PaymentDetails.CardType" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="PaymentDetails.CardNumber" class="control-label"></label>
-    <input asp-for="PaymentDetails.CardNumber" class="form-control" />
+    <input asp-for="PaymentDetails.CardNumber" class="form-control"/>
     <span asp-validation-for="PaymentDetails.CardNumber" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="PaymentDetails.ValidDate" class="control-label"></label>
-    <input asp-for="PaymentDetails.ValidDate" class="form-control" />
+    <input asp-for="PaymentDetails.ValidDate" class="form-control"/>
     <span asp-validation-for="PaymentDetails.ValidDate" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="PaymentDetails.SecurityCode" class="control-label"></label>
-    <input asp-for="PaymentDetails.SecurityCode" class="form-control" />
+    <input asp-for="PaymentDetails.SecurityCode" class="form-control"/>
     <span asp-validation-for="PaymentDetails.SecurityCode" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="PaymentDetails.AppUserId" class="control-label">@App.Resources.App.Domain.User.PaymentDetails.AppUser</label>
+    <label asp-for="PaymentDetails.AppUserId" class="control-label">@PaymentDetails.AppUser</label>
     <select asp-for="PaymentDetails.AppUserId" class="form-control" asp-items="Model.AppUserSelectList">
-        <option value="wrongData">--- @Base.Resources.Common.SelectUser ---</option>
+        <option value="wrongData">--- @Common.SelectUser ---</option>
     </select>
 </div>

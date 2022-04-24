@@ -1,31 +1,33 @@
+@using Base.Resources
 @model IEnumerable<App.Domain.Cast.CastInMovie>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>@Base.Resources.Common.Index</h1>
+<h1>@Common.Index</h1>
 
 <p>
-    <a asp-action="Create">@Base.Resources.Common.Create</a>
+    <a asp-action="Create">@Common.Create</a>
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CastRole)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Persons)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MovieDetails)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CastRole)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Persons)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MovieDetails)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @item.CastRole!.Naming
@@ -40,11 +42,11 @@
                 @item.MovieDetails!.Title
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">@Base.Resources.Common.Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">@Base.Resources.Common.Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">@Base.Resources.Common.Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">@Common.Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

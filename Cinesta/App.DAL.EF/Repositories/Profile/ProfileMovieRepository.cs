@@ -4,7 +4,7 @@ using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories.Profile;
 
-public class ProfileMovieRepository: BaseEntityRepository<ProfileMovie, AppDbContext>, IProfileMovieRepository
+public class ProfileMovieRepository : BaseEntityRepository<ProfileMovie, AppDbContext>, IProfileMovieRepository
 {
     public ProfileMovieRepository(AppDbContext dbContext) : base(dbContext)
     {

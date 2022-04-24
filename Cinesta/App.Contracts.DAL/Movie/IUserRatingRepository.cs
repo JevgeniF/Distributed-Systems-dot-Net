@@ -3,7 +3,6 @@ using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL.Movie;
 
-public interface IUserRatingRepository: IEntityRepository<UserRating>
+public interface IUserRatingRepository : IEntityRepository<UserRating>
 {
-    
 }

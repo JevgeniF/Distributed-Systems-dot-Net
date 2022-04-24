@@ -4,7 +4,7 @@ using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories.Movie;
 
-public class VideoRepository: BaseEntityRepository<Video, AppDbContext>, IVideoRepository
+public class VideoRepository : BaseEntityRepository<Video, AppDbContext>, IVideoRepository
 {
     public VideoRepository(AppDbContext dbContext) : base(dbContext)
     {

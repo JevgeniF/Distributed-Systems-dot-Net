@@ -93,4 +93,13 @@
     <data name="Language" xml:space="preserve">
         <value>Язык</value>
     </data>
+    <data name="Menu" xml:space="preserve">
+        <value>Меню</value>
+    </data>
+    <data name="Unauthorized" xml:space="preserve">
+        <value>Несанкционированный доступ!</value>
+    </data>
+    <data name="NoRights" xml:space="preserve">
+        <value>У вашего аккаунта недостаточно прав для операций с данными</value>
+    </data>
 </root>

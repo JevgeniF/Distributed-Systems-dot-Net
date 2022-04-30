@@ -93,4 +93,13 @@
     <data name="Language" xml:space="preserve">
         <value>Keel</value>
     </data>
+    <data name="Menu" xml:space="preserve">
+        <value>Menüü</value>
+    </data>
+    <data name="Unauthorized" xml:space="preserve">
+        <value>Mitte lubatud!</value>
+    </data>
+    <data name="NoRights" xml:space="preserve">
+        <value>Teie kontol puuduvad õigused andmete töötlemiseks</value>
+    </data>
 </root>

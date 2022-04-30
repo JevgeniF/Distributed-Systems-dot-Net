@@ -1,0 +1,66 @@
+@using App.Resources.App.Domain.Movie
+@using Base.Resources
+@model App.Domain.Movie.MovieDetails
+
+@{
+    ViewData["Title"] = "Delete";
+}
+@if (User.IsInRole("admin"))
+{
+<h1>@Common.Delete</h1>
+
+    <div>
+        <h4>@MovieDetails.MovieDetailsString</h4>
+        <hr/>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.PosterUri)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PosterUri)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Title)
+            </dt>
+            <dd class="col-sm-10">
+                @Model.Title
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Released)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Released)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd class="col-sm-10">
+                @Model.Description
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AgeRating)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AgeRating!.Naming)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.MovieType)
+            </dt>
+            <dd class="col-sm-10">
+                @Model.MovieType!.Naming
+            </dd>
+        </dl>
+
+        <form asp-action="@Common.Delete">
+            <input type="hidden" asp-for="Id"/>
+            <input type="submit" value="Delete" class="btn btn-danger"/> |
+            <a asp-action="Index">@Common.BackToList</a>
+        </form>
+    </div>
+}
+else
+{
+    <h4 class="alert-danger">@Base.Resources.Common.Unauthorized</h4>
+    <p class="alert-danger">@Base.Resources.Common.NoRights</p>
+    <a asp-action="Index">@Base.Resources.Common.BackToList</a>
+}

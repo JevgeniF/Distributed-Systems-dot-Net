@@ -1,0 +1,55 @@
+@using Base.Resources
+@model IEnumerable<App.Domain.Movie.MovieDbScore>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@Common.Index</h1>
+
+@if (User.IsInRole("admin"))
+{
+    <p>
+        <a asp-action="Create">@Common.Create</a>
+    </p>
+}
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ImdbId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Score)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MovieDetails)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ImdbId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Score)
+            </td>
+            <td>
+                @item.MovieDetails!.Title
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a>   
+                                    @if (User.IsInRole("admin"))
+                                    {
+                                    <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a>   
+                                    <a asp-action="Delete" asp-route-id="@item.Id">@Common.Delete</a>
+                                    }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

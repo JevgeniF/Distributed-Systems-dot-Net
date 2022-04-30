@@ -169,11 +169,29 @@ namespace Base.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Menu.
+        /// </summary>
+        public static string Menu {
+            get {
+                return ResourceManager.GetString("Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Movie Title.
         /// </summary>
         public static string MovieTitle {
             get {
                 return ResourceManager.GetString("MovieTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your account has insufficient rights to work operate with data.
+        /// </summary>
+        public static string NoRights {
+            get {
+                return ResourceManager.GetString("NoRights", resourceCulture);
             }
         }
         
@@ -282,6 +300,15 @@ namespace Base.Resources {
         public static string SelectUserProfile {
             get {
                 return ResourceManager.GetString("SelectUserProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unauthorized Access!.
+        /// </summary>
+        public static string Unauthorized {
+            get {
+                return ResourceManager.GetString("Unauthorized", resourceCulture);
             }
         }
         

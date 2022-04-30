@@ -5,4 +5,5 @@ namespace App.Contracts.DAL.Profile;
 
 public interface IProfileFavoriteMovieRepository : IEntityRepository<ProfileFavoriteMovie>
 {
+    Task<IEnumerable<ProfileFavoriteMovie>> GetAllByProfileIdAsync(Guid profileId, bool noTracking = true);
 }

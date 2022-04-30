@@ -101,4 +101,13 @@
     <data name="Language" xml:space="preserve">
         <value>Language</value>
     </data>
+    <data name="Menu" xml:space="preserve">
+        <value>Menu</value>
+    </data>
+    <data name="Unauthorized" xml:space="preserve">
+        <value>Unauthorized Access!</value>
+    </data>
+    <data name="NoRights" xml:space="preserve">
+        <value>Your account has insufficient rights to work operate with data</value>
+    </data>
 </root>

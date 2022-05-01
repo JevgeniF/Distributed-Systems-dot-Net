@@ -71,13 +71,11 @@ namespace WebApp.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [Display(Name = "Name")]
-            [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
+            [StringLength(25, ErrorMessageResourceName = "lengthErrorMessage", ErrorMessageResourceType = typeof(Base.Resources.Identity), MinimumLength = 1)]
             public string Name { get; set; }
             
             [Required]
-            [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 1)]
-            [Display(Name = "Surname")]
+            [StringLength(25, ErrorMessageResourceName = "lengthErrorMessage", ErrorMessageResourceType = typeof(Base.Resources.Identity), MinimumLength = 1)]
             public string Surname { get; set; }
             
             /// <summary>
@@ -86,7 +84,6 @@ namespace WebApp.Areas.Identity.Pages.Account
             /// </summary>
             [Required]
             [EmailAddress]
-            [Display(Name = "Email")]
             public string Email { get; set; }
 
             /// <summary>
@@ -94,9 +91,8 @@ namespace WebApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessageResourceName = "lengthErrorMessage", ErrorMessageResourceType = typeof(Base.Resources.Identity), MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
             public string Password { get; set; }
 
             /// <summary>
@@ -104,8 +100,7 @@ namespace WebApp.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Compare("Password", ErrorMessageResourceName = "passwrdDoesntMatchError", ErrorMessageResourceType = typeof(Base.Resources.Identity))]
             public string ConfirmPassword { get; set; }
         }
 
@@ -165,8 +160,8 @@ namespace WebApp.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, Base.Resources.Identity.confirmYourEmail,
+                         $"{Base.Resources.Identity.confirmEmailText} <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>{Base.Resources.Identity.clickingHere}</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -196,9 +191,7 @@ namespace WebApp.Areas.Identity.Pages.Account
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(AppUser)}'. " +
-                    $"Ensure that '{nameof(AppUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
+                throw new InvalidOperationException($"{Base.Resources.Identity.cantCreateInstance} '{nameof(AppUser)}'.");
             }
         }
 
@@ -206,7 +199,7 @@ namespace WebApp.Areas.Identity.Pages.Account
         {
             if (!_userManager.SupportsUserEmail)
             {
-                throw new NotSupportedException("The default UI requires a user store with email support.");
+                throw new NotSupportedException(Base.Resources.Identity.uiRequiresUserStoreWithEmail);
             }
             return (IUserEmailStore<AppUser>)_userStore;
         }

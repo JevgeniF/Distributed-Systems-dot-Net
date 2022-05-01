@@ -92,4 +92,52 @@
     <data name="disable2FAShort" xml:space="preserve">
         <value>Выключить 2FA</value>
     </data>
+    <data name="register" xml:space="preserve">
+        <value>Зарегистрироваться</value>
+    </data>
+    <data name="createAccount" xml:space="preserve">
+        <value>Создать новый аккунт.</value>
+    </data>
+    <data name="name" xml:space="preserve">
+        <value>Имя</value>
+    </data>
+    <data name="surname" xml:space="preserve">
+        <value>Фамилия</value>
+    </data>
+    <data name="confirmYourEmail" xml:space="preserve">
+        <value>Подтвердите адресс электронной почты</value>
+    </data>
+    <data name="confirmEmailText" xml:space="preserve">
+        <value>Пожалуйста подтвердите адрес элекронной почты </value>
+    </data>
+    <data name="clickingHere" xml:space="preserve">
+        <value>нажав сюда</value>
+    </data>
+    <data name="cantCreateInstance" xml:space="preserve">
+        <value>Невозможно создать экземпляр </value>
+    </data>
+    <data name="uiRequiresUserStoreWithEmail" xml:space="preserve">
+        <value>Для пользовательского интерфейса по умолчанию требуется хранилище пользователей с поддержкой электронной почты.</value>
+    </data>
+    <data name="login" xml:space="preserve">
+        <value>Вход</value>
+    </data>
+    <data name="useAccountToLogin" xml:space="preserve">
+        <value>Испольуйте аккаунт для входа.</value>
+    </data>
+    <data name="rememberMe" xml:space="preserve">
+        <value>Запомни меня?</value>
+    </data>
+    <data name="forgotPassword" xml:space="preserve">
+        <value>Забыли пароль?</value>
+    </data>
+    <data name="registerNewUser" xml:space="preserve">
+        <value>Зарегистрироваться новым пользователем</value>
+    </data>
+    <data name="resendEmailConfirmation" xml:space="preserve">
+        <value>Выслать новое электронное письмо для подтверждения</value>
+    </data>
+    <data name="invalidLoginAttempt" xml:space="preserve">
+        <value>Неверная попыка входа.</value>
+    </data>
 </root>

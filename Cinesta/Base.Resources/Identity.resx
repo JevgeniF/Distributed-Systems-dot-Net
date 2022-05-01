@@ -42,9 +42,6 @@
     <data name="close" xml:space="preserve">
         <value>Close</value>
     </data>
-    <data name="changePassword" xml:space="preserve">
-        <value />
-    </data>
     <data name="changePasswrd" xml:space="preserve">
         <value>Change password</value>
     </data>
@@ -101,5 +98,53 @@
     </data>
     <data name="disable2FAShort" xml:space="preserve">
         <value>Disable 2FA</value>
+    </data>
+    <data name="register" xml:space="preserve">
+        <value>Register</value>
+    </data>
+    <data name="createAccount" xml:space="preserve">
+        <value>Create a new account.</value>
+    </data>
+    <data name="name" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="surname" xml:space="preserve">
+        <value>Surname</value>
+    </data>
+    <data name="confirmYourEmail" xml:space="preserve">
+        <value>Confirm your email</value>
+    </data>
+    <data name="confirmEmailText" xml:space="preserve">
+        <value>Please confirm your account by </value>
+    </data>
+    <data name="clickingHere" xml:space="preserve">
+        <value>clicking here</value>
+    </data>
+    <data name="cantCreateInstance" xml:space="preserve">
+        <value>Can't create an instance of </value>
+    </data>
+    <data name="uiRequiresUserStoreWithEmail" xml:space="preserve">
+        <value>The default UI requires a user store with email support.</value>
+    </data>
+    <data name="login" xml:space="preserve">
+        <value>Log in</value>
+    </data>
+    <data name="useAccountToLogin" xml:space="preserve">
+        <value>Use a local account to log in.</value>
+    </data>
+    <data name="rememberMe" xml:space="preserve">
+        <value>Remember me?</value>
+    </data>
+    <data name="forgotPassword" xml:space="preserve">
+        <value>Forgot your password?</value>
+    </data>
+    <data name="registerNewUser" xml:space="preserve">
+        <value>Register as a new user</value>
+    </data>
+    <data name="resendEmailConfirmation" xml:space="preserve">
+        <value>Resend email confirmation</value>
+    </data>
+    <data name="invalidLoginAttempt" xml:space="preserve">
+        <value>Invalid login attempt.</value>
     </data>
 </root>

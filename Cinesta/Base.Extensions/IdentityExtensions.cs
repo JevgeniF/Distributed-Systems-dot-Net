@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Security.Claims;
+using App.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace Base.Extensions;
 

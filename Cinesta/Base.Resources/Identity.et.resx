@@ -92,4 +92,52 @@
     <data name="disable2FAShort" xml:space="preserve">
         <value>Lülita välja 2FA</value>
     </data>
+    <data name="register" xml:space="preserve">
+        <value>Registreeri</value>
+    </data>
+    <data name="createAccount" xml:space="preserve">
+        <value>Loo uus konto.</value>
+    </data>
+    <data name="name" xml:space="preserve">
+        <value>Nimi</value>
+    </data>
+    <data name="surname" xml:space="preserve">
+        <value>Perekonnanimi</value>
+    </data>
+    <data name="confirmYourEmail" xml:space="preserve">
+        <value>Kinnita sinu e-mail</value>
+    </data>
+    <data name="confirmEmailText" xml:space="preserve">
+        <value>Palun kinnita sinu e-mail </value>
+    </data>
+    <data name="clickingHere" xml:space="preserve">
+        <value>vajutades sinna</value>
+    </data>
+    <data name="cantCreateInstance" xml:space="preserve">
+        <value>Ei saa luua eksemplaar </value>
+    </data>
+    <data name="uiRequiresUserStoreWithEmail" xml:space="preserve">
+        <value>Vaikimisi UI nõuab melitoega kasutaja store'i.</value>
+    </data>
+    <data name="login" xml:space="preserve">
+        <value>Sisselogimine</value>
+    </data>
+    <data name="useAccountToLogin" xml:space="preserve">
+        <value>Kasuta kasutajakonto sisselogimiseks.</value>
+    </data>
+    <data name="rememberMe" xml:space="preserve">
+        <value>Pea mind meeles?</value>
+    </data>
+    <data name="forgotPassword" xml:space="preserve">
+        <value>Unustasid parooli?</value>
+    </data>
+    <data name="registerNewUser" xml:space="preserve">
+        <value>Registreeri uueks kasutajaks</value>
+    </data>
+    <data name="resendEmailConfirmation" xml:space="preserve">
+        <value>Saada uuesti email kinnitamiseks</value>
+    </data>
+    <data name="invalidLoginAttempt" xml:space="preserve">
+        <value>Vale sisselogimise katse.</value>
+    </data>
 </root>

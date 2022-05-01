@@ -4,6 +4,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using App.Contracts.DAL;
@@ -143,9 +144,17 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
             }
 
             await _userManager.UpdateAsync(user);
+            var claims = await _userManager.GetClaimsAsync(user);
+            var oldNameClaim = claims.FirstOrDefault(c => c.Type.Equals("aspnet.name"));
+            var oldSurnameClaim = claims.FirstOrDefault(c => c.Type.Equals("aspnet.surname"));
+            await _userManager.RemoveClaimAsync(user, oldNameClaim);
+            await _userManager.RemoveClaimAsync(user, oldSurnameClaim);
 
+            var nameClaim = new Claim("aspnet.name", user.Name);
+            var surnameClaim = new Claim("aspnet.surname", user.Surname);
+            await _userManager.AddClaimAsync(user, nameClaim);
+            await _userManager.AddClaimAsync(user, surnameClaim);
             
-
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();

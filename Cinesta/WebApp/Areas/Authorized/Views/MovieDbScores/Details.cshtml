@@ -34,8 +34,8 @@
 </div>
 <div>
     @if (User.IsInRole("admin"))
-        {
-            <a asp-action="Edit" asp-route-id="@Model?.Id">@Common.Edit</a>
-        }
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">@Common.Edit</a>
+    }
     <a asp-action="Index">@Common.BackToList</a>
 </div>

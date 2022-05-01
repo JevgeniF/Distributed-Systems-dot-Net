@@ -36,7 +36,7 @@ public class ProfileFavoriteMoviesController : Controller
         var vm = new ProfileFavoriteMovieCreateEditVM
         {
             MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetByAgeRating(profile!.Age))
-                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id), 
+                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
 
@@ -52,7 +52,7 @@ public class ProfileFavoriteMoviesController : Controller
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
         var profile = await _uow.UserProfile.FirstOrDefaultAsync(profileId);
-        
+
         if (ModelState.IsValid)
         {
             vm.ProfileFavoriteMovie.UserProfileId = profileId;
@@ -63,7 +63,7 @@ public class ProfileFavoriteMoviesController : Controller
         }
 
         vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetByAgeRating(profile!.Age))
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id), 
+            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.ProfileFavoriteMovie.MovieDetailsId);
         return View(vm);
     }

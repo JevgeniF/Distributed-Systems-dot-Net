@@ -57,6 +57,7 @@ public class UserProfilesController : Controller
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
         return View(userProfile);
     }
 
@@ -97,6 +98,7 @@ public class UserProfilesController : Controller
 
             return RedirectToAction(nameof(Index));
         }
+
         return View(userProfile);
     }
 

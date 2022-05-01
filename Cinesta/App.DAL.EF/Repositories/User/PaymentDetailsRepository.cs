@@ -15,7 +15,7 @@ public class PaymentDetailsRepository : BaseEntityRepository<PaymentDetails, App
     {
         var query = CreateQuery(noTracking);
         query = query.Include(p => p.AppUser).Where(p => p.AppUserId == userId);
-        
+
         return await query.ToListAsync();
     }
 }

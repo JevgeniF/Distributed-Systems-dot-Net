@@ -41,7 +41,7 @@
     </dl>
 </div>
 <div>
-    @if (User.GetUserId() == @Model.AppUserId || User.IsInRole("admin"))
+    @if (User.GetUserId() == Model.AppUserId || User.IsInRole("admin"))
     {
         <a asp-action="Edit" asp-route-id="@Model?.Id">@Common.Edit</a>
     }

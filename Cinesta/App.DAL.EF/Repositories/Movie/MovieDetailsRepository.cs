@@ -1,9 +1,7 @@
 ﻿using App.Contracts.DAL.Movie;
 using App.Domain.Movie;
-using App.Domain.MovieStandardDetails;
 using Base.DAL.EF;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace App.DAL.EF.Repositories.Movie;
 

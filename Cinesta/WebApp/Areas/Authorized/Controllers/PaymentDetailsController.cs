@@ -57,6 +57,7 @@ public class PaymentDetailsController : Controller
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
         return View(paymentDetails);
     }
 
@@ -80,7 +81,7 @@ public class PaymentDetailsController : Controller
         if (id != paymentDetails.Id) return NotFound();
 
         paymentDetails.AppUserId = User.GetUserId();
-        
+
         if (ModelState.IsValid)
         {
             try
@@ -97,6 +98,7 @@ public class PaymentDetailsController : Controller
 
             return RedirectToAction(nameof(Index));
         }
+
         return View(paymentDetails);
     }
 

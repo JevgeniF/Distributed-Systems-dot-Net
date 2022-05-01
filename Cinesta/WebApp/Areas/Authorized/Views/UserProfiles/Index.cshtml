@@ -45,10 +45,10 @@
                 @Html.DisplayFor(modelItem => item.AppUser!.Email)
             </td>
             <td>
-                @Html.ActionLink(@Common.FavoriteMovies, "Index", "ProfileFavoriteMovies", new {id = @item.Id}, null)
+                @Html.ActionLink(Common.FavoriteMovies, "Index", "ProfileFavoriteMovies", new {id = item.Id}, null)
             </td>
             <td>
-                @Html.ActionLink(@Common.Movies, "Index", "ProfileMovies", new {id = @item.Id}, null)
+                @Html.ActionLink(Common.Movies, "Index", "ProfileMovies", new {id = item.Id}, null)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a> |

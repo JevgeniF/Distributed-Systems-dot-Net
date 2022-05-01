@@ -15,7 +15,7 @@ public class SubscriptionRepository : BaseEntityRepository<Subscription, AppDbCo
     {
         var query = CreateQuery(noTracking);
         query = query.Include(u => u.AppUser).Where(u => u.AppUserId == userId);
-        
+
         return await query.ToListAsync();
     }
 }

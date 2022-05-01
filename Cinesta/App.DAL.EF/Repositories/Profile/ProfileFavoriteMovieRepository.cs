@@ -16,7 +16,7 @@ public class ProfileFavoriteMovieRepository : BaseEntityRepository<ProfileFavori
     {
         var query = QueryableWithInclude()
             .Where(p => p.UserProfileId == profileId);
-        
+
         return await query.ToListAsync();
     }
 

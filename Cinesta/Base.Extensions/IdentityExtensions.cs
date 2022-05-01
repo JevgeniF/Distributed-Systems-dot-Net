@@ -5,8 +5,11 @@ namespace Base.Extensions;
 
 public static class IdentityExtensions
 {
-    public static Guid GetUserId(this ClaimsPrincipal user) => GetUserId<Guid>(user);
-    
+    public static Guid GetUserId(this ClaimsPrincipal user)
+    {
+        return GetUserId<Guid>(user);
+    }
+
     public static TKeyType GetUserId<TKeyType>(this ClaimsPrincipal user)
     {
         var idClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);

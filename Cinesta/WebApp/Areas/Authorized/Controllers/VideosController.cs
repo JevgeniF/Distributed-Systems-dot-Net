@@ -1,6 +1,5 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DAL.EF;
 using App.Domain.Movie;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -5,24 +5,24 @@
 }
 @if (User.IsInRole("admin"))
 {
-<h1>@Base.Resources.Common.Edit</h1>
+    <h1>@Base.Resources.Common.Edit</h1>
 
-<h4>@App.Resources.App.Domain.Movie.Video.VideoString</h4>
-<hr/>
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <h4>@App.Resources.App.Domain.Movie.Video.VideoString</h4>
+    <hr/>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <partial name="_CreateEdit" model="Model"/>
+                <partial name="_CreateEdit" model="Model"/>
 
-            <input type="hidden" asp-for="Video.Id"/>
-            <div class="form-group">
-                <input type="submit" value="@Base.Resources.Common.Save" class="btn btn-primary"/>
-            </div>
-        </form>
+                <input type="hidden" asp-for="Video.Id"/>
+                <div class="form-group">
+                    <input type="submit" value="@Base.Resources.Common.Save" class="btn btn-primary"/>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 }
 else
 {

@@ -57,6 +57,7 @@ public class SubscriptionsController : Controller
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
         return View(subscription);
     }
 
@@ -106,7 +107,7 @@ public class SubscriptionsController : Controller
 
             return RedirectToAction(nameof(Index));
         }
-        
+
         return View(subscription);
     }
 

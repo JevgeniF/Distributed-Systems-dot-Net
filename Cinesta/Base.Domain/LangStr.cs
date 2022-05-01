@@ -56,6 +56,6 @@ public class LangStr : Dictionary<string, string>
 
     public static implicit operator LangStr(string s)
     {
-        return new(s);
+        return new LangStr(s);
     }
 }

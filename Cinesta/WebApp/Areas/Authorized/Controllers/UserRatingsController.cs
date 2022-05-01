@@ -1,13 +1,11 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Identity;
 using App.Domain.Movie;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Areas.Admin.ViewModels;
 using WebApp.Areas.Authorized.ViewModels;
 
 namespace WebApp.Areas.Authorized.Controllers;
@@ -67,7 +65,7 @@ public class UserRatingsController : Controller
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        
+
         vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);

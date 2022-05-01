@@ -6,9 +6,9 @@
 @{
     ViewData["Title"] = "Delete";
 }
-@if (User.GetUserId() == @Model.AppUserId || User.IsInRole("admin"))
+@if (User.GetUserId() == Model.AppUserId || User.IsInRole("admin"))
 {
-<h1>@Common.Delete</h1>
+    <h1>@Common.Delete</h1>
 
     <div>
         <h4>@UserRating.UserRatingString</h4>
@@ -49,7 +49,7 @@
 }
 else
 {
-    <h4 class="alert-danger">@Base.Resources.Common.Unauthorized</h4>
-    <p class="alert-danger">@Base.Resources.Common.NoRights</p>
-    <a asp-action="Index">@Base.Resources.Common.BackToList</a>
+    <h4 class="alert-danger">@Common.Unauthorized</h4>
+    <p class="alert-danger">@Common.NoRights</p>
+    <a asp-action="Index">@Common.BackToList</a>
 }

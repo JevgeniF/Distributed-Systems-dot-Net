@@ -1,4 +1,4 @@
-@model WebApp.Areas.Admin.ViewModels.ProfileFavoriteMovieCreateEditVM
+@model WebApp.Areas.Authorized.ViewModels.ProfileFavoriteMovieCreateEditVM
 
 @{
     ViewData["Title"] = "Create";
@@ -23,7 +23,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">@Base.Resources.Common.BackToList</a>
+    <a asp-action="Index" asp-route-id="@ViewContext.RouteData.Values["id"]">@Base.Resources.Common.BackToList</a>
 </div>
 
 @section Scripts {

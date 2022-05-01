@@ -14,10 +14,21 @@ public class ProfileFavoriteMovieRepository : BaseEntityRepository<ProfileFavori
 
     public async Task<IEnumerable<ProfileFavoriteMovie>> GetAllByProfileIdAsync(Guid profileId, bool noTracking = true)
     {
-        var query = CreateQuery(noTracking);
-        query = query.Include(p => p.UserProfile)
+        var query = QueryableWithInclude()
             .Where(p => p.UserProfileId == profileId);
         
         return await query.ToListAsync();
+    }
+
+    public async Task<IEnumerable<ProfileFavoriteMovie>> GetWithInclude(bool noTracking = true)
+    {
+        return await QueryableWithInclude().ToListAsync();
+    }
+
+    public IQueryable<ProfileFavoriteMovie> QueryableWithInclude(bool noTracking = true)
+    {
+        var query = CreateQuery(noTracking);
+        return query.Include(p => p.MovieDetails)
+            .Include(p => p.UserProfile);
     }
 }

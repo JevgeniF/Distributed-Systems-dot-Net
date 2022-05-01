@@ -1,6 +1,6 @@
 ﻿@using App.Resources.App.Domain.Movie
 @using Base.Resources
-@model WebApp.Areas.Admin.ViewModels.UserRatingCreateEditVM
+@model WebApp.Areas.Authorized.ViewModels.UserRatingCreateEditVM
 
 <div class="form-group">
     <label asp-for="UserRating.Rating" class="control-label">@UserRating.Rating</label>
@@ -11,12 +11,6 @@
     <label asp-for="UserRating.Comment" class="control-label">@UserRating.Comment</label>
     <input asp-for="UserRating.Comment" class="form-control"/>
     <span asp-validation-for="UserRating.Comment" class="text-danger"></span>
-</div>
-<div class="form-group">
-    <label asp-for="UserRating.AppUserId" class="control-label">@UserRating.AppUser</label>
-    <select asp-for="UserRating.AppUserId" class="form-control" asp-items="Model.AppUserSelectList">
-        <option value="wrongData">--- @Common.SelectPerson ----</option>
-    </select>
 </div>
 <div class="form-group">
     <label asp-for="UserRating.MovieDetailsId" class="control-label">@UserRating.MovieDetails</label>

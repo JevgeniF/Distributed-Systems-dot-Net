@@ -1,4 +1,4 @@
-@model WebApp.Areas.Admin.ViewModels.SubscriptionCreateEditVM
+@model App.Domain.User.Subscription?
 
 @{
     ViewData["Title"] = "Edit";
@@ -14,8 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <partial name="_CreateEdit" model="Model"/>
-
-            <input type="hidden" asp-for="Subscription.Id"/>
+            
             <div class="form-group">
                 <input type="submit" value="@Base.Resources.Common.Save" class="btn btn-primary"/>
             </div>

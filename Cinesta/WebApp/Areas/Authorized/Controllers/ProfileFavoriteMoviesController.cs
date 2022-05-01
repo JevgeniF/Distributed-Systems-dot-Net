@@ -1,13 +1,11 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DAL.EF;
 using App.Domain.Movie;
-using App.Domain.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Areas.Admin.ViewModels;
+using WebApp.Areas.Authorized.ViewModels;
 
 namespace WebApp.Areas.Authorized.Controllers;
 
@@ -16,36 +14,33 @@ namespace WebApp.Areas.Authorized.Controllers;
 public class ProfileFavoriteMoviesController : Controller
 {
     private readonly IAppUOW _uow;
-    private Guid _profileId;
+
 
     public ProfileFavoriteMoviesController(IAppUOW uow)
     {
-        
         _uow = uow;
     }
 
     // GET: Admin/ProfileFavoriteMovies
     public async Task<IActionResult> Index()
     {
-        _profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
-        return View(await _uow.ProfileFavoriteMovie.GetAllByProfileIdAsync(_profileId));
-    }
-
-    // GET: Admin/ProfileFavoriteMovies/Details/5
-    public async Task<IActionResult> Details(Guid? id)
-    {
-        if (id == null) return NotFound();
-
-        var profileFavoriteMovie = await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id.Value);
-        if (profileFavoriteMovie == null) return NotFound();
-
-        return View(profileFavoriteMovie);
+        var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
+        return View(await _uow.ProfileFavoriteMovie.GetAllByProfileIdAsync(profileId));
     }
 
     // GET: Admin/ProfileFavoriteMovies/Create
-    public IActionResult Create()
+    public async Task<ActionResult> Create()
     {
-        return View();
+        var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
+        var profile = await _uow.UserProfile.FirstOrDefaultAsync(profileId);
+        var vm = new ProfileFavoriteMovieCreateEditVM
+        {
+            MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetByAgeRating(profile!.Age))
+                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id), 
+                nameof(MovieDetails.Title))
+        };
+
+        return View(vm);
     }
 
     // POST: ProfileFavoriteMovies/Create
@@ -53,56 +48,24 @@ public class ProfileFavoriteMoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(ProfileFavoriteMovie profileFavoriteMovie)
+    public async Task<IActionResult> Create(ProfileFavoriteMovieCreateEditVM vm)
     {
-        if (ModelState.IsValid)
-        {
-            profileFavoriteMovie.UserProfileId = _profileId;
-            profileFavoriteMovie.Id = Guid.NewGuid();
-            _uow.ProfileFavoriteMovie.Add(profileFavoriteMovie);
-            await _uow.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        return View();
-    }
-
-    // GET: ProfileFavoriteMovies/Edit/5
-    public async Task<IActionResult> Edit(Guid? id)
-    {
-        if (id == null) return NotFound();
-
-        var profileFavoriteMovie = await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id.Value);
-        if (profileFavoriteMovie == null) return NotFound();
+        var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
+        var profile = await _uow.UserProfile.FirstOrDefaultAsync(profileId);
         
-        return View(profileFavoriteMovie);
-    }
-
-    // POST: ProfileFavoriteMovies/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Guid id, ProfileFavoriteMovie profileFavoriteMovie)
-    {
-        if (id != profileFavoriteMovie.Id) return NotFound();
-
         if (ModelState.IsValid)
         {
-            try
-            {
-                _uow.ProfileFavoriteMovie.Update(profileFavoriteMovie);
-                await _uow.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await ProfileFavoriteMovieExists(profileFavoriteMovie.Id))
-                    return NotFound();
-                throw;
-            }
-
-            return RedirectToAction(nameof(Index));
+            vm.ProfileFavoriteMovie.UserProfileId = profileId;
+            vm.ProfileFavoriteMovie.Id = Guid.NewGuid();
+            _uow.ProfileFavoriteMovie.Add(vm.ProfileFavoriteMovie);
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index), new {id = profileId});
         }
-        return View(profileFavoriteMovie);
+
+        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetByAgeRating(profile!.Age))
+            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id), 
+            nameof(MovieDetails.Title), vm.ProfileFavoriteMovie.MovieDetailsId);
+        return View(vm);
     }
 
 
@@ -111,7 +74,9 @@ public class ProfileFavoriteMoviesController : Controller
     {
         if (id == null) return NotFound();
 
-        var profileFavoriteMovie = await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id.Value);
+        ViewData["id"] = (await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id.Value))!.UserProfileId;
+        var profileFavoriteMovie = await _uow.ProfileFavoriteMovie.QueryableWithInclude()
+            .FirstOrDefaultAsync(m => m.Id == id);
         if (profileFavoriteMovie == null) return NotFound();
 
         return View(profileFavoriteMovie);
@@ -123,13 +88,10 @@ public class ProfileFavoriteMoviesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id);
-        await _uow.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
+        ViewData["id"] = (await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id))!.UserProfileId;
 
-    private async Task<bool> ProfileFavoriteMovieExists(Guid id)
-    {
-        return await _uow.ProfileFavoriteMovie.ExistsAsync(id);
+        await _uow.ProfileFavoriteMovie.RemoveAsync(id);
+        await _uow.SaveChangesAsync();
+        return RedirectToAction(nameof(Index), new {id = ViewData["id"]});
     }
 }

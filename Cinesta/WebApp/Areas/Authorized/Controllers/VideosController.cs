@@ -1,28 +1,30 @@
 #nullable disable
+using App.Contracts.DAL;
 using App.DAL.EF;
 using App.Domain.Movie;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Areas.Admin.ViewModels;
 
-namespace WebApp.Areas.Admin.Controllers;
+namespace WebApp.Areas.Authorized.Controllers;
 
-[Area("Admin")]
+[Area("Authorized")]
+[Authorize(Roles = "admin,user")]
 public class VideosController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IAppUOW _uow;
 
-    public VideosController(AppDbContext context)
+    public VideosController(IAppUOW uow)
     {
-        _context = context;
+        _uow = uow;
     }
 
     // GET: Admin/Videos
     public async Task<IActionResult> Index()
     {
-        var appDbContext = _context.Videos.Include(v => v.MovieDetails);
-        return View(await appDbContext.ToListAsync());
+        return View(await _uow.Video.GetWithInclude());
     }
 
     // GET: Admin/Videos/Details/5
@@ -30,9 +32,7 @@ public class VideosController : Controller
     {
         if (id == null) return NotFound();
 
-        var video = await _context.Videos
-            .Include(v => v.MovieDetails)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var video = await _uow.Video.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
         if (video == null) return NotFound();
 
         return View(video);
@@ -41,10 +41,12 @@ public class VideosController : Controller
     // GET: Admin/Videos/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new VideoCreateEditVM();
-        vm.MovieDetailsSelectList = new SelectList(
-            await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title));
+        var vm = new VideoCreateEditVM
+        {
+            MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+                nameof(MovieDetails.Title))
+        };
         return View(vm);
     }
 
@@ -57,14 +59,14 @@ public class VideosController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(vm.Video);
-            await _context.SaveChangesAsync();
+            _uow.Video.Add(vm.Video);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        vm.MovieDetailsSelectList = new SelectList(
-            await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
+        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
         return View(vm);
     }
 
@@ -73,14 +75,16 @@ public class VideosController : Controller
     {
         if (id == null) return NotFound();
 
-        var video = await _context.Videos.FindAsync(id);
+        var video = await _uow.Video.FirstOrDefaultAsync(id.Value);
         if (video == null) return NotFound();
 
-        var vm = new VideoCreateEditVM();
-        vm.Video = video;
-        vm.MovieDetailsSelectList = new SelectList(
-            await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
+        var vm = new VideoCreateEditVM
+        {
+            Video = video
+        };
+        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
         return View(vm);
     }
 
@@ -95,8 +99,7 @@ public class VideosController : Controller
 
         if (ModelState.IsValid)
         {
-            var videoFromDb = await _context.Videos.AsNoTracking()
-                .FirstOrDefaultAsync(v => v.Id == video.Id);
+            var videoFromDb = await _uow.Video.FirstOrDefaultAsync(id);
             if (videoFromDb == null) return NotFound();
 
             try
@@ -107,12 +110,12 @@ public class VideosController : Controller
                 videoFromDb.Description.SetTranslation(video.Description);
                 video.Description = videoFromDb.Description;
 
-                _context.Update(video);
-                await _context.SaveChangesAsync();
+                _uow.Video.Update(video);
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VideoExists(video.Id))
+                if (!await VideoExists(video.Id))
                     return NotFound();
                 throw;
             }
@@ -121,9 +124,9 @@ public class VideosController : Controller
         }
 
         var vm = new VideoCreateEditVM();
-        vm.MovieDetailsSelectList = new SelectList(
-            await _context.MovieDetails.Select(m => new {m.Id, m.Title}).ToListAsync(),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
+        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
         return View(vm);
     }
 
@@ -132,9 +135,7 @@ public class VideosController : Controller
     {
         if (id == null) return NotFound();
 
-        var video = await _context.Videos
-            .Include(v => v.MovieDetails)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var video = await _uow.Video.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
         if (video == null) return NotFound();
 
         return View(video);
@@ -146,14 +147,13 @@ public class VideosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var video = await _context.Videos.FindAsync(id);
-        _context.Videos.Remove(video);
-        await _context.SaveChangesAsync();
+        await _uow.Video.RemoveAsync(id);
+        await _uow.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool VideoExists(Guid id)
+    private async Task<bool> VideoExists(Guid id)
     {
-        return _context.Videos.Any(e => e.Id == id);
+        return await _uow.Video.ExistsAsync(id);
     }
 }

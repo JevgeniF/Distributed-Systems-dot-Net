@@ -1,5 +1,5 @@
 #nullable disable
-using App.DAL.EF;
+using App.Contracts.DAL;
 using App.Domain.Movie;
 using App.Domain.MovieStandardDetails;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Areas.Admin.ViewModels;
+using WebApp.Areas.Authorized.ViewModels;
 
 namespace WebApp.Areas.Authorized.Controllers;
 
@@ -14,18 +15,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,user")]
 public class MovieGenresController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly IAppUOW _uow;
 
-    public MovieGenresController(AppDbContext context)
+    public MovieGenresController(IAppUOW uow)
     {
-        _context = context;
+        _uow = uow;
     }
 
     // GET: Admin/MovieGenres
     public async Task<IActionResult> Index()
     {
-        var appDbContext = _context.MovieGenres.Include(m => m.Genre).Include(m => m.MovieDetails);
-        return View(await appDbContext.ToListAsync());
+        return View(await _uow.MovieGenre.GetWithInclude());
     }
 
     // GET: Admin/MovieGenres/Details/5
@@ -33,10 +33,7 @@ public class MovieGenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieGenre = await _context.MovieGenres
-            .Include(m => m.Genre)
-            .Include(m => m.MovieDetails)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var movieGenre = await _uow.MovieGenre.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
         if (movieGenre == null) return NotFound();
 
         return View(movieGenre);
@@ -45,13 +42,14 @@ public class MovieGenresController : Controller
     // GET: Admin/MovieGenres/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new MovieGenreCreateEditVM();
-        vm.GenreSelectList = new SelectList(
-            await _context.Genres.Select(g => new {g.Id, g.Naming}).ToListAsync(),
-            nameof(Genre.Id), nameof(Genre.Naming));
-        vm.MovieDetailsSelectList = new SelectList(
-            _context.MovieDetails.Select(d => new {d.Id, d.Title}),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title));
+        var vm = new MovieGenreCreateEditVM
+        {
+            GenreSelectList = new SelectList((await _uow.Genre.GetAllAsync())
+                .Select(g => new {g.Id, g.Naming}), nameof(Genre.Id), nameof(Genre.Naming)),
+            MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+                .Select(d => new {d.Id, d.Title}), nameof(MovieDetails.Id),
+                nameof(MovieDetails.Title))
+        };
         return View(vm);
     }
 
@@ -64,17 +62,17 @@ public class MovieGenresController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(vm.MovieGenre);
-            await _context.SaveChangesAsync();
+            _uow.MovieGenre.Add(vm.MovieGenre);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        vm.GenreSelectList = new SelectList(
-            await _context.Genres.Select(g => new {g.Id, g.Naming}).ToListAsync(),
-            nameof(Genre.Id), nameof(Genre.Naming), vm.MovieGenre.GenreId);
-        vm.MovieDetailsSelectList = new SelectList(
-            _context.MovieDetails.Select(d => new {d.Id, d.Title}),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
+        vm.GenreSelectList = new SelectList((await _uow.Genre.GetAllAsync())
+            .Select(g => new {g.Id, g.Naming}), nameof(Genre.Id), nameof(Genre.Naming),
+            vm.MovieGenre.GenreId);
+        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+            .Select(d => new {d.Id, d.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
         return View(vm);
     }
 
@@ -83,16 +81,18 @@ public class MovieGenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieGenre = await _context.MovieGenres.FindAsync(id);
+        var movieGenre = await _uow.MovieGenre.FirstOrDefaultAsync(id.Value);
         if (movieGenre == null) return NotFound();
-        var vm = new MovieGenreCreateEditVM();
-        vm.MovieGenre = movieGenre;
-        vm.GenreSelectList = new SelectList(
-            await _context.Genres.Select(g => new {g.Id, g.Naming}).ToListAsync(),
-            nameof(Genre.Id), nameof(Genre.Naming), vm.MovieGenre.GenreId);
-        vm.MovieDetailsSelectList = new SelectList(
-            _context.MovieDetails.Select(d => new {d.Id, d.Title}),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
+        var vm = new MovieGenreCreateEditVM
+        {
+            MovieGenre = movieGenre
+        };
+        vm.GenreSelectList = new SelectList((await _uow.Genre.GetAllAsync())
+            .Select(g => new {g.Id, g.Naming}), nameof(Genre.Id), nameof(Genre.Naming),
+            vm.MovieGenre.GenreId);
+        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+            .Select(d => new {d.Id, d.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
         return View(vm);
     }
 
@@ -109,12 +109,12 @@ public class MovieGenresController : Controller
         {
             try
             {
-                _context.Update(movieGenre);
-                await _context.SaveChangesAsync();
+                _uow.MovieGenre.Update(movieGenre);
+                await _uow.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieGenreExists(movieGenre.Id))
+                if (!await MovieGenreExists(movieGenre.Id))
                     return NotFound();
                 throw;
             }
@@ -122,14 +122,16 @@ public class MovieGenresController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var vm = new MovieGenreCreateEditVM();
-        vm.MovieGenre = movieGenre;
-        vm.GenreSelectList = new SelectList(
-            await _context.Genres.Select(g => new {g.Id, g.Naming}).ToListAsync(),
-            nameof(Genre.Id), nameof(Genre.Naming), vm.MovieGenre.GenreId);
-        vm.MovieDetailsSelectList = new SelectList(
-            _context.MovieDetails.Select(d => new {d.Id, d.Title}),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
+        var vm = new MovieGenreCreateEditVM
+        {
+            MovieGenre = movieGenre
+        };
+        vm.GenreSelectList = new SelectList((await _uow.Genre.GetAllAsync())
+            .Select(g => new {g.Id, g.Naming}), nameof(Genre.Id), nameof(Genre.Naming),
+            vm.MovieGenre.GenreId);
+        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+            .Select(d => new {d.Id, d.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
         return View(vm);
     }
 
@@ -139,9 +141,7 @@ public class MovieGenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieGenre = await _context.MovieGenres
-            .Include(m => m.Genre)
-            .Include(m => m.MovieDetails)
+        var movieGenre = await _uow.MovieGenre.QueryableWithInclude()
             .FirstOrDefaultAsync(m => m.Id == id);
         if (movieGenre == null) return NotFound();
 
@@ -154,14 +154,13 @@ public class MovieGenresController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var movieGenre = await _context.MovieGenres.FindAsync(id);
-        _context.MovieGenres.Remove(movieGenre);
-        await _context.SaveChangesAsync();
+        await _uow.MovieGenre.RemoveAsync(id);
+        await _uow.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool MovieGenreExists(Guid id)
+    private async Task<bool> MovieGenreExists(Guid id)
     {
-        return _context.MovieGenres.Any(e => e.Id == id);
+        return await _uow.MovieGenre.ExistsAsync(id);
     }
 }

@@ -1,25 +1,18 @@
 @using Base.Resources
-@model IEnumerable<App.Domain.Profile.ProfileMovie>
+@model IEnumerable<App.Domain.Movie.MovieDetails>
 
 @{
     ViewData["Title"] = "Index";
+    ViewData["id"] = ViewContext.RouteData.Values["id"];
 }
 
 <h1>@Common.Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.UserProfile)
+            @Html.DisplayNameFor(model => model.Title)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MovieDetails)
-        </th>
-        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -27,15 +20,7 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.UserProfile!.Name)
-            </td>
-            <td>
-                @item.MovieDetails!.Title
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">@Common.Delete</a>
+                @item.Title
             </td>
         </tr>
     }

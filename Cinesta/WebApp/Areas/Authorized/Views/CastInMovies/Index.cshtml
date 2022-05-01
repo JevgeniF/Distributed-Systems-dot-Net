@@ -33,16 +33,16 @@
     {
         <tr>
             <td>
-                @item.CastRole!.Naming
+                @item.CastRole?.Naming
             </td>
             <td>
                 @{
-                    var fullName = string.Join(" ", item.Persons!.Name, item.Persons!.Surname);
+                    var fullName = string.Join(" ", item.Persons?.Name, item.Persons?.Surname);
                     @Html.DisplayFor(modelItem => fullName)
                 }
             </td>
             <td>
-                @item.MovieDetails!.Title
+                @item.MovieDetails?.Title
             </td>
             <td>
                     <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a>   

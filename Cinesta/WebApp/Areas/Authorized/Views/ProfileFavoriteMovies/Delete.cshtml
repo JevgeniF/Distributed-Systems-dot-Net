@@ -13,12 +13,6 @@
     <hr/>
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UserProfile)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UserProfile!.Name)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MovieDetails)
         </dt>
         <dd class="col-sm-10">
@@ -29,6 +23,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id"/>
         <input type="submit" value="@Common.Delete" class="btn btn-danger"/> |
-        <a asp-action="Index">@Common.BackToList</a>
+        <a asp-action="Index" asp-route-id="@ViewData["id"]">@Common.BackToList</a>
     </form>
 </div>

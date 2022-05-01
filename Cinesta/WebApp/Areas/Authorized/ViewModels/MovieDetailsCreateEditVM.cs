@@ -1,7 +1,7 @@
 ﻿using App.Domain.Movie;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace WebApp.Areas.Admin.ViewModels;
+namespace WebApp.Areas.Authorized.ViewModels;
 
 public class MovieDetailsCreateEditVM
 {

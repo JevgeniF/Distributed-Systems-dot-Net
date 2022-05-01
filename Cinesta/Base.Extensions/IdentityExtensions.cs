@@ -11,18 +11,18 @@ public static class IdentityExtensions
     {
         return GetUserId<Guid>(user);
     }
-    
+
     public static string GetUserFullName(this ClaimsPrincipal user)
     {
         return (user.Claims.FirstOrDefault(c => c.Type == "aspnet.name")?.Value ?? "Unknown") + " " +
-            (user.Claims.FirstOrDefault(c => c.Type == "aspnet.surname")?.Value ?? "Person");
+               (user.Claims.FirstOrDefault(c => c.Type == "aspnet.surname")?.Value ?? "Person");
     }
-    
+
     public static string GetUserName(this ClaimsPrincipal user)
     {
         return user.Claims.FirstOrDefault(c => c.Type == "aspnet.name")?.Value ?? "";
     }
-    
+
     public static string GetUserSurname(this ClaimsPrincipal user)
     {
         return user.Claims.FirstOrDefault(c => c.Type == "aspnet.surname")?.Value ?? "";

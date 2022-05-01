@@ -34,7 +34,7 @@ public static class AppDataHelper
                 throw new NullReferenceException(
                     "userManager or roleManager cannot be null!");
 
-            var roles = new(string name, string displayName)[]
+            var roles = new (string name, string displayName)[]
             {
                 ("admin", "System administrator"),
                 ("user", "Service user")
@@ -56,7 +56,7 @@ public static class AppDataHelper
 
             var users = new (string username, string name, string surname, string password, string roles)[]
             {
-                ("admin@cinesta.ee","Jevgeni", "Fenko", "chtulhu", "user,admin"),
+                ("admin@cinesta.ee", "Jevgeni", "Fenko", "chtulhu", "user,admin"),
                 ("user@gmail.com", "Oskar", "Luts", "qwerty", "user"),
                 ("newuser@gmail.com", "Lev", "Tolstoi", "123456", "")
             };

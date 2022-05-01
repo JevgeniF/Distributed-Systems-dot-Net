@@ -21,10 +21,7 @@ builder.Services.AddScoped<IAppUOW, AppUOW>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentity<AppUser, AppRole>(options =>
-        {
-            options.SignIn.RequireConfirmedAccount = false;
-        }
+builder.Services.AddIdentity<AppUser, AppRole>(options => { options.SignIn.RequireConfirmedAccount = false; }
     )
     .AddDefaultUI()
     .AddEntityFrameworkStores<AppDbContext>()

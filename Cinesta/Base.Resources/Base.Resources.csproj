@@ -18,8 +18,8 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
         </EmbeddedResource>
         <EmbeddedResource Update="Identity.resx">
-          <Generator>ResXFileCodeGenerator</Generator>
-          <LastGenOutput>Identity.Designer.cs</LastGenOutput>
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Identity.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
 
@@ -30,9 +30,9 @@
             <DependentUpon>Common.resx</DependentUpon>
         </Compile>
         <Compile Update="Identity.Designer.cs">
-          <DesignTime>True</DesignTime>
-          <AutoGen>True</AutoGen>
-          <DependentUpon>Identity.resx</DependentUpon>
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Identity.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 

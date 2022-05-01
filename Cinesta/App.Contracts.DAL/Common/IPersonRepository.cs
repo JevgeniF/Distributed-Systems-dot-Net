@@ -5,5 +5,5 @@ namespace App.Contracts.DAL.Common;
 
 public interface IPersonRepository : IEntityRepository<Person>
 {
-    // for custom methods
+    Task<Person?> GetByNames(string userName, string userSurname, bool noTracking = true);
 }

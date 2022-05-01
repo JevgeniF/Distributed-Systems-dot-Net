@@ -8,7 +8,7 @@ namespace App.Domain.Movie;
 public class UserRating : DomainEntityMetaId
 {
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.UserRating), Name = nameof(Rating))]
-    public int Rating { get; set; }
+    public double Rating { get; set; }
 
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.UserRating), Name = nameof(Comment))]

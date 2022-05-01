@@ -35,7 +35,7 @@ public class MovieDetailsController : ControllerBase
                 MovieTypeId = m.MovieTypeId,
                 MovieType = m.MovieType,
                 MovieDbScores = m.MovieDbScores,
-                Genres = m.Genres,
+                Genres = m.MovieGenres,
                 Videos = m.Videos,
                 UserRatings = m.UserRatings,
                 CastInMovie = m.CastInMovie

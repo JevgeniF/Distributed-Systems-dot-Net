@@ -16,7 +16,7 @@ public class MovieDetailsDto : DomainEntityId
     public Guid MovieTypeId { get; set; }
     public MovieType? MovieType { get; set; }
     public ICollection<MovieDbScore>? MovieDbScores { get; set; }
-    public ICollection<Genre>? Genres { get; set; }
+    public ICollection<MovieGenre>? Genres { get; set; }
     public ICollection<Video>? Videos { get; set; }
     public ICollection<UserRating>? UserRatings { get; set; }
     public ICollection<CastInMovie>? CastInMovie { get; set; }

@@ -36,7 +36,7 @@ public class MovieDetails : DomainEntityMetaId
 
     public ICollection<MovieDbScore>? MovieDbScores { get; set; }
 
-    public ICollection<Genre>? Genres { get; set; }
+    public ICollection<MovieGenre>? MovieGenres { get; set; }
 
     public ICollection<Video>? Videos { get; set; }
 

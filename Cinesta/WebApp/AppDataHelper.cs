@@ -1,6 +1,7 @@
 ﻿using App.DAL.EF;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.Classification;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp;
@@ -33,27 +34,31 @@ public static class AppDataHelper
                 throw new NullReferenceException(
                     "userManager or roleManager cannot be null!");
 
-            var roles = new[]
+            var roles = new(string name, string displayName)[]
             {
-                "admin",
-                "user"
+                ("admin", "System administrator"),
+                ("user", "Service user")
             };
 
             foreach (var roleInfo in roles)
             {
-                var role = roleManager.FindByNameAsync(roleInfo).Result;
+                var role = roleManager.FindByNameAsync(roleInfo.name).Result;
                 if (role == null)
                 {
-                    var identityResult = roleManager.CreateAsync(new AppRole {Name = roleInfo}).Result;
+                    var identityResult = roleManager.CreateAsync(new AppRole
+                    {
+                        Name = roleInfo.name,
+                        DisplayName = roleInfo.displayName
+                    }).Result;
                     if (!identityResult.Succeeded) throw new ApplicationException("Role creation failed");
                 }
             }
 
-            var users = new (string username, string password, string roles)[]
+            var users = new (string username, string name, string surname, string password, string roles)[]
             {
-                ("admin@cinesta.ee", "chtulhu", "user,admin"),
-                ("user@gmail.com", "qwerty", "user"),
-                ("newuser@gmail.com", "123456", "")
+                ("admin@cinesta.ee","Jevgeni", "Fenko", "chtulhu", "user,admin"),
+                ("user@gmail.com", "Oskar", "Luts", "qwerty", "user"),
+                ("newuser@gmail.com", "Lev", "Tolstoi", "123456", "")
             };
 
             foreach (var userInfo in users)
@@ -64,6 +69,8 @@ public static class AppDataHelper
                     user = new AppUser
                     {
                         Email = userInfo.username,
+                        Name = userInfo.name,
+                        Surname = userInfo.surname,
                         UserName = userInfo.username,
                         EmailConfirmed = true
                     };

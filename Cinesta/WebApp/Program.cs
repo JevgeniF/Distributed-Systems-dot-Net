@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("NpgsqlConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
@@ -20,20 +21,9 @@ builder.Services.AddScoped<IAppUOW, AppUOW>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-/*
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-*/
-
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
         {
             options.SignIn.RequireConfirmedAccount = false;
-            options.Password.RequireDigit = false;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequiredUniqueChars = 0;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequiredLength = 1;
         }
     )
     .AddDefaultUI()
@@ -68,6 +58,16 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         new QueryStringRequestCultureProvider(),
         new CookieRequestCultureProvider()
     };
+});
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 1;
 });
 
 var app = builder.Build();

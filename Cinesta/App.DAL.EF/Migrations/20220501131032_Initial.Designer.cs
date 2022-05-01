@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220424095628_Initial")]
+    [Migration("20220501131032_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,6 +139,11 @@ namespace App.DAL.EF.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -182,6 +187,11 @@ namespace App.DAL.EF.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -204,6 +214,11 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -373,8 +388,8 @@ namespace App.DAL.EF.Migrations
                     b.Property<Guid>("MovieDetailsId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("integer");
+                    b.Property<double>("Rating")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -487,9 +502,6 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<Guid?>("MovieDetailsId")
-                        .HasColumnType("uuid");
-
                     b.Property<LangStr>("Naming")
                         .IsRequired()
                         .HasColumnType("jsonb");
@@ -502,8 +514,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MovieDetailsId");
 
                     b.ToTable("Genres");
                 });
@@ -915,7 +925,7 @@ namespace App.DAL.EF.Migrations
                         .HasForeignKey("GenreId");
 
                     b.HasOne("App.Domain.Movie.MovieDetails", "MovieDetails")
-                        .WithMany()
+                        .WithMany("MovieGenres")
                         .HasForeignKey("MovieDetailsId");
 
                     b.Navigation("Genre");
@@ -949,13 +959,6 @@ namespace App.DAL.EF.Migrations
                         .HasForeignKey("MovieDetailsId");
 
                     b.Navigation("MovieDetails");
-                });
-
-            modelBuilder.Entity("App.Domain.MovieStandardDetails.Genre", b =>
-                {
-                    b.HasOne("App.Domain.Movie.MovieDetails", null)
-                        .WithMany("Genres")
-                        .HasForeignKey("MovieDetailsId");
                 });
 
             modelBuilder.Entity("App.Domain.Profile.ProfileFavoriteMovie", b =>
@@ -1089,9 +1092,9 @@ namespace App.DAL.EF.Migrations
                 {
                     b.Navigation("CastInMovie");
 
-                    b.Navigation("Genres");
-
                     b.Navigation("MovieDbScores");
+
+                    b.Navigation("MovieGenres");
 
                     b.Navigation("UserRatings");
 

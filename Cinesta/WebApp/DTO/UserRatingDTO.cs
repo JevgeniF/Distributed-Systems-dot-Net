@@ -6,7 +6,7 @@ namespace WebApp.DTO;
 
 public class UserRatingDto : DomainEntityId
 {
-    public int Rating { get; set; }
+    public double Rating { get; set; }
     public string Comment { get; set; } = default!;
     public Guid AppUserId { get; set; }
     public AppUser? AppUser { get; set; }

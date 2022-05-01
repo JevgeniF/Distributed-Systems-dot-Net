@@ -1,0 +1,95 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="personalData" xml:space="preserve">
+        <value>Isiklikud andmed</value>
+    </data>
+    <data name="manageYourAccount" xml:space="preserve">
+        <value>Seadista konto</value>
+    </data>
+    <data name="changeYourAccountSettings" xml:space="preserve">
+        <value>Muuda konto andmed</value>
+    </data>
+    <data name="profile" xml:space="preserve">
+        <value>Profiil</value>
+    </data>
+    <data name="email" xml:space="preserve">
+        <value>E-mail</value>
+    </data>
+    <data name="passwrd" xml:space="preserve">
+        <value>Parool</value>
+    </data>
+    <data name="twoFactor" xml:space="preserve">
+        <value>Kaheastmeline sisselogimine</value>
+    </data>
+    <data name="close" xml:space="preserve">
+        <value>Panna kinni</value>
+    </data>
+    <data name="changePasswrd" xml:space="preserve">
+        <value>Muuda parooli</value>
+    </data>
+    <data name="currentPasswrd" xml:space="preserve">
+        <value>Praegune parool</value>
+    </data>
+    <data name="newPasswrd" xml:space="preserve">
+        <value>Uus parool</value>
+    </data>
+    <data name="confirmNewPasswrd" xml:space="preserve">
+        <value>Kinnita uue parooli</value>
+    </data>
+    <data name="updatePasswrd" xml:space="preserve">
+        <value>Uuenda parooli</value>
+    </data>
+    <data name="deletePersonalData" xml:space="preserve">
+        <value>Kustuta isiklikud andmed</value>
+    </data>
+    <data name="deletePersonalDataNotice" xml:space="preserve">
+        <value>Andmete kustutamine eemaldab ka sinu konto, ja seda ei saa taastada.</value>
+    </data>
+    <data name="deletePersonalDataButton" xml:space="preserve">
+        <value>Kustuta minu andmed ja pane kinni kasutajakonto</value>
+    </data>
+    <data name="lengthErrorMessage" xml:space="preserve">
+        <value>{0} peab olema vähemalt {2} ja maksimum {1} märgi.</value>
+    </data>
+    <data name="passwrdDoesntMatchError" xml:space="preserve">
+        <value>Uus parool ja parooli kinnitus on erinevad</value>
+    </data>
+    <data name="unableToLoadUser" xml:space="preserve">
+        <value>Ei saa laadida kasutajat</value>
+    </data>
+    <data name="passwrdChangedMessage" xml:space="preserve">
+        <value>Teie parool vahetatud.</value>
+    </data>
+    <data name="wrongPasswrd" xml:space="preserve">
+        <value>Vale parool</value>
+    </data>
+    <data name="unexpectedErrorDeletingUser" xml:space="preserve">
+        <value>Tundmatu viga kasutajakonto kustutamisel.</value>
+    </data>
+    <data name="disable2FA" xml:space="preserve">
+        <value>Lülita välja kaheasmeline sisselogimine (2FA)</value>
+    </data>
+    <data name="disables2FAOnly" xml:space="preserve">
+        <value>See lülitab välja ainult 2FA.</value>
+    </data>
+    <data name="disabling2FAMessage" xml:space="preserve">
+        <value>2FA välja lülitamine ei vaheta võtmed, mis on kasutatud autentimise appis. Kui sa tahad vahetada need võtmed, siis sul vaja </value>
+    </data>
+    <data name="resetAuthenticatorKeys" xml:space="preserve">
+        <value>resettida autenteerimise võtmed.</value>
+    </data>
+    <data name="disable2FAShort" xml:space="preserve">
+        <value>Lülita välja 2FA</value>
+    </data>
+</root>

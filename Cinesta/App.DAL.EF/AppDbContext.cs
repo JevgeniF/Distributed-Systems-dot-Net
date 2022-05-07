@@ -16,6 +16,8 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
         : base(options)
     {
     }
+    //identity
+    public DbSet<RefreshToken> RefreshTokens { get; set; } = default!;
 
     //cast
     public DbSet<CastInMovie> CastInMovies { get; set; } = default!;

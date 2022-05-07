@@ -1,6 +1,8 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.Movie;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
@@ -8,6 +10,7 @@ using WebApp.DTO;
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class UserRatingsController : ControllerBase
 {

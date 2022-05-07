@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220501131032_Initial")]
+    [Migration("20220507183244_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -239,6 +239,51 @@ namespace App.DAL.EF.Migrations
                     b.HasIndex("PersonId");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("App.Domain.Identity.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("ExpirationDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("PreviousExpirationDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PreviousToken")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("App.Domain.Movie.MovieDbScore", b =>
@@ -888,6 +933,13 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Person");
                 });
 
+            modelBuilder.Entity("App.Domain.Identity.RefreshToken", b =>
+                {
+                    b.HasOne("App.Domain.Identity.AppUser", null)
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("AppUserId");
+                });
+
             modelBuilder.Entity("App.Domain.Movie.MovieDbScore", b =>
                 {
                     b.HasOne("App.Domain.Movie.MovieDetails", "MovieDetails")
@@ -1085,6 +1137,8 @@ namespace App.DAL.EF.Migrations
 
             modelBuilder.Entity("App.Domain.Identity.AppUser", b =>
                 {
+                    b.Navigation("RefreshTokens");
+
                     b.Navigation("UserProfiles");
                 });
 

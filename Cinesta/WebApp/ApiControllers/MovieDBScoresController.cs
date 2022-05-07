@@ -1,12 +1,15 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.Movie;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class MovieDBScoresController : ControllerBase
 {
@@ -21,14 +24,15 @@ public class MovieDBScoresController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<MovieDbScore>> GetMovieDbScores()
     {
-        return await _uow.MovieDbScore.GetAllAsync();
+        return await _uow.MovieDbScore.GetWithInclude();
     }
 
     // GET: api/MovieDBScores/5
     [HttpGet("{id}")]
     public async Task<ActionResult<MovieDbScore>> GetMovieDbScore(Guid id)
     {
-        var movieDbScore = await _uow.MovieDbScore.FirstOrDefaultAsync(id);
+        var movieDbScore = await _uow.MovieDbScore.QueryableWithInclude()
+            .FirstOrDefaultAsync(m => m.Id == id);
 
         if (movieDbScore == null) return NotFound();
 
@@ -38,6 +42,7 @@ public class MovieDBScoresController : ControllerBase
     // PUT: api/MovieDBScores/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutMovieDbScore(Guid id, MovieDbScore movieDbScore)
     {
         if (id != movieDbScore.Id) return BadRequest();
@@ -60,6 +65,7 @@ public class MovieDBScoresController : ControllerBase
     // POST: api/MovieDBScores
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieDbScore>> PostMovieDbScore(MovieDbScore movieDbScore)
     {
         _uow.MovieDbScore.Add(movieDbScore);
@@ -70,6 +76,7 @@ public class MovieDBScoresController : ControllerBase
 
     // DELETE: api/MovieDBScores/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieDbScore(Guid id)
     {
         await _uow.MovieDbScore.RemoveAsync(id);

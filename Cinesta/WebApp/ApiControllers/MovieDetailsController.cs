@@ -1,6 +1,8 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.Movie;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
@@ -8,6 +10,7 @@ using WebApp.DTO;
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class MovieDetailsController : ControllerBase
 {
@@ -58,6 +61,7 @@ public class MovieDetailsController : ControllerBase
     // PUT: api/MovieDetails/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutMovieDetails(Guid id, MovieDetailsDto movieDetails)
     {
         if (id != movieDetails.Id) return BadRequest();
@@ -85,6 +89,7 @@ public class MovieDetailsController : ControllerBase
     // POST: api/MovieDetails
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieDetails>> PostMovieDetails(MovieDetails movieDetails)
     {
         _uow.MovieDetails.Add(movieDetails);
@@ -95,6 +100,7 @@ public class MovieDetailsController : ControllerBase
 
     // DELETE: api/MovieDetails/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieDetails(Guid id)
     {
         await _uow.MovieDetails.RemoveAsync(id);

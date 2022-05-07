@@ -1,12 +1,15 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.MovieStandardDetails;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class AgeRatingsController : ControllerBase
 {

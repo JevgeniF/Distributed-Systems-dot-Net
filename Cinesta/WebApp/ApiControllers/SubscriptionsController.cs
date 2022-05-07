@@ -1,6 +1,8 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
@@ -8,6 +10,7 @@ using WebApp.DTO;
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class SubscriptionsController : ControllerBase
 {
@@ -50,6 +53,7 @@ public class SubscriptionsController : ControllerBase
     // PUT: api/Subscriptions/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutSubscription(Guid id, SubscriptionDto subscription)
     {
         if (id != subscription.Id) return BadRequest();

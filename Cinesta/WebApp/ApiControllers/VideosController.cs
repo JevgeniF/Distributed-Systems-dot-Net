@@ -1,6 +1,8 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.Movie;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
@@ -8,6 +10,7 @@ using WebApp.DTO;
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class VideosController : ControllerBase
 {
@@ -52,6 +55,7 @@ public class VideosController : ControllerBase
     // PUT: api/Videos/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutVideo(Guid id, VideoDto video)
     {
         if (id != video.Id) return BadRequest();
@@ -79,6 +83,7 @@ public class VideosController : ControllerBase
     // POST: api/Videos
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<Video>> PostVideo(Video video)
     {
         _uow.Video.Add(video);
@@ -89,6 +94,7 @@ public class VideosController : ControllerBase
 
     // DELETE: api/Videos/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteVideo(Guid id)
     {
         await _uow.Video.RemoveAsync(id);

@@ -1,12 +1,15 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.Movie;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class MovieGenresController : ControllerBase
 {
@@ -38,6 +41,7 @@ public class MovieGenresController : ControllerBase
     // PUT: api/MovieGenres/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutMovieGenre(Guid id, MovieGenre movieGenre)
     {
         if (id != movieGenre.Id) return BadRequest();
@@ -60,6 +64,7 @@ public class MovieGenresController : ControllerBase
     // POST: api/MovieGenres
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieGenre>> PostMovieGenre(MovieGenre movieGenre)
     {
         _uow.MovieGenre.Add(movieGenre);
@@ -70,6 +75,7 @@ public class MovieGenresController : ControllerBase
 
     // DELETE: api/MovieGenres/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieGenre(Guid id)
     {
         await _uow.MovieGenre.RemoveAsync(id);

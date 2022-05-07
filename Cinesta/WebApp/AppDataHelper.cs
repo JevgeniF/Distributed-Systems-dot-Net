@@ -1,7 +1,7 @@
-﻿using App.DAL.EF;
+﻿using System.Security.Claims;
+using App.DAL.EF;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.Classification;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp;
@@ -75,6 +75,8 @@ public static class AppDataHelper
                         EmailConfirmed = true
                     };
                     var identityResult = userManager.CreateAsync(user, userInfo.password).Result;
+                    identityResult = userManager.AddClaimAsync(user, new Claim("aspnet.name", user.Name)).Result;
+                    identityResult = userManager.AddClaimAsync(user, new Claim("aspnet.surname", user.Surname)).Result;
                     if (!identityResult.Succeeded) throw new ApplicationException("Cannot create user!");
                 }
 

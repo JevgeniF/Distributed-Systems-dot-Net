@@ -1,6 +1,8 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.Cast;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
@@ -8,6 +10,7 @@ using WebApp.DTO;
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class CastRolesController : ControllerBase
 {
@@ -20,7 +23,7 @@ public class CastRolesController : ControllerBase
 
     // GET: api/CastRoles
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CastRoleDto>>> GetFooBars()
+    public async Task<ActionResult<IEnumerable<CastRoleDto>>> GetCastRoles()
     {
         var res = (await _uow.CastRole.GetAllAsync())
             .Select(c => new CastRoleDto

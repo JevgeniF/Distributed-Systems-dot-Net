@@ -1,12 +1,15 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.Cast;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class CastInMoviesController : ControllerBase
 {
@@ -21,15 +24,14 @@ public class CastInMoviesController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<CastInMovie>> GetCastInMovies()
     {
-        return await _uow.CastInMovie.GetAllAsync();
+        return await _uow.CastInMovie.GetWithInclude();
     }
 
     // GET: api/CastInMovies/5
     [HttpGet("{id}")]
     public async Task<ActionResult<CastInMovie>> GetCastInMovie(Guid id)
     {
-        var castInMovie = await _uow.CastInMovie.FirstOrDefaultAsync(id);
-
+        var castInMovie = await _uow.CastInMovie.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
         if (castInMovie == null) return NotFound();
 
         return castInMovie;
@@ -38,6 +40,7 @@ public class CastInMoviesController : ControllerBase
     // PUT: api/CastInMovies/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutCastInMovie(Guid id, CastInMovie castInMovie)
     {
         if (id != castInMovie.Id) return BadRequest();
@@ -60,6 +63,7 @@ public class CastInMoviesController : ControllerBase
     // POST: api/CastInMovies
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<CastInMovie>> PostCastInMovie(CastInMovie castInMovie)
     {
         _uow.CastInMovie.Add(castInMovie);
@@ -70,6 +74,7 @@ public class CastInMoviesController : ControllerBase
 
     // DELETE: api/CastInMovies/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteCastInMovie(Guid id)
     {
         await _uow.CastInMovie.RemoveAsync(id);

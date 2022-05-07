@@ -1,6 +1,8 @@
 #nullable disable
 using App.Contracts.DAL;
 using App.Domain.MovieStandardDetails;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
@@ -8,6 +10,7 @@ using WebApp.DTO;
 namespace WebApp.ApiControllers;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class MovieTypesController : ControllerBase
 {
@@ -46,6 +49,7 @@ public class MovieTypesController : ControllerBase
     // PUT: api/MovieTypes/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutMovieType(Guid id, MovieTypeDto movieType)
     {
         if (id != movieType.Id) return BadRequest();
@@ -72,6 +76,7 @@ public class MovieTypesController : ControllerBase
     // POST: api/MovieTypes
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieType>> PostMovieType(MovieType movieType)
     {
         _uow.MovieType.Add(movieType);
@@ -82,6 +87,7 @@ public class MovieTypesController : ControllerBase
 
     // DELETE: api/MovieTypes/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieType(Guid id)
     {
         _uow.MovieType.Remove(id);

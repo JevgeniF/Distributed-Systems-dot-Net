@@ -47,7 +47,7 @@ public static class IdentityExtensions
     {
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-        var token = new JwtSecurityToken(issuer: issuer, audience: audience, claims: claims,
+        var token = new JwtSecurityToken(issuer, audience, claims,
             expires: expirationDateTime, signingCredentials: signingCredentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

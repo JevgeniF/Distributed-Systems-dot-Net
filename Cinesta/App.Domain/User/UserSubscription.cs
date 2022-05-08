@@ -3,11 +3,11 @@ using Base.Domain;
 
 namespace App.Domain.User;
 
-public class UserSubscription: DomainEntityMetaId<Guid>
+public class UserSubscription: DomainEntityMetaId
 {
-    public Guid AppUserId { get; set; }
+    public Guid? AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
     
-    public Guid SubscriptionId { get; set; }
+    public Guid? SubscriptionId { get; set; }
     public Subscription? Subscription { get; set; }
 }

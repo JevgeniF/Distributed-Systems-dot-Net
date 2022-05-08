@@ -36,5 +36,6 @@ public interface IAppUOW : IUnitOfWork
 
     // user
     ISubscriptionRepository Subscription { get; }
+    IUserSubscriptionRepository UserSubscription { get; }
     IPaymentDetailsRepository PaymentDetails { get; }
 }

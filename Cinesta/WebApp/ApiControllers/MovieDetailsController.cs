@@ -78,8 +78,7 @@ public class MovieDetailsController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!await MovieDetailsExists(id))
-                return NotFound();
+            if (!await MovieDetailsExists(id)) return NotFound();
             throw;
         }
 

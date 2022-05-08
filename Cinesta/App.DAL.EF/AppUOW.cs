@@ -17,11 +17,8 @@ namespace App.DAL.EF;
 
 public class AppUOW : BaseUOW<AppDbContext>, IAppUOW
 {
-    // movie standard details
     private IAgeRatingRepository? _ageRating;
     private ICastInMovieRepository? _castInMovie;
-
-    // cast
     private ICastRoleRepository? _castRole;
     private IGenreRepository? _genre;
     private IMovieDBScoreRepository? _movieDbScore;
@@ -29,20 +26,13 @@ public class AppUOW : BaseUOW<AppDbContext>, IAppUOW
     private IMovieGenreRepository? _movieGenre;
     private IMovieTypeRepository? _movieType;
     private IPaymentDetailsRepository? _paymentDetails;
-
-    // person
     private IPersonRepository? _person;
     private IProfileFavoriteMovieRepository? _profileFavoriteMovie;
     private IProfileMovieRepository? _profileMovie;
-
-    // user
     private ISubscriptionRepository? _subscription;
-
-    // profile
     private IUserProfileRepository? _userProfile;
+    private IUserSubscriptionRepository? _userSubscription;
     private IUserRatingRepository? _userRating;
-
-    // movie
     private IVideoRepository? _video;
 
     public AppUOW(AppDbContext dbContext) : base(dbContext)
@@ -67,6 +57,9 @@ public class AppUOW : BaseUOW<AppDbContext>, IAppUOW
         new ProfileFavoriteMovieRepository(UOWDbContext);
 
     public virtual ISubscriptionRepository Subscription => _subscription ??= new SubscriptionRepository(UOWDbContext);
+
+    public virtual IUserSubscriptionRepository UserSubscription =>
+        _userSubscription ??= new UserSubscriptionRepository(UOWDbContext);
 
     public virtual IPaymentDetailsRepository PaymentDetails => _paymentDetails ??=
         new PaymentDetailsRepository(UOWDbContext);

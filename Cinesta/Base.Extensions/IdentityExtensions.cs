@@ -1,11 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using App.Domain.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Base.Extensions;
@@ -35,6 +31,9 @@ public static class IdentityExtensions
 
     public static TKeyType GetUserId<TKeyType>(this ClaimsPrincipal user)
     {
+        if (typeof(TKeyType) != typeof(Guid) && typeof(TKeyType) != typeof(string) && typeof(TKeyType) != typeof(int))
+            throw new ApplicationException($"This type of User id {typeof(TKeyType).Name} is not supported!");
+        
         var idClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
         if (idClaim == null) throw new NullReferenceException("NameIdentifier claim not found");
 

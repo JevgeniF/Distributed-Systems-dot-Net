@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Base.Domain;
 
-namespace App.Domain.Cast;
+namespace App.DTO.Cast;
 
-public class CastRole : DomainEntityMetaId
+public class CastRole: DomainEntityId<Guid>
 {
     [Column(TypeName = "jsonb")]
+    [Display(ResourceType = typeof(Resources.App.Domain.Cast.CastRole), Name = nameof(Naming))]
     public LangStr Naming { get; set; } = new();
 }

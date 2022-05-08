@@ -50,6 +50,7 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 
     //user
     public DbSet<Subscription> Subscriptions { get; set; } = default!;
+    public DbSet<UserSubscription> UserSubscriptions { get; set; } = default!;
     public DbSet<PaymentDetails> PaymentDetails { get; set; } = default!;
 
     public override int SaveChanges()

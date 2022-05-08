@@ -11,11 +11,11 @@ public class SubscriptionRepository : BaseEntityRepository<Subscription, AppDbCo
     {
     }
 
-    public async Task<IEnumerable<Subscription>> GetAllByUserIdAsync(Guid userId, bool noTracking = true)
-    {
-        var query = CreateQuery(noTracking);
-        query = query.Include(u => u.AppUser).Where(u => u.AppUserId == userId);
+    //public async Task<IEnumerable<Subscription>> GetAllByUserIdAsync(Guid userId, bool noTracking = true)
+    //{
+    //    var query = CreateQuery(noTracking);
+    //    query = query.Include(u => u.AppUser).Where(u => u.AppUserId == userId);
 
-        return await query.ToListAsync();
-    }
+    //    return await query.ToListAsync();
+    //}
 }

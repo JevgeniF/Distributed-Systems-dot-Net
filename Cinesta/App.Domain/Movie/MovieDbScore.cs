@@ -5,14 +5,8 @@ namespace App.Domain.Movie;
 
 public class MovieDbScore : DomainEntityMetaId
 {
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDbScore), Name = nameof(ImdbId))]
-    public string ImdbId { get; set; } = default!;
-
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDbScore), Name = nameof(Score))]
+    public string ImdbId { get; set; } = default!; 
     public double? Score { get; set; }
-
     public Guid MovieDetailsId { get; set; }
-
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDbScore), Name = nameof(MovieDetails))]
     public MovieDetails? MovieDetails { get; set; }
 }

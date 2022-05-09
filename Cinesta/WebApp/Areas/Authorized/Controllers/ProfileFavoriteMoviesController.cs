@@ -1,6 +1,6 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Movie;
+using App.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,7 +25,7 @@ public class ProfileFavoriteMoviesController : Controller
     public async Task<IActionResult> Index()
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
-        return View(await _uow.ProfileFavoriteMovie.GetAllByProfileIdAsync(profileId));
+        return View(await _uow.ProfileFavoriteMovie.IncludeGetAllByProfileIdAsync(profileId));
     }
 
     // GET: Admin/ProfileFavoriteMovies/Create
@@ -35,7 +35,7 @@ public class ProfileFavoriteMoviesController : Controller
         var profile = await _uow.UserProfile.FirstOrDefaultAsync(profileId);
         var vm = new ProfileFavoriteMovieCreateEditVM
         {
-            MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetByAgeRating(profile!.Age))
+            MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.IncludeGetByAgeAsync(profile!.Age))
                 .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
@@ -62,7 +62,7 @@ public class ProfileFavoriteMoviesController : Controller
             return RedirectToAction(nameof(Index), new {id = profileId});
         }
 
-        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetByAgeRating(profile!.Age))
+        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.IncludeGetByAgeAsync(profile!.Age))
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.ProfileFavoriteMovie.MovieDetailsId);
         return View(vm);
@@ -75,8 +75,7 @@ public class ProfileFavoriteMoviesController : Controller
         if (id == null) return NotFound();
 
         ViewData["id"] = (await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id.Value))!.UserProfileId;
-        var profileFavoriteMovie = await _uow.ProfileFavoriteMovie.QueryableWithInclude()
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var profileFavoriteMovie = await _uow.ProfileFavoriteMovie.IncludeFirstOrDefaultAsync(id.Value);
         if (profileFavoriteMovie == null) return NotFound();
 
         return View(profileFavoriteMovie);

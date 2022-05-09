@@ -1,11 +1,11 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Movie;
+using App.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Areas.Admin.ViewModels;
+using WebApp.Areas.Authorized.ViewModels;
 
 namespace WebApp.Areas.Authorized.Controllers;
 
@@ -23,7 +23,7 @@ public class VideosController : Controller
     // GET: Admin/Videos
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.Video.GetWithInclude());
+        return View(await _uow.Video.IncludeGetAllAsync());
     }
 
     // GET: Admin/Videos/Details/5
@@ -31,7 +31,7 @@ public class VideosController : Controller
     {
         if (id == null) return NotFound();
 
-        var video = await _uow.Video.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
+        var video = await _uow.Video.IncludeFirstOrDefaultAsync(id.Value);
         if (video == null) return NotFound();
 
         return View(video);
@@ -134,7 +134,7 @@ public class VideosController : Controller
     {
         if (id == null) return NotFound();
 
-        var video = await _uow.Video.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
+        var video = await _uow.Video.IncludeFirstOrDefaultAsync(id.Value);
         if (video == null) return NotFound();
 
         return View(video);

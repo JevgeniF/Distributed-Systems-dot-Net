@@ -1,6 +1,6 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Cast;
+using App.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,14 +24,14 @@ public class CastInMoviesController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<CastInMovie>> GetCastInMovies()
     {
-        return await _uow.CastInMovie.GetWithInclude();
+        return await _uow.CastInMovie.IncludeGetAllAsync();
     }
 
     // GET: api/CastInMovies/5
     [HttpGet("{id}")]
     public async Task<ActionResult<CastInMovie>> GetCastInMovie(Guid id)
     {
-        var castInMovie = await _uow.CastInMovie.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
+        var castInMovie = await _uow.CastInMovie.IncludeFirstOrDefaultAsync(id);
         if (castInMovie == null) return NotFound();
 
         return castInMovie;

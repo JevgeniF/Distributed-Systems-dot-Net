@@ -1,6 +1,6 @@
 @using Base.Extensions
 @using Base.Resources
-@model IEnumerable<App.Domain.Movie.UserRating>
+@model IEnumerable<App.DTO.UserRating>
 
 @{
     ViewData["Title"] = "Index";
@@ -40,7 +40,7 @@
                 @item.Comment
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUser!.Email)
+                @Html.DisplayFor(modelItem => item.AppUser!.Name)
             </td>
             <td>
                 @item.MovieDetails!.Title

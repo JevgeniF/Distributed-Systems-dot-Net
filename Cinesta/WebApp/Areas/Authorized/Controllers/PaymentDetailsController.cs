@@ -1,6 +1,6 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.User;
+using App.DTO;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ public class PaymentDetailsController : Controller
     // GET: Admin/PaymentDetails
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.PaymentDetails.GetAllByUserIdAsync(User.GetUserId()));
+        return View(await _uow.PaymentDetails.IncludeGetAllByUserIdAsync(User.GetUserId()));
     }
 
     // GET: Admin/PaymentDetails/Details/5

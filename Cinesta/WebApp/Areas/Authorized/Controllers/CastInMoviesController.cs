@@ -1,8 +1,6 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Cast;
-using App.Domain.Common;
-using App.Domain.Movie;
+using App.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,7 +23,7 @@ public class CastInMoviesController : Controller
     // GET: Admin/CastInMovies
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.CastInMovie.GetWithInclude());
+        return View(await _uow.CastInMovie.IncludeGetAllAsync());
     }
 
     // GET: Admin/CastInMovies/Details/5
@@ -33,7 +31,7 @@ public class CastInMoviesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castInMovie = await _uow.CastInMovie.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
+        var castInMovie = await _uow.CastInMovie.IncludeFirstOrDefaultAsync(id.Value);
         if (castInMovie == null) return NotFound();
 
         return View(castInMovie);
@@ -158,7 +156,7 @@ public class CastInMoviesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castInMovie = await _uow.CastInMovie.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
+        var castInMovie = await _uow.CastInMovie.IncludeFirstOrDefaultAsync(id.Value);
         if (castInMovie == null) return NotFound();
 
         return View(castInMovie);

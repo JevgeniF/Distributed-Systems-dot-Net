@@ -1,12 +1,10 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Identity;
+using App.DTO;
 using Microsoft.AspNetCore.Mvc;
-using App.Domain.User;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WebApp.Areas.Authorized.ViewModels;
 
 namespace WebApp.Areas.Authorized.Controllers
@@ -25,7 +23,7 @@ namespace WebApp.Areas.Authorized.Controllers
         // GET: Authorized/UserSubscriptions
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.UserSubscription.GetAllByUserIdAsync(User.GetUserId()));
+            return View(await _uow.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()));
         }
 
         // GET: Authorized/UserSubscriptions/Details/5
@@ -34,7 +32,7 @@ namespace WebApp.Areas.Authorized.Controllers
             if (id == null) return NotFound();
 
             var userSubscription =
-                await _uow.UserSubscription.QueryableWithInclude().FirstOrDefaultAsync(u => u.Id == id);
+                await _uow.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
             if (userSubscription == null) return NotFound();
 
             return View(userSubscription);
@@ -79,7 +77,7 @@ namespace WebApp.Areas.Authorized.Controllers
             if (id == null) return NotFound();
 
             var userSubscription =
-                await _uow.UserSubscription.QueryableWithInclude().FirstOrDefaultAsync(u => u.Id == id);
+                await _uow.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
             if (userSubscription == null) return NotFound();
 
             return View(userSubscription);

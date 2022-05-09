@@ -1,10 +1,5 @@
-﻿using App.Domain.Cast;
-using App.Domain.Common;
+﻿using App.Domain;
 using App.Domain.Identity;
-using App.Domain.Movie;
-using App.Domain.MovieStandardDetails;
-using App.Domain.Profile;
-using App.Domain.User;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

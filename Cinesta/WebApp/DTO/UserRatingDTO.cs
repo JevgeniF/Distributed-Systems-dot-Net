@@ -1,5 +1,5 @@
-﻿using App.Domain.Identity;
-using App.Domain.Movie;
+﻿using App.DTO;
+using App.DTO.Identity;
 using Base.Domain;
 
 namespace WebApp.DTO;

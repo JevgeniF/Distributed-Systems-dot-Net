@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using App.DTO.Common;
-using App.DTO.Profile;
 using Base.Domain;
 
 namespace App.DTO.Identity;
 
-public class AppUser: DomainEntityId<Guid>
+public class AppUser: DomainEntityId
 {
     public Guid? PersonId { get; set; } = default!;
 

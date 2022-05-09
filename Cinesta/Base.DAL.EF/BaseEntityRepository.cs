@@ -1,64 +1,69 @@
-﻿using Base.Contracts.DAL;
+﻿using Base.Contracts;
+using Base.Contracts.DAL;
 using Base.Contracts.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Base.DAL.EF;
 
-public class BaseEntityRepository<TEntity, TDbContext> : BaseEntityRepository<TEntity, Guid, TDbContext>
-    where TEntity : class, IDomainEntityId<Guid>
+public class BaseEntityRepository<TAppEntity, TDalEntity, TDbContext> : BaseEntityRepository<TAppEntity, TDalEntity, Guid, TDbContext>
+    where TAppEntity : class, IDomainEntityId<Guid>
+    where TDalEntity : class, IDomainEntityId<Guid>
     where TDbContext : DbContext
 {
-    public BaseEntityRepository(TDbContext dbContext) : base(dbContext)
+    public BaseEntityRepository(TDbContext dbContext, IMapper<TAppEntity, TDalEntity> mapper) : base(dbContext, mapper)
     {
     }
 }
 
-public class BaseEntityRepository<TEntity, TKey, TDbContext> : IEntityRepository<TEntity, TKey>
-    where TEntity : class, IDomainEntityId<TKey>
+public class BaseEntityRepository<TAppEntity,TDalEntity, TKey, TDbContext> : IEntityRepository<TAppEntity, TKey>
+    where TAppEntity : class, IDomainEntityId<TKey>
+    where TDalEntity : class, IDomainEntityId<TKey>
     where TKey : IEquatable<TKey>
     where TDbContext : DbContext
 {
     protected readonly TDbContext RepoDbContext;
-    protected readonly DbSet<TEntity> RepoDbSet;
+    protected readonly DbSet<TDalEntity> RepoDbSet;
+    protected readonly IMapper<TAppEntity, TDalEntity> Mapper;
 
-    public BaseEntityRepository(TDbContext dbContext)
+    public BaseEntityRepository(TDbContext dbContext, IMapper<TAppEntity, TDalEntity> mapper)
     {
         RepoDbContext = dbContext;
-        RepoDbSet = dbContext.Set<TEntity>();
+        RepoDbSet = dbContext.Set<TDalEntity>();
+        Mapper = mapper;
     }
 
-    public virtual TEntity Add(TEntity entity)
+    public virtual TAppEntity Add(TAppEntity entity)
     {
-        return RepoDbSet.Add(entity).Entity;
+        return Mapper.Map(RepoDbSet.Add(Mapper.Map(entity)!).Entity)!;
     }
 
-    public virtual TEntity Update(TEntity entity)
+    public virtual TAppEntity Update(TAppEntity entity)
     {
-        return RepoDbSet.Update(entity).Entity;
+        return Mapper.Map(RepoDbSet.Update(Mapper.Map(entity)!).Entity)!;
     }
 
-    public virtual TEntity Remove(TEntity entity)
+    public virtual TAppEntity Remove(TAppEntity entity)
     {
-        return RepoDbSet.Remove(entity).Entity;
-    }
+        return Mapper.Map(RepoDbSet.Remove(Mapper.Map(entity)!).Entity)!;
+}
 
-    public virtual TEntity Remove(TKey id)
+    public virtual TAppEntity Remove(TKey id)
     {
         var entity = FirstOrDefault(id);
         if (entity == null)
             // TODO: implement custom exception for entity not found
-            throw new NullReferenceException($"Entity {typeof(TEntity).Name} was not found");
+            throw new NullReferenceException($"Entity {typeof(TAppEntity).Name} was not found");
         return Remove(entity);
     }
 
-    public virtual TEntity? FirstOrDefault(TKey id, bool noTracking = true)
+    public virtual TAppEntity? FirstOrDefault(TKey id, bool noTracking = true)
     {
-        return CreateQuery(noTracking).FirstOrDefault(e => e.Id.Equals(id));
+        return Mapper.Map(CreateQuery(noTracking).FirstOrDefault(e => e.Id.Equals(id)));
     }
 
-    public virtual IEnumerable<TEntity> GetAll(bool noTracking = true)
+    public virtual IEnumerable<TAppEntity> GetAll(bool noTracking = true)
     {
-        return CreateQuery(noTracking).ToList();
+        return CreateQuery(noTracking).ToList().Select(e => Mapper.Map(e)!);
     }
 
     public virtual bool Exists(TKey id)
@@ -66,14 +71,14 @@ public class BaseEntityRepository<TEntity, TKey, TDbContext> : IEntityRepository
         return RepoDbSet.Any(e => e.Id.Equals(id));
     }
 
-    public virtual async Task<TEntity?> FirstOrDefaultAsync(TKey id, bool noTracking = true)
+    public virtual async Task<TAppEntity?> FirstOrDefaultAsync(TKey id, bool noTracking = true)
     {
-        return await CreateQuery(noTracking).FirstOrDefaultAsync(e => e.Id.Equals(id));
+        return Mapper.Map(await CreateQuery(noTracking).FirstOrDefaultAsync(e => e.Id.Equals(id)));
     }
 
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(bool noTracking = true)
+    public virtual async Task<IEnumerable<TAppEntity>> GetAllAsync(bool noTracking = true)
     {
-        return await CreateQuery(noTracking).ToListAsync();
+        return (await CreateQuery(noTracking).ToListAsync()).Select(e => Mapper.Map(e)!);
     }
 
     public virtual async Task<bool> ExistsAsync(TKey id)
@@ -81,16 +86,16 @@ public class BaseEntityRepository<TEntity, TKey, TDbContext> : IEntityRepository
         return await RepoDbSet.AnyAsync(e => e.Id.Equals(id));
     }
 
-    public virtual async Task<TEntity> RemoveAsync(TKey id)
+    public virtual async Task<TAppEntity> RemoveAsync(TKey id)
     {
         var entity = await FirstOrDefaultAsync(id);
         if (entity == null)
             // TODO: implement custom exception for entity not found
-            throw new NullReferenceException($"Entity {typeof(TEntity).Name} was not found");
+            throw new NullReferenceException($"Entity {typeof(TAppEntity).Name} was not found");
         return Remove(entity);
     }
 
-    protected virtual IQueryable<TEntity> CreateQuery(bool noTracking = true)
+    protected virtual IQueryable<TDalEntity> CreateQuery(bool noTracking = true)
     {
         // TODO: entity ownership control
 

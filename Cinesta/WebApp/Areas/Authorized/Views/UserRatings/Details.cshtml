@@ -2,7 +2,7 @@
 @using Base.Extensions
 @using Base.Resources
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model App.Domain.Movie.UserRating
+@model App.DTO.UserRating
 
 @{
     ViewData["Title"] = "Details";
@@ -30,7 +30,7 @@
             @Html.DisplayNameFor(model => model.AppUser)
         </dt>
         <dd class="col-sm-10">
-            @Model.AppUser!.Email
+            @Model.AppUser!.Name
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MovieDetails)

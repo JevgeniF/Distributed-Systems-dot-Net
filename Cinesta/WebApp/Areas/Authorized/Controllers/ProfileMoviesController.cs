@@ -21,6 +21,6 @@ public class ProfileMoviesController : Controller
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
         var profile = await _uow.UserProfile.FirstOrDefaultAsync(profileId);
-        return View(await _uow.ProfileMovie.GetAllByProfileAgeAsync(profile!.Age));
+        return View(await _uow.MovieDetails.IncludeGetByAgeAsync(profile!.Age));
     }
 }

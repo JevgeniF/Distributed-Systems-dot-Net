@@ -1,4 +1,4 @@
-@model IEnumerable<App.Domain.User.UserSubscription>
+@model IEnumerable<App.DTO.UserSubscription>
 
 @{
     ViewData["Title"] = "Index";
@@ -25,7 +25,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUser!.UserName)
+                @Html.DisplayFor(modelItem => item.AppUser!.Name + " " + item.AppUser.Surname)
             </td>
             <td>
                 @item.Subscription!.Naming

@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using App.Contracts.DAL;
-using App.Domain.Common;
+using App.Domain;
 using Microsoft.AspNetCore.Authentication;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -143,7 +143,7 @@ public class RegisterModel : PageModel
                 var person = await _uow.Person.GetByNames(user.Name, user.Surname);
                 if (person == null)
                 {
-                    person = new Person
+                    person = new App.DTO.Person
                     {
                         Id = Guid.NewGuid(),
                         Name = user.Name,

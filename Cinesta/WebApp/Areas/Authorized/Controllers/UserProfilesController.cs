@@ -1,6 +1,6 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Profile;
+using App.DTO;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ public class UserProfilesController : Controller
     // GET: Admin/UserProfiles
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.UserProfile.GetAllByUserIdAsync(User.GetUserId()));
+        return View(await _uow.UserProfile.IncludeGetAllByUserIdAsync(User.GetUserId()));
     }
 
     // GET: Admin/UserProfiles/Details/5

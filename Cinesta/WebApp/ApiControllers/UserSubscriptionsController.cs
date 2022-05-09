@@ -1,7 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
+using App.DTO;
 using Microsoft.AspNetCore.Mvc;
-using App.Domain.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 

@@ -1,6 +1,4 @@
-﻿using App.Domain.Cast;
-using App.Domain.Movie;
-using App.Domain.MovieStandardDetails;
+﻿using App.DTO;
 using Base.Domain;
 
 namespace WebApp.DTO;

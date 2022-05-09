@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using App.Domain.Common;
-using App.Domain.Profile;
 using Base.Domain.Identity;
 
 namespace App.Domain.Identity;

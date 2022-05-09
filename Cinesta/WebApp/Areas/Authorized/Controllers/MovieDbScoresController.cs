@@ -1,6 +1,6 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Movie;
+using App.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,7 +23,7 @@ public class MovieDbScoresController : Controller
     // GET: Admin/MovieDbScores
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.MovieDbScore.GetWithInclude());
+        return View(await _uow.MovieDbScore.IncludeGetAllAsync());
     }
 
     // GET: Admin/MovieDbScores/Details/5
@@ -31,8 +31,7 @@ public class MovieDbScoresController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieDbScore = await _uow.MovieDbScore.QueryableWithInclude()
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var movieDbScore = await _uow.MovieDbScore.IncludeFirstOrDefaultAsync(id.Value);
         if (movieDbScore == null) return NotFound();
 
         return View(movieDbScore);
@@ -130,8 +129,7 @@ public class MovieDbScoresController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieDbScore = await _uow.MovieDbScore.QueryableWithInclude()
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var movieDbScore = await _uow.MovieDbScore.IncludeFirstOrDefaultAsync(id.Value);
         if (movieDbScore == null) return NotFound();
 
         return View(movieDbScore);

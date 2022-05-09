@@ -1,8 +1,8 @@
 #nullable disable
 using App.Contracts.DAL;
+using App.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.Domain.User;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Areas.Authorized.Controllers

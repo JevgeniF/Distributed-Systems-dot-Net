@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using App.Contracts.DAL;
 using App.DAL.EF;
-using App.Domain.Common;
 using App.Domain.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -113,7 +112,7 @@ public class AccountController : ControllerBase
         var person = await _uow.Person.GetByNames(appUser.Name, appUser.Surname);
         if (person == null)
         {
-            person = new Person
+            person = new App.DTO.Person
             {
                 Id = Guid.NewGuid(),
                 Name = appUser.Name,

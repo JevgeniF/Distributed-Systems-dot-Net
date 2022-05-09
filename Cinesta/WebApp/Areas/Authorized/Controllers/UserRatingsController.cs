@@ -1,6 +1,6 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.Domain.Movie;
+using App.DTO;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +24,7 @@ public class UserRatingsController : Controller
     // GET: Admin/UserRatings
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.UserRating.GetWithInclude());
+        return View(await _uow.UserRating.IncludeGetAllAsync());
     }
 
     // GET: Admin/UserRatings/Details/5
@@ -32,7 +32,7 @@ public class UserRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var userRating = await _uow.UserRating.QueryableWithInclude().FirstOrDefaultAsync(m => m.Id == id);
+        var userRating = await _uow.UserRating.IncludeFirstOrDefaultAsync(id.Value);
         if (userRating == null) return NotFound();
 
         return View(userRating);

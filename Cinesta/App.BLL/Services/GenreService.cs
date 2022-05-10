@@ -6,7 +6,7 @@ using Base.Contracts;
 
 namespace App.BLL.Services;
 
-public class GenreService: BaseEntityService<Genre, App.DAL.DTO.Genre, IGenreRepository>, IGenreService
+public class GenreService : BaseEntityService<Genre, App.DAL.DTO.Genre, IGenreRepository>, IGenreService
 {
     public GenreService(IGenreRepository repository, IMapper<Genre, DAL.DTO.Genre> mapper) : base(repository, mapper)
     {

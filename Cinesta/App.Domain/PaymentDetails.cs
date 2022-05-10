@@ -6,15 +6,12 @@ namespace App.Domain;
 
 public class PaymentDetails : DomainEntityMetaId
 {
-    [MaxLength(25)]
-    public string CardType { get; set; } = default!;
+    [MaxLength(25)] public string CardType { get; set; } = default!;
 
-    [MaxLength(16)]
-    public string CardNumber { get; set; } = default!;
+    [MaxLength(16)] public string CardNumber { get; set; } = default!;
     public DateTime ValidDate { get; set; }
 
-    [MaxLength(3)]
-    public string SecurityCode { get; set; } = default!;
+    [MaxLength(3)] public string SecurityCode { get; set; } = default!;
     public Guid AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
 }

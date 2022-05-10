@@ -24,7 +24,7 @@ public class CastInMovieRepository : BaseEntityRepository<CastInMovie, Domain.Ca
         query = query.Include(c => c.CastRole).Include(c => c.Persons);
         return (await query.ToListAsync()).Select(c => Mapper.Map(c)!);
     }
-    
+
     public async Task<CastInMovie?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);

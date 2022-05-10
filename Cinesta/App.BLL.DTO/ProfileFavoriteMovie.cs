@@ -3,7 +3,7 @@ using Base.Domain;
 
 namespace App.BLL.DTO;
 
-public class ProfileFavoriteMovie: DomainEntityId
+public class ProfileFavoriteMovie : DomainEntityId
 {
     public Guid UserProfileId { get; set; }
 

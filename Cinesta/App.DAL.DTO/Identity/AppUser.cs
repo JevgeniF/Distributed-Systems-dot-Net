@@ -3,7 +3,7 @@ using Base.Domain;
 
 namespace App.DAL.DTO.Identity;
 
-public class AppUser: DomainEntityId
+public class AppUser : DomainEntityId
 {
     public Guid? PersonId { get; set; } = default!;
 
@@ -11,6 +11,6 @@ public class AppUser: DomainEntityId
     [MinLength(1)] [MaxLength(25)] public string Surname { get; set; } = default!;
 
     public Person? Person { get; set; }
-    
+
     public ICollection<UserProfile>? UserProfiles { get; set; }
 }

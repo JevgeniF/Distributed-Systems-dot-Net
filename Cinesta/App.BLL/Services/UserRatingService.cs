@@ -6,9 +6,11 @@ using Base.Contracts;
 
 namespace App.BLL.Services;
 
-public class UserRatingService: BaseEntityService<UserRating, App.DAL.DTO.UserRating, IUserRatingRepository>, IUserRatingService
+public class UserRatingService : BaseEntityService<UserRating, App.DAL.DTO.UserRating, IUserRatingRepository>,
+    IUserRatingService
 {
-    public UserRatingService(IUserRatingRepository repository, IMapper<UserRating, DAL.DTO.UserRating> mapper) : base(repository, mapper)
+    public UserRatingService(IUserRatingRepository repository, IMapper<UserRating, DAL.DTO.UserRating> mapper) : base(
+        repository, mapper)
     {
     }
 

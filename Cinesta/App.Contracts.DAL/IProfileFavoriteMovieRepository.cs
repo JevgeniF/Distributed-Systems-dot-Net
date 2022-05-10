@@ -3,7 +3,8 @@ using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface IProfileFavoriteMovieRepository : IEntityRepository<ProfileFavoriteMovie>, IProfileFavoriteMovieRepositoryCustom<ProfileFavoriteMovie>
+public interface IProfileFavoriteMovieRepository : IEntityRepository<ProfileFavoriteMovie>,
+    IProfileFavoriteMovieRepositoryCustom<ProfileFavoriteMovie>
 {
 }
 

@@ -4,7 +4,6 @@ using Base.Contracts.BLL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IVideoService: IEntityService<Video>, IVideoRepositoryCustom<Video>
+public interface IVideoService : IEntityService<Video>, IVideoRepositoryCustom<Video>
 {
-    
 }

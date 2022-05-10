@@ -6,9 +6,11 @@ using Base.Contracts;
 
 namespace App.BLL.Services;
 
-public class PaymentDetailsService: BaseEntityService<PaymentDetails, DAL.DTO.PaymentDetails, IPaymentDetailsRepository>, IPaymentDetailsService
+public class PaymentDetailsService :
+    BaseEntityService<PaymentDetails, DAL.DTO.PaymentDetails, IPaymentDetailsRepository>, IPaymentDetailsService
 {
-    public PaymentDetailsService(IPaymentDetailsRepository repository, IMapper<PaymentDetails, DAL.DTO.PaymentDetails> mapper) : base(repository, mapper)
+    public PaymentDetailsService(IPaymentDetailsRepository repository,
+        IMapper<PaymentDetails, DAL.DTO.PaymentDetails> mapper) : base(repository, mapper)
     {
     }
 

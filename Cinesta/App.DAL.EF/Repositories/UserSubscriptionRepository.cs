@@ -24,7 +24,7 @@ public class UserSubscriptionRepository : BaseEntityRepository<DTO.UserSubscript
 
         return (await query.ToListAsync()).Select(u => Mapper.Map(u)!);
     }
-    
+
     public async Task<DTO.UserSubscription?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);

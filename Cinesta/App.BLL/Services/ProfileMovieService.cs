@@ -6,9 +6,11 @@ using Base.Contracts;
 
 namespace App.BLL.Services;
 
-public class ProfileMovieService: BaseEntityService<ProfileMovie, DAL.DTO.ProfileMovie, IProfileMovieRepository>, IProfileMovieService
+public class ProfileMovieService : BaseEntityService<ProfileMovie, DAL.DTO.ProfileMovie, IProfileMovieRepository>,
+    IProfileMovieService
 {
-    public ProfileMovieService(IProfileMovieRepository repository, IMapper<ProfileMovie, DAL.DTO.ProfileMovie> mapper) : base(repository, mapper)
+    public ProfileMovieService(IProfileMovieRepository repository, IMapper<ProfileMovie, DAL.DTO.ProfileMovie> mapper) :
+        base(repository, mapper)
     {
     }
 }

@@ -4,7 +4,6 @@ using Base.Contracts.BLL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IMovieDbScoreService: IEntityService<MovieDbScore>, IMovieDbScoreRepositoryCustom<MovieDbScore>
+public interface IMovieDbScoreService : IEntityService<MovieDbScore>, IMovieDbScoreRepositoryCustom<MovieDbScore>
 {
-    
 }

@@ -4,7 +4,7 @@ using Base.Contracts.BLL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IUserSubscriptionService: IEntityService<UserSubscription>, IUserSubscriptionRepositoryCustom<UserSubscription>
+public interface IUserSubscriptionService : IEntityService<UserSubscription>,
+    IUserSubscriptionRepositoryCustom<UserSubscription>
 {
-    
 }

@@ -3,7 +3,6 @@ using Base.Contracts.BLL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IPersonService: IEntityService<Person>
+public interface IPersonService : IEntityService<Person>
 {
-    
 }

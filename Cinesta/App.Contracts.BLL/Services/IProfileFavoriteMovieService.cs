@@ -4,7 +4,7 @@ using Base.Contracts.BLL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IProfileFavoriteMovieService: IEntityService<ProfileFavoriteMovie>, IProfileFavoriteMovieRepositoryCustom<ProfileFavoriteMovie>
+public interface IProfileFavoriteMovieService : IEntityService<ProfileFavoriteMovie>,
+    IProfileFavoriteMovieRepositoryCustom<ProfileFavoriteMovie>
 {
-    
 }

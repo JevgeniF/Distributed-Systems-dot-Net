@@ -5,7 +5,7 @@ using Base.Domain;
 
 namespace App.DAL.DTO;
 
-public class UserRating: DomainEntityId
+public class UserRating : DomainEntityId
 {
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.UserRating), Name = nameof(Rating))]
     public double Rating { get; set; }

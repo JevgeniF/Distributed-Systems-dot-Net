@@ -2,7 +2,7 @@
 
 namespace Base.DAL;
 
-public class BaseMapper<TOut, TIn>: IMapper<TOut, TIn>
+public class BaseMapper<TOut, TIn> : IMapper<TOut, TIn>
 {
     protected readonly AutoMapper.IMapper Mapper;
 

@@ -3,7 +3,7 @@ using Base.Domain;
 
 namespace App.DAL.DTO;
 
-public class MovieDbScore: DomainEntityId
+public class MovieDbScore : DomainEntityId
 {
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDbScore), Name = nameof(ImdbId))]
     public string ImdbId { get; set; } = default!;

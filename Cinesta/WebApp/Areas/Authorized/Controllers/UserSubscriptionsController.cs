@@ -8,95 +8,95 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebApp.Areas.Authorized.ViewModels;
 
-namespace WebApp.Areas.Authorized.Controllers
+namespace WebApp.Areas.Authorized.Controllers;
+
+[Area("Authorized")]
+[Authorize(Roles = "admin,user")]
+public class UserSubscriptionsController : Controller
 {
-    [Area("Authorized")]
-    [Authorize(Roles = "admin,user")]
-    public class UserSubscriptionsController : Controller
+    private readonly IAppBll _bll;
+
+    public UserSubscriptionsController(IAppBll bll)
     {
-        private readonly IAppBll _bll;
+        _bll = bll;
+    }
 
-        public UserSubscriptionsController(IAppBll bll)
+    // GET: Authorized/UserSubscriptions
+    public async Task<IActionResult> Index()
+    {
+        return View(await _bll.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()));
+    }
+
+    // GET: Authorized/UserSubscriptions/Details/5
+    public async Task<IActionResult> Details(Guid? id)
+    {
+        if (id == null) return NotFound();
+
+        var userSubscription =
+            await _bll.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
+        if (userSubscription == null) return NotFound();
+
+        return View(userSubscription);
+    }
+
+    // GET: Authorized/UserSubscriptions/Create
+    public async Task<IActionResult> Create()
+    {
+        var vm = new UserSubscriptionCreateVM
         {
-            _bll = bll;
-        }
-
-        // GET: Authorized/UserSubscriptions
-        public async Task<IActionResult> Index()
-        {
-            return View(await _bll.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()));
-        }
-
-        // GET: Authorized/UserSubscriptions/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null) return NotFound();
-
-            var userSubscription =
-                await _bll.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
-            if (userSubscription == null) return NotFound();
-
-            return View(userSubscription);
-        }
-
-        // GET: Authorized/UserSubscriptions/Create
-        public async Task<IActionResult> Create()
-        {
-            var vm = new UserSubscriptionCreateVM
-            {
-                SubscriptionSelectList = new SelectList((await _bll.Subscription.GetAllAsync())
-                    .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
-                    nameof(Subscription.Naming))
-            };
-            return View(vm);
-        }
-
-        // POST: Authorized/UserSubscriptions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserSubscriptionCreateVM vm)
-        {
-            if (ModelState.IsValid)
-            {
-                vm.UserSubscription.AppUserId = User.GetUserId();
-                _bll.UserSubscription.Add(vm.UserSubscription);
-                await _bll.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            vm.SubscriptionSelectList = new SelectList((await _bll.Subscription.GetAllAsync())
+            SubscriptionSelectList = new SelectList((await _bll.Subscription.GetAllAsync())
                 .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
-                nameof(Subscription.Naming), vm.UserSubscription.SubscriptionId);
-            return View(vm);
-        }
+                nameof(Subscription.Naming))
+        };
+        return View(vm);
+    }
 
-        // GET: Authorized/UserSubscriptions/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+    // POST: Authorized/UserSubscriptions/Create
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(UserSubscriptionCreateVM vm)
+    {
+        if (ModelState.IsValid)
         {
-            if (id == null) return NotFound();
-
-            var userSubscription =
-                await _bll.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
-            if (userSubscription == null) return NotFound();
-
-            return View(userSubscription);
-        }
-
-        // POST: Authorized/UserSubscriptions/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            await _bll.UserSubscription.RemoveAsync(id);
+            vm.UserSubscription.AppUserId = User.GetUserId();
+            _bll.UserSubscription.Add(vm.UserSubscription);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> UserSubscriptionExists(Guid id)
-        {
-            return await _bll.UserSubscription.ExistsAsync(id);
-        }
+        vm.SubscriptionSelectList = new SelectList((await _bll.Subscription.GetAllAsync())
+            .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
+            nameof(Subscription.Naming), vm.UserSubscription.SubscriptionId);
+        return View(vm);
+    }
+
+    // GET: Authorized/UserSubscriptions/Delete/5
+    public async Task<IActionResult> Delete(Guid? id)
+    {
+        if (id == null) return NotFound();
+
+        var userSubscription =
+            await _bll.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
+        if (userSubscription == null) return NotFound();
+
+        return View(userSubscription);
+    }
+
+    // POST: Authorized/UserSubscriptions/Delete/5
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(Guid id)
+    {
+        await _bll.UserSubscription.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<bool> UserSubscriptionExists(Guid id)
+    {
+        return await _bll.UserSubscription.ExistsAsync(id);
     }
 }

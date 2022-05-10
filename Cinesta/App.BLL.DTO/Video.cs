@@ -4,7 +4,7 @@ using Base.Domain;
 
 namespace App.BLL.DTO;
 
-public class Video: DomainEntityId
+public class Video : DomainEntityId
 {
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Season))]
     public int? Season { get; set; }

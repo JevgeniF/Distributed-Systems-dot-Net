@@ -5,9 +5,11 @@ using Base.Contracts.Domain;
 
 namespace Base.BLL;
 
-public class BaseEntityService<TBllEntity, TDalEntity, TRepository>: BaseEntityService<TBllEntity, TDalEntity, TRepository, Guid>, IEntityService<TBllEntity>
-    where TDalEntity: class, IDomainEntityId
-    where TBllEntity: class, IDomainEntityId
+public class
+    BaseEntityService<TBllEntity, TDalEntity, TRepository> :
+        BaseEntityService<TBllEntity, TDalEntity, TRepository, Guid>, IEntityService<TBllEntity>
+    where TDalEntity : class, IDomainEntityId
+    where TBllEntity : class, IDomainEntityId
     where TRepository : IEntityRepository<TDalEntity>
 {
     public BaseEntityService(TRepository repository, IMapper<TBllEntity, TDalEntity> mapper) : base(repository, mapper)
@@ -17,13 +19,13 @@ public class BaseEntityService<TBllEntity, TDalEntity, TRepository>: BaseEntityS
 
 public class BaseEntityService<TBllEntity, TDalEntity, TRepository, TKey> : IEntityService<TBllEntity, TKey>
     where TBllEntity : class, IDomainEntityId<TKey>
-    where TRepository: IEntityRepository<TDalEntity, TKey>
+    where TRepository : IEntityRepository<TDalEntity, TKey>
     where TKey : IEquatable<TKey>
     where TDalEntity : class, IDomainEntityId<TKey>
 {
     protected TRepository Repository { get; set; }
     protected IMapper<TBllEntity, TDalEntity> Mapper;
-    
+
     public BaseEntityService(TRepository repository, IMapper<TBllEntity, TDalEntity> mapper)
     {
         Repository = repository;

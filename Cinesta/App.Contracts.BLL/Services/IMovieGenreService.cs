@@ -4,7 +4,6 @@ using App.Contracts.DAL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IMovieGenreService: IEntityService<MovieGenre>, IMovieGenreRepositoryCustom<MovieGenre>
+public interface IMovieGenreService : IEntityService<MovieGenre>, IMovieGenreRepositoryCustom<MovieGenre>
 {
-    
 }

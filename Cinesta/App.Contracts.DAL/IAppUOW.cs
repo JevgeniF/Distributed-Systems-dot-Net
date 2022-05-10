@@ -4,7 +4,6 @@ namespace App.Contracts.DAL;
 
 public interface IAppUOW : IUnitOfWork
 {
-   
     ICastRoleRepository CastRole { get; }
     ICastInMovieRepository CastInMovie { get; }
     IPersonRepository Person { get; }

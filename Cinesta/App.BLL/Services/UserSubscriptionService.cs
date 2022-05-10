@@ -6,9 +6,11 @@ using Base.Contracts;
 
 namespace App.BLL.Services;
 
-public class UserSubscriptionService: BaseEntityService<UserSubscription, DAL.DTO.UserSubscription, IUserSubscriptionRepository>, IUserSubscriptionService
+public class UserSubscriptionService :
+    BaseEntityService<UserSubscription, DAL.DTO.UserSubscription, IUserSubscriptionRepository>, IUserSubscriptionService
 {
-    public UserSubscriptionService(IUserSubscriptionRepository repository, IMapper<UserSubscription, DAL.DTO.UserSubscription> mapper) : base(repository, mapper)
+    public UserSubscriptionService(IUserSubscriptionRepository repository,
+        IMapper<UserSubscription, DAL.DTO.UserSubscription> mapper) : base(repository, mapper)
     {
     }
 

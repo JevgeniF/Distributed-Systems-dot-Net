@@ -21,7 +21,7 @@ public class MovieDbScoreRepository : BaseEntityRepository<DTO.MovieDbScore, Mov
         query.Include(m => m.MovieDetails);
         return (await query.ToListAsync()).Select(m => Mapper.Map(m)!);
     }
-    
+
     public async Task<DTO.MovieDbScore?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);

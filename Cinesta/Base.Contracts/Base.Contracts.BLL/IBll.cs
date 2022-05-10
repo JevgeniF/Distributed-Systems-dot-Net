@@ -2,7 +2,6 @@
 
 namespace Base.Contracts.BLL;
 
-public interface IBll: IUnitOfWork
+public interface IBll : IUnitOfWork
 {
-    
 }

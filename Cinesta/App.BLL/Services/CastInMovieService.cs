@@ -6,9 +6,11 @@ using Base.Contracts;
 
 namespace App.BLL.Services;
 
-public class CastInMovieService: BaseEntityService<CastInMovie, App.DAL.DTO.CastInMovie, ICastInMovieRepository>, ICastInMovieService
+public class CastInMovieService : BaseEntityService<CastInMovie, App.DAL.DTO.CastInMovie, ICastInMovieRepository>,
+    ICastInMovieService
 {
-    public CastInMovieService(ICastInMovieRepository repository, IMapper<CastInMovie, DAL.DTO.CastInMovie> mapper) : base(repository, mapper)
+    public CastInMovieService(ICastInMovieRepository repository, IMapper<CastInMovie, DAL.DTO.CastInMovie> mapper) :
+        base(repository, mapper)
     {
     }
 

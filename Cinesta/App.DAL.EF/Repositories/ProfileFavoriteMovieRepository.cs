@@ -35,7 +35,7 @@ public class ProfileFavoriteMovieRepository :
 
         return (await query.ToListAsync()).Select(p => Mapper.Map(p)!);
     }
-    
+
     public async Task<DTO.ProfileFavoriteMovie?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);

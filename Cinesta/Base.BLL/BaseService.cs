@@ -2,7 +2,6 @@
 
 namespace Base.BLL;
 
-public class BaseService: IService
+public class BaseService : IService
 {
-    
 }

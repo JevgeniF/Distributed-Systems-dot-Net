@@ -3,7 +3,8 @@ using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface IUserSubscriptionRepository : IEntityRepository<UserSubscription>, IUserSubscriptionRepositoryCustom<UserSubscription>
+public interface IUserSubscriptionRepository : IEntityRepository<UserSubscription>,
+    IUserSubscriptionRepositoryCustom<UserSubscription>
 {
 }
 

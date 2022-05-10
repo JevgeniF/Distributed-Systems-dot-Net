@@ -5,17 +5,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Base.DAL.EF;
 
-public class BaseEntityRepository<TDalEntity, TDomainEntity, TDbContext> : BaseEntityRepository<TDalEntity, TDomainEntity, Guid, TDbContext>
+public class
+    BaseEntityRepository<TDalEntity, TDomainEntity, TDbContext> : BaseEntityRepository<TDalEntity, TDomainEntity, Guid,
+        TDbContext>
     where TDalEntity : class, IDomainEntityId<Guid>
     where TDomainEntity : class, IDomainEntityId<Guid>
     where TDbContext : DbContext
 {
-    public BaseEntityRepository(TDbContext dbContext, IMapper<TDalEntity, TDomainEntity> mapper) : base(dbContext, mapper)
+    public BaseEntityRepository(TDbContext dbContext, IMapper<TDalEntity, TDomainEntity> mapper) : base(dbContext,
+        mapper)
     {
     }
 }
 
-public class BaseEntityRepository<TDalEntity,TDomainEntity, TKey, TDbContext> : IEntityRepository<TDalEntity, TKey>
+public class BaseEntityRepository<TDalEntity, TDomainEntity, TKey, TDbContext> : IEntityRepository<TDalEntity, TKey>
     where TDalEntity : class, IDomainEntityId<TKey>
     where TDomainEntity : class, IDomainEntityId<TKey>
     where TKey : IEquatable<TKey>
@@ -45,7 +48,7 @@ public class BaseEntityRepository<TDalEntity,TDomainEntity, TKey, TDbContext> : 
     public virtual TDalEntity Remove(TDalEntity entity)
     {
         return Mapper.Map(RepoDbSet.Remove(Mapper.Map(entity)!).Entity)!;
-}
+    }
 
     public virtual TDalEntity Remove(TKey id)
     {

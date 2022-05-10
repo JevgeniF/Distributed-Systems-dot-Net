@@ -4,7 +4,7 @@ using Base.Domain;
 
 namespace App.DAL.DTO;
 
-public class UserProfile: DomainEntityId
+public class UserProfile : DomainEntityId
 {
     [MaxLength(100)]
     [Display(ResourceType = typeof(Resources.App.Domain.Profile.UserProfile), Name = nameof(IconUri))]

@@ -4,7 +4,7 @@ using Base.Domain;
 
 namespace App.BLL.DTO;
 
-public class MovieDetails: DomainEntityId
+public class MovieDetails : DomainEntityId
 {
     [MaxLength(100)]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(PosterUri))]

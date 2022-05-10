@@ -3,7 +3,7 @@ using Base.Domain;
 
 namespace App.BLL.DTO;
 
-public class CastInMovie: DomainEntityId
+public class CastInMovie : DomainEntityId
 {
     public Guid CastRoleId { get; set; }
 

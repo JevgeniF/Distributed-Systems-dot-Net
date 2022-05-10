@@ -3,7 +3,6 @@ using Base.Contracts.BLL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface ISubscriptionService: IEntityService<Subscription>
+public interface ISubscriptionService : IEntityService<Subscription>
 {
-    
 }

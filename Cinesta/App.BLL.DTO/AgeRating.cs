@@ -3,7 +3,7 @@ using Base.Domain;
 
 namespace App.BLL.DTO;
 
-public class AgeRating: DomainEntityId
+public class AgeRating : DomainEntityId
 {
     [MaxLength(20)]
     [Display(ResourceType = typeof(Resources.App.Domain.MovieStandardDetails.AgeRating), Name = nameof(Naming))]

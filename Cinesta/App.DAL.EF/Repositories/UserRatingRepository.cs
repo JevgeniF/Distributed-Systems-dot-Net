@@ -22,7 +22,7 @@ public class UserRatingRepository : BaseEntityRepository<DTO.UserRating, UserRat
             .Include(u => u.MovieDetails);
         return (await query.ToListAsync()).Select(u => Mapper.Map(u)!);
     }
-    
+
     public async Task<DTO.UserRating?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);

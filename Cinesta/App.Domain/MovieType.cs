@@ -5,6 +5,5 @@ namespace App.Domain;
 
 public class MovieType : DomainEntityMetaId
 {
-    [Column(TypeName = "jsonb")]
-    public LangStr Naming { get; set; } = new();
+    [Column(TypeName = "jsonb")] public LangStr Naming { get; set; } = new();
 }

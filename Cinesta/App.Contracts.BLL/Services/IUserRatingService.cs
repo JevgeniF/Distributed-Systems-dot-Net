@@ -4,7 +4,6 @@ using Base.Contracts.BLL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IUserRatingService: IEntityService<UserRating>, IUserRatingRepositoryCustom<UserRating>
+public interface IUserRatingService : IEntityService<UserRating>, IUserRatingRepositoryCustom<UserRating>
 {
-    
 }

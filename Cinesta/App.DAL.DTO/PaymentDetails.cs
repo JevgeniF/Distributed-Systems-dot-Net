@@ -4,7 +4,7 @@ using Base.Domain;
 
 namespace App.DAL.DTO;
 
-public class PaymentDetails: DomainEntityId
+public class PaymentDetails : DomainEntityId
 {
     [MaxLength(25)]
     [Display(ResourceType = typeof(Resources.App.Domain.User.PaymentDetails), Name = nameof(CardType))]

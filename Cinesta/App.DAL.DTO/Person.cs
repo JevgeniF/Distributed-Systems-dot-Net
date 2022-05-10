@@ -3,7 +3,7 @@ using Base.Domain;
 
 namespace App.DAL.DTO;
 
-public class Person: DomainEntityId
+public class Person : DomainEntityId
 {
     [MaxLength(25)]
     [Display(ResourceType = typeof(Resources.App.Domain.Common.Person), Name = nameof(Name))]

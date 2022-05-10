@@ -22,7 +22,7 @@ public class MovieGenreRepository : BaseEntityRepository<DTO.MovieGenre, MovieGe
             .Include(m => m.MovieDetails);
         return (await query.ToListAsync()).Select(m => Mapper.Map(m)!);
     }
-    
+
     public async Task<DTO.MovieGenre?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);

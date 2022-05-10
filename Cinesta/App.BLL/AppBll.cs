@@ -8,16 +8,17 @@ using Base.BLL;
 
 namespace App.BLL;
 
-public class AppBll: BaseBll<IAppUOW>, IAppBll
+public class AppBll : BaseBll<IAppUOW>, IAppBll
 {
     protected IAppUOW UOW;
-    private readonly AutoMapper.IMapper _mapper;
-    
+    private readonly IMapper _mapper;
+
     public AppBll(IAppUOW uow, IMapper mapper)
     {
         UOW = uow;
         _mapper = mapper;
     }
+
     public override async Task<int> SaveChangesAsync()
     {
         return await UOW.SaveChangesAsync();
@@ -27,7 +28,7 @@ public class AppBll: BaseBll<IAppUOW>, IAppBll
     {
         return UOW.SaveChanges();
     }
-    
+
     private IAgeRatingService? _ageRating;
     private ICastInMovieService? _castInMovie;
     private ICastRoleService? _castRole;
@@ -56,7 +57,7 @@ public class AppBll: BaseBll<IAppUOW>, IAppBll
         _person ??= new PersonService(UOW.Person, new PersonMapper(_mapper));
 
     public virtual IAgeRatingService AgeRating =>
-        _ageRating ??= new AgeRatingService(UOW.AgeRating,new AgeRatingMapper(_mapper));
+        _ageRating ??= new AgeRatingService(UOW.AgeRating, new AgeRatingMapper(_mapper));
 
     public virtual IGenreService Genre => _genre ??= new GenreService(UOW.Genre, new GenreMapper(_mapper));
 
@@ -83,8 +84,9 @@ public class AppBll: BaseBll<IAppUOW>, IAppBll
     public virtual IProfileMovieService ProfileMovie =>
         _profileMovie ??= new ProfileMovieService(UOW.ProfileMovie, new ProfileMovieMapper(_mapper));
 
-    public virtual IProfileFavoriteMovieService ProfileFavoriteMovie => 
-        _profileFavoriteMovie ??= new ProfileFavoriteMovieService(UOW.ProfileFavoriteMovie, new ProfileFavoriteMovieMapper(_mapper));
+    public virtual IProfileFavoriteMovieService ProfileFavoriteMovie =>
+        _profileFavoriteMovie ??=
+            new ProfileFavoriteMovieService(UOW.ProfileFavoriteMovie, new ProfileFavoriteMovieMapper(_mapper));
 
     public virtual ISubscriptionService Subscription =>
         _subscription ??= new SubscriptionService(UOW.Subscription, new SubscriptionMapper(_mapper));

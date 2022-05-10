@@ -6,9 +6,11 @@ using Base.Contracts;
 
 namespace App.BLL.Services;
 
-public class UserProfileService: BaseEntityService<UserProfile, DAL.DTO.UserProfile, IUserProfileRepository>, IUserProfileService
+public class UserProfileService : BaseEntityService<UserProfile, DAL.DTO.UserProfile, IUserProfileRepository>,
+    IUserProfileService
 {
-    public UserProfileService(IUserProfileRepository repository, IMapper<UserProfile, DAL.DTO.UserProfile> mapper) : base(repository, mapper)
+    public UserProfileService(IUserProfileRepository repository, IMapper<UserProfile, DAL.DTO.UserProfile> mapper) :
+        base(repository, mapper)
     {
     }
 

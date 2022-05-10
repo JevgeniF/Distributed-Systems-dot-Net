@@ -8,8 +8,7 @@ public class UserRating : DomainEntityMetaId
 {
     public double Rating { get; set; }
 
-    [Column(TypeName = "jsonb")]
-    public LangStr Comment { get; set; } = new();
+    [Column(TypeName = "jsonb")] public LangStr Comment { get; set; } = new();
     public Guid AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
     public Guid MovieDetailsId { get; set; }

@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +14,25 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class UserProfilesController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public UserProfilesController(IAppUOW uow)
+    public UserProfilesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/UserProfiles
     [HttpGet]
     public async Task<IEnumerable<UserProfile>> GetUserProfiles()
     {
-        return await _uow.UserProfile.GetAllAsync();
+        return await _bll.UserProfile.GetAllAsync();
     }
 
     // GET: api/UserProfiles/5
     [HttpGet("{id}")]
     public async Task<ActionResult<UserProfile>> GetUserProfile(Guid id)
     {
-        var userProfile = await _uow.UserProfile.FirstOrDefaultAsync(id);
+        var userProfile = await _bll.UserProfile.FirstOrDefaultAsync(id);
 
         if (userProfile == null) return NotFound();
 
@@ -47,8 +48,8 @@ public class UserProfilesController : ControllerBase
 
         try
         {
-            _uow.UserProfile.Update(userProfile);
-            await _uow.SaveChangesAsync();
+            _bll.UserProfile.Update(userProfile);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -65,8 +66,8 @@ public class UserProfilesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserProfile>> PostUserProfile(UserProfile userProfile)
     {
-        _uow.UserProfile.Add(userProfile);
-        await _uow.SaveChangesAsync();
+        _bll.UserProfile.Add(userProfile);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetUserProfile", new {id = userProfile.Id}, userProfile);
     }
@@ -75,14 +76,14 @@ public class UserProfilesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserProfile(Guid id)
     {
-        await _uow.UserProfile.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.UserProfile.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private Task<bool> UserProfileExists(Guid id)
     {
-        return _uow.UserProfile.ExistsAsync(id);
+        return _bll.UserProfile.ExistsAsync(id);
     }
 }

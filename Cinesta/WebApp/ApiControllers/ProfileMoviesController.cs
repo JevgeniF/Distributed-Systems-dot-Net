@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +14,25 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class ProfileMoviesController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public ProfileMoviesController(IAppUOW uow)
+    public ProfileMoviesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/ProfileMovies
     [HttpGet]
     public async Task<IEnumerable<ProfileMovie>> GetProfileMovies()
     {
-        return await _uow.ProfileMovie.GetAllAsync();
+        return await _bll.ProfileMovie.GetAllAsync();
     }
 
     // GET: api/ProfileMovies/5
     [HttpGet("{id}")]
     public async Task<ActionResult<ProfileMovie>> GetProfileMovie(Guid id)
     {
-        var profileMovie = await _uow.ProfileMovie.FirstOrDefaultAsync(id);
+        var profileMovie = await _bll.ProfileMovie.FirstOrDefaultAsync(id);
 
         if (profileMovie == null) return NotFound();
 
@@ -47,8 +48,8 @@ public class ProfileMoviesController : ControllerBase
 
         try
         {
-            _uow.ProfileMovie.Update(profileMovie);
-            await _uow.SaveChangesAsync();
+            _bll.ProfileMovie.Update(profileMovie);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -65,8 +66,8 @@ public class ProfileMoviesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProfileMovie>> PostProfileMovie(ProfileMovie profileMovie)
     {
-        _uow.ProfileMovie.Add(profileMovie);
-        await _uow.SaveChangesAsync();
+        _bll.ProfileMovie.Add(profileMovie);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetProfileMovie", new {id = profileMovie.Id}, profileMovie);
     }
@@ -75,14 +76,14 @@ public class ProfileMoviesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProfileMovie(Guid id)
     {
-        await _uow.ProfileMovie.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.ProfileMovie.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> ProfileMovieExists(Guid id)
     {
-        return await _uow.ProfileMovie.ExistsAsync(id);
+        return await _bll.ProfileMovie.ExistsAsync(id);
     }
 }

@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,18 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class VideosController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public VideosController(IAppUOW uow)
+    public VideosController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/Videos
     [HttpGet]
     public async Task<ActionResult<IEnumerable<VideoDto>>> GetVideos()
     {
-        var res = (await _uow.Video.GetAllAsync())
+        var res = (await _bll.Video.GetAllAsync())
             .Select(v => new VideoDto
             {
                 Id = v.Id,
@@ -45,7 +46,7 @@ public class VideosController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Video>> GetVideo(Guid id)
     {
-        var video = await _uow.Video.FirstOrDefaultAsync(id);
+        var video = await _bll.Video.FirstOrDefaultAsync(id);
 
         if (video == null) return NotFound();
 
@@ -60,15 +61,15 @@ public class VideosController : ControllerBase
     {
         if (id != video.Id) return BadRequest();
 
-        var videoFromDb = await _uow.Video.FirstOrDefaultAsync(id);
+        var videoFromDb = await _bll.Video.FirstOrDefaultAsync(id);
         if (videoFromDb == null) return NotFound();
 
         try
         {
             videoFromDb.Title.SetTranslation(video.Title);
             videoFromDb.Description.SetTranslation(video.Description);
-            _uow.Video.Update(videoFromDb);
-            await _uow.SaveChangesAsync();
+            _bll.Video.Update(videoFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -86,8 +87,8 @@ public class VideosController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<Video>> PostVideo(Video video)
     {
-        _uow.Video.Add(video);
-        await _uow.SaveChangesAsync();
+        _bll.Video.Add(video);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetVideo", new {id = video.Id}, video);
     }
@@ -97,14 +98,14 @@ public class VideosController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteVideo(Guid id)
     {
-        await _uow.Video.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.Video.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> VideoExists(Guid id)
     {
-        return await _uow.Video.ExistsAsync(id);
+        return await _bll.Video.ExistsAsync(id);
     }
 }

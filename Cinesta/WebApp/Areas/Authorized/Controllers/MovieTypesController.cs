@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin")]
 public class MovieTypesController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public MovieTypesController(IAppUOW uow)
+    public MovieTypesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/MovieTypes
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.MovieType.GetAllAsync());
+        return View(await _bll.MovieType.GetAllAsync());
     }
 
     // GET: Admin/MovieTypes/Details/5
@@ -29,7 +30,7 @@ public class MovieTypesController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieType = await _uow.MovieType
+        var movieType = await _bll.MovieType
             .FirstOrDefaultAsync(id.Value);
         if (movieType == null) return NotFound();
 
@@ -54,8 +55,8 @@ public class MovieTypesController : Controller
         if (ModelState.IsValid)
         {
             movieType.Id = Guid.NewGuid();
-            _uow.MovieType.Add(movieType);
-            await _uow.SaveChangesAsync();
+            _bll.MovieType.Add(movieType);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -67,7 +68,7 @@ public class MovieTypesController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieType = await _uow.MovieType.FirstOrDefaultAsync(id.Value);
+        var movieType = await _bll.MovieType.FirstOrDefaultAsync(id.Value);
         if (movieType == null) return NotFound();
         return View(movieType);
     }
@@ -85,7 +86,7 @@ public class MovieTypesController : Controller
 
         if (ModelState.IsValid)
         {
-            var movieTypeFromDb = await _uow.MovieType.FirstOrDefaultAsync(id);
+            var movieTypeFromDb = await _bll.MovieType.FirstOrDefaultAsync(id);
             if (movieTypeFromDb == null) return NotFound();
 
             try
@@ -93,8 +94,8 @@ public class MovieTypesController : Controller
                 movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
                 movieType.Naming = movieTypeFromDb.Naming;
 
-                _uow.MovieType.Update(movieType);
-                await _uow.SaveChangesAsync();
+                _bll.MovieType.Update(movieType);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -114,7 +115,7 @@ public class MovieTypesController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieType = await _uow.MovieType
+        var movieType = await _bll.MovieType
             .FirstOrDefaultAsync(id.Value);
         if (movieType == null) return NotFound();
 
@@ -127,13 +128,13 @@ public class MovieTypesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.MovieType.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.MovieType.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> MovieTypeExists(Guid id)
     {
-        return await _uow.MovieType.ExistsAsync(id);
+        return await _bll.MovieType.ExistsAsync(id);
     }
 }

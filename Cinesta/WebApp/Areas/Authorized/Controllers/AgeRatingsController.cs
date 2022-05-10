@@ -1,6 +1,7 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin")]
 public class AgeRatingsController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public AgeRatingsController(IAppUOW uow)
+    public AgeRatingsController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/AgeRatings
     public async Task<IActionResult> Index()
     {
-        var result = await _uow.AgeRating.GetAllAsync();
+        var result = await _bll.AgeRating.GetAllAsync();
         return View(result);
     }
 
@@ -30,7 +31,7 @@ public class AgeRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id.Value);
+        var ageRating = await _bll.AgeRating.FirstOrDefaultAsync(id.Value);
         if (ageRating == null) return NotFound();
 
         return View(ageRating);
@@ -54,8 +55,8 @@ public class AgeRatingsController : Controller
         if (ModelState.IsValid)
         {
             ageRating.Id = Guid.NewGuid();
-            _uow.AgeRating.Add(ageRating);
-            await _uow.SaveChangesAsync();
+            _bll.AgeRating.Add(ageRating);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -67,7 +68,7 @@ public class AgeRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id.Value);
+        var ageRating = await _bll.AgeRating.FirstOrDefaultAsync(id.Value);
         if (ageRating == null) return NotFound();
         return View(ageRating);
     }
@@ -87,8 +88,8 @@ public class AgeRatingsController : Controller
         {
             try
             {
-                _uow.AgeRating.Update(ageRating);
-                await _uow.SaveChangesAsync();
+                _bll.AgeRating.Update(ageRating);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -108,7 +109,7 @@ public class AgeRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id.Value);
+        var ageRating = await _bll.AgeRating.FirstOrDefaultAsync(id.Value);
         if (ageRating == null) return NotFound();
 
         return View(ageRating);
@@ -120,13 +121,13 @@ public class AgeRatingsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.AgeRating.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.AgeRating.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> AgeRatingExists(Guid id)
     {
-        return await _uow.AgeRating.ExistsAsync(id);
+        return await _bll.AgeRating.ExistsAsync(id);
     }
 }

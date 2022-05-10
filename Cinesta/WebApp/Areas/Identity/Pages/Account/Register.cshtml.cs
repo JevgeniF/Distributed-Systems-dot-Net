@@ -143,7 +143,7 @@ public class RegisterModel : PageModel
                 var person = await _uow.Person.GetByNames(user.Name, user.Surname);
                 if (person == null)
                 {
-                    person = new App.DTO.Person
+                    person = new App.DAL.DTO.Person
                     {
                         Id = Guid.NewGuid(),
                         Name = user.Name,

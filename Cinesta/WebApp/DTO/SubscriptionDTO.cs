@@ -1,4 +1,4 @@
-﻿using App.DTO.Identity;
+﻿using App.BLL.DTO.Identity;
 using Base.Domain;
 
 namespace WebApp.DTO;

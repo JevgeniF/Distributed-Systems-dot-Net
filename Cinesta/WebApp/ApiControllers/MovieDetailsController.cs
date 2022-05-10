@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,18 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class MovieDetailsController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public MovieDetailsController(IAppUOW uow)
+    public MovieDetailsController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/MovieDetails
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MovieDetailsDto>>> GetMovieDetails()
     {
-        var res = (await _uow.MovieDetails.GetAllAsync())
+        var res = (await _bll.MovieDetails.GetAllAsync())
             .Select(m => new MovieDetailsDto
             {
                 Id = m.Id,
@@ -51,7 +52,7 @@ public class MovieDetailsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<MovieDetails>> GetMovieDetails(Guid id)
     {
-        var movieDetails = await _uow.MovieDetails.FirstOrDefaultAsync(id);
+        var movieDetails = await _bll.MovieDetails.FirstOrDefaultAsync(id);
 
         if (movieDetails == null) return NotFound();
 
@@ -66,15 +67,15 @@ public class MovieDetailsController : ControllerBase
     {
         if (id != movieDetails.Id) return BadRequest();
 
-        var movieDetailsFromDb = await _uow.MovieDetails.FirstOrDefaultAsync(id);
+        var movieDetailsFromDb = await _bll.MovieDetails.FirstOrDefaultAsync(id);
         if (movieDetailsFromDb == null) return NotFound();
 
         try
         {
             movieDetailsFromDb.Title.SetTranslation(movieDetails.Title);
             movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
-            _uow.MovieDetails.Update(movieDetailsFromDb);
-            await _uow.SaveChangesAsync();
+            _bll.MovieDetails.Update(movieDetailsFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -91,8 +92,8 @@ public class MovieDetailsController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieDetails>> PostMovieDetails(MovieDetails movieDetails)
     {
-        _uow.MovieDetails.Add(movieDetails);
-        await _uow.SaveChangesAsync();
+        _bll.MovieDetails.Add(movieDetails);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetMovieDetails", new {id = movieDetails.Id}, movieDetails);
     }
@@ -102,14 +103,14 @@ public class MovieDetailsController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieDetails(Guid id)
     {
-        await _uow.MovieDetails.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.MovieDetails.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> MovieDetailsExists(Guid id)
     {
-        return await _uow.MovieDetails.ExistsAsync(id);
+        return await _bll.MovieDetails.ExistsAsync(id);
     }
 }

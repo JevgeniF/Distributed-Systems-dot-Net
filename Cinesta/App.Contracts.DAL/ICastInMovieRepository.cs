@@ -1,10 +1,14 @@
-﻿using App.DTO;
+﻿using App.DAL.DTO;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface ICastInMovieRepository : IEntityRepository<CastInMovie>
+public interface ICastInMovieRepository : IEntityRepository<CastInMovie>, ICastInMovieRepositoryCustom<CastInMovie>
 {
-    Task<IEnumerable<CastInMovie>> IncludeGetAllAsync(bool noTracking = true);
-    Task<CastInMovie?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
+}
+
+public interface ICastInMovieRepositoryCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllAsync(bool noTracking = true);
+    Task<TEntity?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
 }

@@ -1,6 +1,7 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,18 +14,18 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class AgeRatingsController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public AgeRatingsController(IAppUOW uow)
+    public AgeRatingsController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/AgeRatings
     [HttpGet]
     public async Task<IEnumerable<AgeRating>> GetAgeRatings()
     {
-        var result = await _uow.AgeRating.GetAllAsync();
+        var result = await _bll.AgeRating.GetAllAsync();
         return result;
     }
 
@@ -32,7 +33,7 @@ public class AgeRatingsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<AgeRating>> GetAgeRating(Guid id)
     {
-        var ageRating = await _uow.AgeRating.FirstOrDefaultAsync(id);
+        var ageRating = await _bll.AgeRating.FirstOrDefaultAsync(id);
 
         if (ageRating == null) return NotFound();
 
@@ -47,8 +48,8 @@ public class AgeRatingsController : ControllerBase
         if (id != ageRating.Id) return BadRequest();
         try
         {
-            _uow.AgeRating.Update(ageRating);
-            await _uow.SaveChangesAsync();
+            _bll.AgeRating.Update(ageRating);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -65,8 +66,8 @@ public class AgeRatingsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<AgeRating>> PostAgeRating(AgeRating ageRating)
     {
-        _uow.AgeRating.Add(ageRating);
-        await _uow.SaveChangesAsync();
+        _bll.AgeRating.Add(ageRating);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetAgeRating", new {id = ageRating.Id}, ageRating);
     }
@@ -75,14 +76,14 @@ public class AgeRatingsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAgeRating(Guid id)
     {
-        await _uow.AgeRating.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.AgeRating.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> AgeRatingExists(Guid id)
     {
-        return await _uow.AgeRating.ExistsAsync(id);
+        return await _bll.AgeRating.ExistsAsync(id);
     }
 }

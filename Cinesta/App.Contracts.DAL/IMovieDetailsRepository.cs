@@ -1,11 +1,15 @@
-﻿using App.DTO;
+﻿using App.DAL.DTO;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface IMovieDetailsRepository : IEntityRepository<MovieDetails>
+public interface IMovieDetailsRepository : IEntityRepository<MovieDetails>, IMovieDetailsRepositoryCustom<MovieDetails>
 {
-    Task<IEnumerable<DTO.MovieDetails>> IncludeGetAllAsync(bool noTracking = true);
-    Task<DTO.MovieDetails?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
-    Task<IEnumerable<DTO.MovieDetails>> IncludeGetByAgeAsync(int age, bool noTracking = true);
+}
+
+public interface IMovieDetailsRepositoryCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllAsync(bool noTracking = true);
+    Task<TEntity?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
+    Task<IEnumerable<TEntity>> IncludeGetByAgeAsync(int age, bool noTracking = true);
 }

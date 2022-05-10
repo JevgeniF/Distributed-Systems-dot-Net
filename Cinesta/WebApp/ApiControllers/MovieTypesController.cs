@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,18 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class MovieTypesController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public MovieTypesController(IAppUOW uow)
+    public MovieTypesController(IAppBll uow)
     {
-        _uow = uow;
+        _bll = uow;
     }
 
     // GET: api/MovieTypes
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MovieTypeDto>>> GetMovieTypes()
     {
-        var res = (await _uow.MovieType.GetAllAsync())
+        var res = (await _bll.MovieType.GetAllAsync())
             .Select(m => new MovieTypeDto
             {
                 Id = m.Id,
@@ -39,7 +40,7 @@ public class MovieTypesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<MovieType>> GetMovieType(Guid id)
     {
-        var movieType = await _uow.MovieType.FirstOrDefaultAsync(id);
+        var movieType = await _bll.MovieType.FirstOrDefaultAsync(id);
 
         if (movieType == null) return NotFound();
 
@@ -54,14 +55,14 @@ public class MovieTypesController : ControllerBase
     {
         if (id != movieType.Id) return BadRequest();
 
-        var movieTypeFromDb = await _uow.MovieType.FirstOrDefaultAsync(id);
+        var movieTypeFromDb = await _bll.MovieType.FirstOrDefaultAsync(id);
         if (movieTypeFromDb == null) return NotFound();
 
         try
         {
             movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
-            _uow.MovieType.Update(movieTypeFromDb);
-            await _uow.SaveChangesAsync();
+            _bll.MovieType.Update(movieTypeFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -79,8 +80,8 @@ public class MovieTypesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieType>> PostMovieType(MovieType movieType)
     {
-        _uow.MovieType.Add(movieType);
-        await _uow.SaveChangesAsync();
+        _bll.MovieType.Add(movieType);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetMovieType", new {id = movieType.Id}, movieType);
     }
@@ -90,14 +91,14 @@ public class MovieTypesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieType(Guid id)
     {
-        _uow.MovieType.Remove(id);
-        await _uow.SaveChangesAsync();
+        _bll.MovieType.Remove(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> MovieTypeExists(Guid id)
     {
-        return await _uow.MovieType.ExistsAsync(id);
+        return await _bll.MovieType.ExistsAsync(id);
     }
 }

@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin")]
 public class CastRolesController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public CastRolesController(IAppUOW uow)
+    public CastRolesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/CastRoles
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.CastRole.GetAllAsync());
+        return View(await _bll.CastRole.GetAllAsync());
     }
 
     // GET: Admin/CastRoles/Details/5
@@ -29,7 +30,7 @@ public class CastRolesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castRole = await _uow.CastRole.FirstOrDefaultAsync(id.Value);
+        var castRole = await _bll.CastRole.FirstOrDefaultAsync(id.Value);
 
         if (castRole == null) return NotFound();
 
@@ -54,8 +55,8 @@ public class CastRolesController : Controller
         if (ModelState.IsValid)
         {
             castRole.Id = Guid.NewGuid();
-            _uow.CastRole.Add(castRole);
-            await _uow.SaveChangesAsync();
+            _bll.CastRole.Add(castRole);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -67,7 +68,7 @@ public class CastRolesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castRole = await _uow.CastRole.FirstOrDefaultAsync(id.Value);
+        var castRole = await _bll.CastRole.FirstOrDefaultAsync(id.Value);
         if (castRole == null) return NotFound();
         return View(castRole);
     }
@@ -85,7 +86,7 @@ public class CastRolesController : Controller
 
         if (ModelState.IsValid)
         {
-            var castRoleFromDb = await _uow.CastRole.FirstOrDefaultAsync(id);
+            var castRoleFromDb = await _bll.CastRole.FirstOrDefaultAsync(id);
             if (castRoleFromDb == null) return NotFound();
 
             try
@@ -93,8 +94,8 @@ public class CastRolesController : Controller
                 castRoleFromDb.Naming.SetTranslation(castRole.Naming);
                 castRole.Naming = castRoleFromDb.Naming;
 
-                _uow.CastRole.Update(castRole);
-                await _uow.SaveChangesAsync();
+                _bll.CastRole.Update(castRole);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -114,7 +115,7 @@ public class CastRolesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castRole = await _uow.CastRole.FirstOrDefaultAsync(id.Value);
+        var castRole = await _bll.CastRole.FirstOrDefaultAsync(id.Value);
         if (castRole == null) return NotFound();
 
         return View(castRole);
@@ -126,13 +127,13 @@ public class CastRolesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.CastRole.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.CastRole.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> CastRoleExists(Guid id)
     {
-        return await _uow.CastRole.ExistsAsync(id);
+        return await _bll.CastRole.ExistsAsync(id);
     }
 }

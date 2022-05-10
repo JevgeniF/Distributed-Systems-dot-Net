@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +14,25 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class PersonsController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public PersonsController(IAppUOW uow)
+    public PersonsController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/Persons
     [HttpGet]
     public async Task<IEnumerable<Person>> GetPersons()
     {
-        return await _uow.Person.GetAllAsync();
+        return await _bll.Person.GetAllAsync();
     }
 
     // GET: api/Persons/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Person>> GetPerson(Guid id)
     {
-        var person = await _uow.Person.FirstOrDefaultAsync(id);
+        var person = await _bll.Person.FirstOrDefaultAsync(id);
 
         if (person == null) return NotFound();
 
@@ -47,8 +48,8 @@ public class PersonsController : ControllerBase
 
         try
         {
-            _uow.Person.Update(person);
-            await _uow.SaveChangesAsync();
+            _bll.Person.Update(person);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -65,8 +66,8 @@ public class PersonsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Person>> PostPerson(Person person)
     {
-        _uow.Person.Add(person);
-        await _uow.SaveChangesAsync();
+        _bll.Person.Add(person);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetPerson", new {id = person.Id}, person);
     }
@@ -75,14 +76,14 @@ public class PersonsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePerson(Guid id)
     {
-        await _uow.Person.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.Person.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> PersonExists(Guid id)
     {
-        return await _uow.Person.ExistsAsync(id);
+        return await _bll.Person.ExistsAsync(id);
     }
 }

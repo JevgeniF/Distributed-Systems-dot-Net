@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,29 +14,29 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,user")]
 public class ProfileFavoriteMoviesController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
 
-    public ProfileFavoriteMoviesController(IAppUOW uow)
+    public ProfileFavoriteMoviesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/ProfileFavoriteMovies
     public async Task<IActionResult> Index()
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
-        return View(await _uow.ProfileFavoriteMovie.IncludeGetAllByProfileIdAsync(profileId));
+        return View(await _bll.ProfileFavoriteMovie.IncludeGetAllByProfileIdAsync(profileId));
     }
 
     // GET: Admin/ProfileFavoriteMovies/Create
     public async Task<ActionResult> Create()
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
-        var profile = await _uow.UserProfile.FirstOrDefaultAsync(profileId);
+        var profile = await _bll.UserProfile.FirstOrDefaultAsync(profileId);
         var vm = new ProfileFavoriteMovieCreateEditVM
         {
-            MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.IncludeGetByAgeAsync(profile!.Age))
+            MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.IncludeGetByAgeAsync(profile!.Age))
                 .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
@@ -51,18 +52,18 @@ public class ProfileFavoriteMoviesController : Controller
     public async Task<IActionResult> Create(ProfileFavoriteMovieCreateEditVM vm)
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
-        var profile = await _uow.UserProfile.FirstOrDefaultAsync(profileId);
+        var profile = await _bll.UserProfile.FirstOrDefaultAsync(profileId);
 
         if (ModelState.IsValid)
         {
             vm.ProfileFavoriteMovie.UserProfileId = profileId;
             vm.ProfileFavoriteMovie.Id = Guid.NewGuid();
-            _uow.ProfileFavoriteMovie.Add(vm.ProfileFavoriteMovie);
-            await _uow.SaveChangesAsync();
+            _bll.ProfileFavoriteMovie.Add(vm.ProfileFavoriteMovie);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index), new {id = profileId});
         }
 
-        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.IncludeGetByAgeAsync(profile!.Age))
+        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.IncludeGetByAgeAsync(profile!.Age))
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.ProfileFavoriteMovie.MovieDetailsId);
         return View(vm);
@@ -74,8 +75,8 @@ public class ProfileFavoriteMoviesController : Controller
     {
         if (id == null) return NotFound();
 
-        ViewData["id"] = (await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id.Value))!.UserProfileId;
-        var profileFavoriteMovie = await _uow.ProfileFavoriteMovie.IncludeFirstOrDefaultAsync(id.Value);
+        ViewData["id"] = (await _bll.ProfileFavoriteMovie.FirstOrDefaultAsync(id.Value))!.UserProfileId;
+        var profileFavoriteMovie = await _bll.ProfileFavoriteMovie.IncludeFirstOrDefaultAsync(id.Value);
         if (profileFavoriteMovie == null) return NotFound();
 
         return View(profileFavoriteMovie);
@@ -87,10 +88,10 @@ public class ProfileFavoriteMoviesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        ViewData["id"] = (await _uow.ProfileFavoriteMovie.FirstOrDefaultAsync(id))!.UserProfileId;
+        ViewData["id"] = (await _bll.ProfileFavoriteMovie.FirstOrDefaultAsync(id))!.UserProfileId;
 
-        await _uow.ProfileFavoriteMovie.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.ProfileFavoriteMovie.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index), new {id = ViewData["id"]});
     }
 }

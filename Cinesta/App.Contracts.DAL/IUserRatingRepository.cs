@@ -1,10 +1,14 @@
-﻿using App.DTO;
+﻿using App.DAL.DTO;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface IUserRatingRepository : IEntityRepository<UserRating>
+public interface IUserRatingRepository : IEntityRepository<UserRating>, IUserRatingRepositoryCustom<UserRating>
 {
-    Task<IEnumerable<UserRating>> IncludeGetAllAsync(bool noTracking = true);
-    Task<DTO.UserRating?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
+}
+
+public interface IUserRatingRepositoryCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllAsync(bool noTracking = true);
+    Task<TEntity?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
 }

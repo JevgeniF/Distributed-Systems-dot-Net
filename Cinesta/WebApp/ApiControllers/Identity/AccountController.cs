@@ -112,7 +112,7 @@ public class AccountController : ControllerBase
         var person = await _uow.Person.GetByNames(appUser.Name, appUser.Surname);
         if (person == null)
         {
-            person = new App.DTO.Person
+            person = new App.DAL.DTO.Person
             {
                 Id = Guid.NewGuid(),
                 Name = appUser.Name,

@@ -2,7 +2,7 @@
 using AutoMapper;
 using Base.Contracts;
 using Base.DAL;
-using CastInMovie = App.DTO.CastInMovie;
+using CastInMovie = App.DAL.DTO.CastInMovie;
 
 namespace App.DAL.EF.Mappers;
 

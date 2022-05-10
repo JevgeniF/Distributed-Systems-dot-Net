@@ -6,7 +6,7 @@ using Base.Contracts;
 using Base.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using CastInMovie = App.DTO.CastInMovie;
+using CastInMovie = App.DAL.DTO.CastInMovie;
 
 namespace App.DAL.EF.Repositories;
 

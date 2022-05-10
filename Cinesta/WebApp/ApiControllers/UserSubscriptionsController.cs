@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -12,25 +13,25 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class UserSubscriptionsController : ControllerBase
     {
-        private readonly IAppUOW _uow;
+        private readonly IAppBll _bll;
 
-        public UserSubscriptionsController(IAppUOW uow)
+        public UserSubscriptionsController(IAppBll bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/UserSubscriptions
         [HttpGet]
         public async Task<IEnumerable<UserSubscription>> GetUserSubscriptions()
         {
-            return await _uow.UserSubscription.GetAllAsync();
+            return await _bll.UserSubscription.GetAllAsync();
         }
 
         // GET: api/UserSubscriptions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserSubscription>> GetUserSubscription(Guid id)
         {
-            var userSubscription = await _uow.UserSubscription.FirstOrDefaultAsync(id);
+            var userSubscription = await _bll.UserSubscription.FirstOrDefaultAsync(id);
 
             if (userSubscription == null)
             {
@@ -45,8 +46,8 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<UserSubscription>> PostUserSubscription(UserSubscription userSubscription)
         {
-            _uow.UserSubscription.Add(userSubscription);
-            await _uow.SaveChangesAsync();
+            _bll.UserSubscription.Add(userSubscription);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetUserSubscription", new { id = userSubscription.Id }, userSubscription);
         }
@@ -55,15 +56,15 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUserSubscription(Guid id)
         {
-            await _uow.UserSubscription.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.UserSubscription.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
         private async Task<bool> UserSubscriptionExists(Guid id)
         {
-            return await _uow.UserSubscription.ExistsAsync(id);
+            return await _bll.UserSubscription.ExistsAsync(id);
         }
     }
 }

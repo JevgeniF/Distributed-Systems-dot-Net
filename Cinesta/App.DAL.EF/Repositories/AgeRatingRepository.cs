@@ -6,10 +6,10 @@ using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories;
 
-public class AgeRatingRepository : BaseEntityRepository<App.DTO.AgeRating, AgeRating, AppDbContext>,
+public class AgeRatingRepository : BaseEntityRepository<DTO.AgeRating, AgeRating, AppDbContext>,
     IAgeRatingRepository
 {
-    public AgeRatingRepository(AppDbContext dbContext, IMapper<App.DTO.AgeRating, AgeRating> mapper) : base(dbContext,
+    public AgeRatingRepository(AppDbContext dbContext, IMapper<DTO.AgeRating, AgeRating> mapper) : base(dbContext,
         mapper)
     {
     }

@@ -1,5 +1,5 @@
-﻿using App.DTO;
-using App.DTO.Identity;
+﻿using App.BLL.DTO;
+using App.BLL.DTO.Identity;
 using Base.Domain;
 
 namespace WebApp.DTO;

@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,17 +14,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,user")]
 public class CastInMoviesController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public CastInMoviesController(IAppUOW uow)
+    public CastInMoviesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/CastInMovies
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.CastInMovie.IncludeGetAllAsync());
+        return View(await _bll.CastInMovie.IncludeGetAllAsync());
     }
 
     // GET: Admin/CastInMovies/Details/5
@@ -31,7 +32,7 @@ public class CastInMoviesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castInMovie = await _uow.CastInMovie.IncludeFirstOrDefaultAsync(id.Value);
+        var castInMovie = await _bll.CastInMovie.IncludeFirstOrDefaultAsync(id.Value);
         if (castInMovie == null) return NotFound();
 
         return View(castInMovie);
@@ -42,13 +43,13 @@ public class CastInMoviesController : Controller
     {
         var vm = new CastInMovieCreateEditVM
         {
-            CastRoleSelectList = new SelectList((await _uow.CastRole.GetAllAsync())
+            CastRoleSelectList = new SelectList((await _bll.CastRole.GetAllAsync())
                 .Select(c => new {c.Id, c.Naming}),
                 nameof(CastRole.Id), nameof(CastRole.Naming)),
-            PersonSelectList = new SelectList((await _uow.Person.GetAllAsync())
+            PersonSelectList = new SelectList((await _bll.Person.GetAllAsync())
                 .Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)}),
                 nameof(Person.Id), "FullName"),
-            MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+            MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
                 .Select(m => new {m.Id, m.Title}),
                 nameof(MovieDetails.Id), nameof(MovieDetails.Title))
         };
@@ -65,19 +66,19 @@ public class CastInMoviesController : Controller
     {
         if (ModelState.IsValid)
         {
-            _uow.CastInMovie.Add(vm.CastInMovie);
-            await _uow.SaveChangesAsync();
+            _bll.CastInMovie.Add(vm.CastInMovie);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         vm.CastRoleSelectList = new SelectList(
-            (await _uow.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
+            (await _bll.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
             nameof(CastRole.Id), nameof(CastRole.Naming), vm.CastInMovie.CastRoleId);
         vm.MovieDetailsSelectList = new SelectList(
-            (await _uow.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
+            (await _bll.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
             nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
         vm.PersonSelectList = new SelectList(
-            (await _uow.Person.GetAllAsync())
+            (await _bll.Person.GetAllAsync())
             .Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)}), nameof(Person.Id),
             "FullName", vm.CastInMovie.PersonId);
         return View(vm);
@@ -88,20 +89,20 @@ public class CastInMoviesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castInMovie = await _uow.CastInMovie.FirstOrDefaultAsync(id.Value);
+        var castInMovie = await _bll.CastInMovie.FirstOrDefaultAsync(id.Value);
         if (castInMovie == null) return NotFound();
         var vm = new CastInMovieCreateEditVM
         {
             CastInMovie = castInMovie
         };
         vm.CastRoleSelectList = new SelectList(
-            (await _uow.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
+            (await _bll.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
             nameof(CastRole.Id), nameof(CastRole.Naming), vm.CastInMovie.CastRoleId);
         vm.MovieDetailsSelectList = new SelectList(
-            (await _uow.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
+            (await _bll.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
             nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
         vm.PersonSelectList = new SelectList(
-            (await _uow.Person.GetAllAsync())
+            (await _bll.Person.GetAllAsync())
             .Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)}), nameof(Person.Id),
             "FullName", vm.CastInMovie.PersonId);
         return View(vm);
@@ -120,8 +121,8 @@ public class CastInMoviesController : Controller
         {
             try
             {
-                _uow.CastInMovie.Update(castInMovie);
-                await _uow.SaveChangesAsync();
+                _bll.CastInMovie.Update(castInMovie);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -138,13 +139,13 @@ public class CastInMoviesController : Controller
             CastInMovie = castInMovie
         };
         vm.CastRoleSelectList = new SelectList(
-            (await _uow.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
+            (await _bll.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
             nameof(CastRole.Id), nameof(CastRole.Naming), vm.CastInMovie.CastRoleId);
         vm.MovieDetailsSelectList = new SelectList(
-            (await _uow.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
+            (await _bll.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
             nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
         vm.PersonSelectList = new SelectList(
-            (await _uow.Person.GetAllAsync())
+            (await _bll.Person.GetAllAsync())
             .Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)}), nameof(Person.Id),
             "FullName", vm.CastInMovie.PersonId);
         return View(vm);
@@ -156,7 +157,7 @@ public class CastInMoviesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castInMovie = await _uow.CastInMovie.IncludeFirstOrDefaultAsync(id.Value);
+        var castInMovie = await _bll.CastInMovie.IncludeFirstOrDefaultAsync(id.Value);
         if (castInMovie == null) return NotFound();
 
         return View(castInMovie);
@@ -168,13 +169,13 @@ public class CastInMoviesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.CastInMovie.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.CastInMovie.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> CastInMovieExists(Guid id)
     {
-        return await _uow.CastInMovie.ExistsAsync(id);
+        return await _bll.CastInMovie.ExistsAsync(id);
     }
 }

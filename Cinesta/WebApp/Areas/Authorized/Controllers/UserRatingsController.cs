@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,17 +15,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,user")]
 public class UserRatingsController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public UserRatingsController(IAppUOW uow)
+    public UserRatingsController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/UserRatings
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.UserRating.IncludeGetAllAsync());
+        return View(await _bll.UserRating.IncludeGetAllAsync());
     }
 
     // GET: Admin/UserRatings/Details/5
@@ -32,7 +33,7 @@ public class UserRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var userRating = await _uow.UserRating.IncludeFirstOrDefaultAsync(id.Value);
+        var userRating = await _bll.UserRating.IncludeFirstOrDefaultAsync(id.Value);
         if (userRating == null) return NotFound();
 
         return View(userRating);
@@ -43,7 +44,7 @@ public class UserRatingsController : Controller
     {
         var vm = new UserRatingCreateEditVM
         {
-            MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+            MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
                 .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
@@ -61,12 +62,12 @@ public class UserRatingsController : Controller
         {
             vm.UserRating.AppUserId = User.GetUserId();
             vm.UserRating.Id = Guid.NewGuid();
-            _uow.UserRating.Add(vm.UserRating);
-            await _uow.SaveChangesAsync();
+            _bll.UserRating.Add(vm.UserRating);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
@@ -77,14 +78,14 @@ public class UserRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var userRating = await _uow.UserRating.FirstOrDefaultAsync(id.Value);
+        var userRating = await _bll.UserRating.FirstOrDefaultAsync(id.Value);
         if (userRating == null) return NotFound();
 
         var vm = new UserRatingCreateEditVM
         {
             UserRating = userRating
         };
-        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
@@ -103,7 +104,7 @@ public class UserRatingsController : Controller
 
         if (ModelState.IsValid)
         {
-            var userRatingsFromDb = await _uow.UserRating.FirstOrDefaultAsync(id);
+            var userRatingsFromDb = await _bll.UserRating.FirstOrDefaultAsync(id);
             if (userRatingsFromDb == null) return NotFound();
 
             try
@@ -111,8 +112,8 @@ public class UserRatingsController : Controller
                 userRatingsFromDb.Comment.SetTranslation(userRating.Comment);
                 userRating.Comment = userRatingsFromDb.Comment;
 
-                _uow.UserRating.Update(userRating);
-                await _uow.SaveChangesAsync();
+                _bll.UserRating.Update(userRating);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -128,7 +129,7 @@ public class UserRatingsController : Controller
         {
             UserRating = userRating
         };
-        vm.MovieDetailsSelectList = new SelectList((await _uow.MovieDetails.GetAllAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
@@ -140,7 +141,7 @@ public class UserRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var userRating = await _uow.UserRating.FirstOrDefaultAsync(id.Value);
+        var userRating = await _bll.UserRating.FirstOrDefaultAsync(id.Value);
         if (userRating == null) return NotFound();
 
         return View(userRating);
@@ -152,13 +153,13 @@ public class UserRatingsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.Subscription.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.Subscription.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> UserRatingExists(Guid id)
     {
-        return await _uow.Subscription.ExistsAsync(id);
+        return await _bll.Subscription.ExistsAsync(id);
     }
 }

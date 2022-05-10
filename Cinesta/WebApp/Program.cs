@@ -1,5 +1,7 @@
 using System.Globalization;
 using System.Text;
+using App.BLL;
+using App.Contracts.BLL;
 using App.Contracts.DAL;
 using App.DAL.EF;
 using App.Domain.Identity;
@@ -10,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebApp;
+using AutoMapperConfig = App.DAL.EF.AutoMapperConfig;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +23,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IAppUOW, AppUOW>();
+builder.Services.AddScoped<IAppBll, AppBll>();
 
-builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
+builder.Services.AddAutoMapper(typeof(AutoMapperConfig), typeof(App.BLL.AutoMapperConfig));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

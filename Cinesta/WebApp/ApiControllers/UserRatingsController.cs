@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,18 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class UserRatingsController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public UserRatingsController(IAppUOW uow)
+    public UserRatingsController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/UserRatings
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserRatingDto>>> GetUserRatings()
     {
-        var res = (await _uow.UserRating.GetAllAsync())
+        var res = (await _bll.UserRating.GetAllAsync())
             .Select(u => new UserRatingDto
             {
                 Id = u.Id,
@@ -44,7 +45,7 @@ public class UserRatingsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<UserRating>> GetUserRating(Guid id)
     {
-        var userRating = await _uow.UserRating.FirstOrDefaultAsync(id);
+        var userRating = await _bll.UserRating.FirstOrDefaultAsync(id);
 
         if (userRating == null) return NotFound();
 
@@ -58,14 +59,14 @@ public class UserRatingsController : ControllerBase
     {
         if (id != userRating.Id) return BadRequest();
 
-        var userRatingsFromDb = await _uow.UserRating.FirstOrDefaultAsync(id);
+        var userRatingsFromDb = await _bll.UserRating.FirstOrDefaultAsync(id);
         if (userRatingsFromDb == null) return NotFound();
 
         try
         {
             userRatingsFromDb.Comment.SetTranslation(userRating.Comment);
-            _uow.UserRating.Update(userRatingsFromDb);
-            await _uow.SaveChangesAsync();
+            _bll.UserRating.Update(userRatingsFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -82,8 +83,8 @@ public class UserRatingsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserRating>> PostUserRating(UserRating userRating)
     {
-        _uow.UserRating.Add(userRating);
-        await _uow.SaveChangesAsync();
+        _bll.UserRating.Add(userRating);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetUserRating", new {id = userRating.Id}, userRating);
     }
@@ -92,14 +93,14 @@ public class UserRatingsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserRating(Guid id)
     {
-        await _uow.UserRating.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.UserRating.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> UserRatingExists(Guid id)
     {
-        return await _uow.UserRating.ExistsAsync(id);
+        return await _bll.UserRating.ExistsAsync(id);
     }
 }

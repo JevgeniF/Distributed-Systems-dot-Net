@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,17 +12,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin")]
 public class GenresController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public GenresController(IAppUOW uow)
+    public GenresController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/Genres
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.Genre.GetAllAsync());
+        return View(await _bll.Genre.GetAllAsync());
     }
 
     // GET: Admin/Genres/Details/5
@@ -29,7 +30,7 @@ public class GenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var genre = await _uow.Genre.FirstOrDefaultAsync(id.Value);
+        var genre = await _bll.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
 
         return View(genre);
@@ -51,8 +52,8 @@ public class GenresController : Controller
         if (ModelState.IsValid)
         {
             genre.Id = Guid.NewGuid();
-            _uow.Genre.Add(genre);
-            await _uow.SaveChangesAsync();
+            _bll.Genre.Add(genre);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -64,7 +65,7 @@ public class GenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var genre = await _uow.Genre.FirstOrDefaultAsync(id.Value);
+        var genre = await _bll.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
         return View(genre);
     }
@@ -82,7 +83,7 @@ public class GenresController : Controller
 
         if (ModelState.IsValid)
         {
-            var genreFromDb = await _uow.Genre.FirstOrDefaultAsync(id);
+            var genreFromDb = await _bll.Genre.FirstOrDefaultAsync(id);
             if (genreFromDb == null) return NotFound();
 
             try
@@ -90,8 +91,8 @@ public class GenresController : Controller
                 genreFromDb.Naming.SetTranslation(genre.Naming);
                 genre.Naming = genreFromDb.Naming;
 
-                _uow.Genre.Update(genre);
-                await _uow.SaveChangesAsync();
+                _bll.Genre.Update(genre);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -111,7 +112,7 @@ public class GenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var genre = await _uow.Genre.FirstOrDefaultAsync(id.Value);
+        var genre = await _bll.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
 
         return View(genre);
@@ -123,13 +124,13 @@ public class GenresController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.Genre.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.Genre.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> GenreExists(Guid id)
     {
-        return await _uow.Genre.ExistsAsync(id);
+        return await _bll.Genre.ExistsAsync(id);
     }
 }

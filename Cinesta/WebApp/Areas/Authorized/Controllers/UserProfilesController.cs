@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,17 +13,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,user")]
 public class UserProfilesController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public UserProfilesController(IAppUOW uow)
+    public UserProfilesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/UserProfiles
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.UserProfile.IncludeGetAllByUserIdAsync(User.GetUserId()));
+        return View(await _bll.UserProfile.IncludeGetAllByUserIdAsync(User.GetUserId()));
     }
 
     // GET: Admin/UserProfiles/Details/5
@@ -30,7 +31,7 @@ public class UserProfilesController : Controller
     {
         if (id == null) return NotFound();
 
-        var userProfile = await _uow.UserProfile.FirstOrDefaultAsync(id.Value);
+        var userProfile = await _bll.UserProfile.FirstOrDefaultAsync(id.Value);
         if (userProfile == null) return NotFound();
 
         return View(userProfile);
@@ -53,8 +54,8 @@ public class UserProfilesController : Controller
         {
             userProfile.AppUserId = User.GetUserId();
             userProfile.Id = Guid.NewGuid();
-            _uow.UserProfile.Add(userProfile);
-            await _uow.SaveChangesAsync();
+            _bll.UserProfile.Add(userProfile);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -66,7 +67,7 @@ public class UserProfilesController : Controller
     {
         if (id == null) return NotFound();
 
-        var userProfile = await _uow.UserProfile.FirstOrDefaultAsync(id.Value);
+        var userProfile = await _bll.UserProfile.FirstOrDefaultAsync(id.Value);
         if (userProfile == null) return NotFound();
         return View(userProfile);
     }
@@ -86,8 +87,8 @@ public class UserProfilesController : Controller
         {
             try
             {
-                _uow.UserProfile.Update(userProfile);
-                await _uow.SaveChangesAsync();
+                _bll.UserProfile.Update(userProfile);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -108,7 +109,7 @@ public class UserProfilesController : Controller
     {
         if (id == null) return NotFound();
 
-        var userProfile = await _uow.UserProfile.FirstOrDefaultAsync(id.Value);
+        var userProfile = await _bll.UserProfile.FirstOrDefaultAsync(id.Value);
         if (userProfile == null) return NotFound();
 
         return View(userProfile);
@@ -120,13 +121,13 @@ public class UserProfilesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.UserProfile.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.UserProfile.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> UserProfileExists(Guid id)
     {
-        return await _uow.UserProfile.ExistsAsync(id);
+        return await _bll.UserProfile.ExistsAsync(id);
     }
 }

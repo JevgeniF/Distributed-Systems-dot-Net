@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +14,25 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class MovieGenresController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public MovieGenresController(IAppUOW uow)
+    public MovieGenresController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/MovieGenres
     [HttpGet]
     public async Task<IEnumerable<MovieGenre>> GetMovieGenres()
     {
-        return await _uow.MovieGenre.GetAllAsync();
+        return await _bll.MovieGenre.GetAllAsync();
     }
 
     // GET: api/MovieGenres/5
     [HttpGet("{id}")]
     public async Task<ActionResult<MovieGenre>> GetMovieGenre(Guid id)
     {
-        var movieGenre = await _uow.MovieGenre.FirstOrDefaultAsync(id);
+        var movieGenre = await _bll.MovieGenre.FirstOrDefaultAsync(id);
 
         if (movieGenre == null) return NotFound();
 
@@ -48,8 +49,8 @@ public class MovieGenresController : ControllerBase
 
         try
         {
-            _uow.MovieGenre.Update(movieGenre);
-            await _uow.SaveChangesAsync();
+            _bll.MovieGenre.Update(movieGenre);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -67,8 +68,8 @@ public class MovieGenresController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieGenre>> PostMovieGenre(MovieGenre movieGenre)
     {
-        _uow.MovieGenre.Add(movieGenre);
-        await _uow.SaveChangesAsync();
+        _bll.MovieGenre.Add(movieGenre);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetMovieGenre", new {id = movieGenre.Id}, movieGenre);
     }
@@ -78,14 +79,14 @@ public class MovieGenresController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieGenre(Guid id)
     {
-        await _uow.MovieGenre.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.MovieGenre.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> MovieGenreExists(Guid id)
     {
-        return await _uow.MovieGenre.ExistsAsync(id);
+        return await _bll.MovieGenre.ExistsAsync(id);
     }
 }

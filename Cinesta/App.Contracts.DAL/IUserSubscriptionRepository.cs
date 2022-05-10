@@ -1,10 +1,14 @@
-﻿using App.DTO;
+﻿using App.DAL.DTO;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface IUserSubscriptionRepository : IEntityRepository<UserSubscription>
+public interface IUserSubscriptionRepository : IEntityRepository<UserSubscription>, IUserSubscriptionRepositoryCustom<UserSubscription>
 {
-    Task<IEnumerable<UserSubscription>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true);
-    Task<DTO.UserSubscription?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
+}
+
+public interface IUserSubscriptionRepositoryCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true);
+    Task<TEntity?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
 }

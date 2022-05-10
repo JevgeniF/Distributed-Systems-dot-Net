@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,17 +14,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,user")]
 public class MovieDetailsController : Controller
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public MovieDetailsController(IAppUOW uow)
+    public MovieDetailsController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: Admin/MovieDetails
     public async Task<IActionResult> Index()
     {
-        return View(await _uow.MovieDetails.IncludeGetAllAsync());
+        return View(await _bll.MovieDetails.IncludeGetAllAsync());
     }
 
     // GET: Admin/MovieDetails/Details/5
@@ -31,7 +32,7 @@ public class MovieDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieDetails = await _uow.MovieDetails.IncludeFirstOrDefaultAsync(id.Value);
+        var movieDetails = await _bll.MovieDetails.IncludeFirstOrDefaultAsync(id.Value);
         if (movieDetails == null) return NotFound();
 
         return View(movieDetails);
@@ -42,10 +43,10 @@ public class MovieDetailsController : Controller
     {
         var vm = new MovieDetailsCreateEditVM
         {
-            AgeRatingSelectList = new SelectList((await _uow.AgeRating.GetAllAsync())
+            AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
                 .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
                 nameof(AgeRating.Naming)),
-            MovieTypeSelectList = new SelectList((await _uow.MovieType.GetAllAsync())
+            MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
                 .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
                 nameof(MovieType.Naming))
         };
@@ -61,15 +62,15 @@ public class MovieDetailsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _uow.MovieDetails.Add(vm.MovieDetails);
-            await _uow.SaveChangesAsync();
+            _bll.MovieDetails.Add(vm.MovieDetails);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        vm.AgeRatingSelectList = new SelectList((await _uow.AgeRating.GetAllAsync())
+        vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
             .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
             nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-        vm.MovieTypeSelectList = new SelectList((await _uow.MovieType.GetAllAsync())
+        vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
             .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
             nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
@@ -80,17 +81,17 @@ public class MovieDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieDetails = await _uow.MovieDetails.FirstOrDefaultAsync(id.Value);
+        var movieDetails = await _bll.MovieDetails.FirstOrDefaultAsync(id.Value);
         if (movieDetails == null) return NotFound();
 
         var vm = new MovieDetailsCreateEditVM
         {
             MovieDetails = movieDetails
         };
-        vm.AgeRatingSelectList = new SelectList((await _uow.AgeRating.GetAllAsync())
+        vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
             .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
             nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-        vm.MovieTypeSelectList = new SelectList((await _uow.MovieType.GetAllAsync())
+        vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
             .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
             nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
@@ -107,7 +108,7 @@ public class MovieDetailsController : Controller
 
         if (ModelState.IsValid)
         {
-            var movieDetailsFromDb = await _uow.MovieDetails.FirstOrDefaultAsync(id);
+            var movieDetailsFromDb = await _bll.MovieDetails.FirstOrDefaultAsync(id);
             if (movieDetailsFromDb == null) return NotFound();
             try
             {
@@ -117,8 +118,8 @@ public class MovieDetailsController : Controller
                 movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
                 movieDetails.Description = movieDetailsFromDb.Description;
 
-                _uow.MovieDetails.Update(movieDetails);
-                await _uow.SaveChangesAsync();
+                _bll.MovieDetails.Update(movieDetails);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -134,10 +135,10 @@ public class MovieDetailsController : Controller
         {
             MovieDetails = movieDetails
         };
-        vm.AgeRatingSelectList = new SelectList((await _uow.AgeRating.GetAllAsync())
+        vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
             .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
             nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-        vm.MovieTypeSelectList = new SelectList((await _uow.MovieType.GetAllAsync())
+        vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
             .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
             nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
@@ -149,7 +150,7 @@ public class MovieDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieDetails = await _uow.MovieDetails.IncludeFirstOrDefaultAsync(id.Value);
+        var movieDetails = await _bll.MovieDetails.IncludeFirstOrDefaultAsync(id.Value);
         if (movieDetails == null) return NotFound();
 
         return View(movieDetails);
@@ -161,13 +162,13 @@ public class MovieDetailsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _uow.MovieDetails.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.MovieDetails.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> MovieDetailsExists(Guid id)
     {
-        return await _uow.MovieDetails.ExistsAsync(id);
+        return await _bll.MovieDetails.ExistsAsync(id);
     }
 }

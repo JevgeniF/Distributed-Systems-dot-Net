@@ -1,10 +1,14 @@
-﻿using App.DTO;
+﻿using App.DAL.DTO;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface IMovieDbScoreRepository : IEntityRepository<MovieDbScore>
+public interface IMovieDbScoreRepository : IEntityRepository<MovieDbScore>, IMovieDbScoreRepositoryCustom<MovieDbScore>
 {
-    Task<IEnumerable<MovieDbScore>> IncludeGetAllAsync(bool noTracking = true);
-    Task<DTO.MovieDbScore?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
+}
+
+public interface IMovieDbScoreRepositoryCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllAsync(bool noTracking = true);
+    Task<TEntity?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
 }

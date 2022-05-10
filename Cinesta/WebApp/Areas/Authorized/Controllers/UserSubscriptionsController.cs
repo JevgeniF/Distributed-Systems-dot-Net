@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Mvc;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -13,17 +14,17 @@ namespace WebApp.Areas.Authorized.Controllers
     [Authorize(Roles = "admin,user")]
     public class UserSubscriptionsController : Controller
     {
-        private readonly IAppUOW _uow;
+        private readonly IAppBll _bll;
 
-        public UserSubscriptionsController(IAppUOW uow)
+        public UserSubscriptionsController(IAppBll bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Authorized/UserSubscriptions
         public async Task<IActionResult> Index()
         {
-            return View(await _uow.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()));
+            return View(await _bll.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()));
         }
 
         // GET: Authorized/UserSubscriptions/Details/5
@@ -32,7 +33,7 @@ namespace WebApp.Areas.Authorized.Controllers
             if (id == null) return NotFound();
 
             var userSubscription =
-                await _uow.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
+                await _bll.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
             if (userSubscription == null) return NotFound();
 
             return View(userSubscription);
@@ -43,7 +44,7 @@ namespace WebApp.Areas.Authorized.Controllers
         {
             var vm = new UserSubscriptionCreateVM
             {
-                SubscriptionSelectList = new SelectList((await _uow.Subscription.GetAllAsync())
+                SubscriptionSelectList = new SelectList((await _bll.Subscription.GetAllAsync())
                     .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
                     nameof(Subscription.Naming))
             };
@@ -60,12 +61,12 @@ namespace WebApp.Areas.Authorized.Controllers
             if (ModelState.IsValid)
             {
                 vm.UserSubscription.AppUserId = User.GetUserId();
-                _uow.UserSubscription.Add(vm.UserSubscription);
-                await _uow.SaveChangesAsync();
+                _bll.UserSubscription.Add(vm.UserSubscription);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            vm.SubscriptionSelectList = new SelectList((await _uow.Subscription.GetAllAsync())
+            vm.SubscriptionSelectList = new SelectList((await _bll.Subscription.GetAllAsync())
                 .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
                 nameof(Subscription.Naming), vm.UserSubscription.SubscriptionId);
             return View(vm);
@@ -77,7 +78,7 @@ namespace WebApp.Areas.Authorized.Controllers
             if (id == null) return NotFound();
 
             var userSubscription =
-                await _uow.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
+                await _bll.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
             if (userSubscription == null) return NotFound();
 
             return View(userSubscription);
@@ -88,14 +89,14 @@ namespace WebApp.Areas.Authorized.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.UserSubscription.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.UserSubscription.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private async Task<bool> UserSubscriptionExists(Guid id)
         {
-            return await _uow.UserSubscription.ExistsAsync(id);
+            return await _bll.UserSubscription.ExistsAsync(id);
         }
     }
 }

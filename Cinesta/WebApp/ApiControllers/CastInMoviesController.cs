@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +14,25 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class CastInMoviesController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public CastInMoviesController(IAppUOW uow)
+    public CastInMoviesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/CastInMovies
     [HttpGet]
     public async Task<IEnumerable<CastInMovie>> GetCastInMovies()
     {
-        return await _uow.CastInMovie.IncludeGetAllAsync();
+        return await _bll.CastInMovie.IncludeGetAllAsync();
     }
 
     // GET: api/CastInMovies/5
     [HttpGet("{id}")]
     public async Task<ActionResult<CastInMovie>> GetCastInMovie(Guid id)
     {
-        var castInMovie = await _uow.CastInMovie.IncludeFirstOrDefaultAsync(id);
+        var castInMovie = await _bll.CastInMovie.IncludeFirstOrDefaultAsync(id);
         if (castInMovie == null) return NotFound();
 
         return castInMovie;
@@ -47,8 +48,8 @@ public class CastInMoviesController : ControllerBase
 
         try
         {
-            _uow.CastInMovie.Update(castInMovie);
-            await _uow.SaveChangesAsync();
+            _bll.CastInMovie.Update(castInMovie);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -66,8 +67,8 @@ public class CastInMoviesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<CastInMovie>> PostCastInMovie(CastInMovie castInMovie)
     {
-        _uow.CastInMovie.Add(castInMovie);
-        await _uow.SaveChangesAsync();
+        _bll.CastInMovie.Add(castInMovie);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetCastInMovie", new {id = castInMovie.Id}, castInMovie);
     }
@@ -77,14 +78,14 @@ public class CastInMoviesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteCastInMovie(Guid id)
     {
-        await _uow.CastInMovie.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.CastInMovie.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> CastInMovieExists(Guid id)
     {
-        return await _uow.CastInMovie.ExistsAsync(id);
+        return await _bll.CastInMovie.ExistsAsync(id);
     }
 }

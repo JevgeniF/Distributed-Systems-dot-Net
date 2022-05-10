@@ -1,4 +1,4 @@
-﻿using App.DTO;
+﻿using App.DAL.DTO;
 using AutoMapper;
 using Base.Contracts;
 using Base.DAL;

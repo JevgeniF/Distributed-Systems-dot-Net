@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,25 +14,25 @@ namespace WebApp.ApiControllers
     [ApiController]
     public class SubscriptionsController : ControllerBase
     {
-        private readonly IAppUOW _uow;
+        private readonly IAppBll _bll;
 
-        public SubscriptionsController(IAppUOW uow)
+        public SubscriptionsController(IAppBll bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/Subscriptions
         [HttpGet]
         public async Task<IEnumerable<Subscription>> GetSubscriptions()
         {
-            return await _uow.Subscription.GetAllAsync();
+            return await _bll.Subscription.GetAllAsync();
         }
 
         // GET: api/Subscriptions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Subscription>> GetSubscription(Guid id)
         {
-            var subscription = await _uow.Subscription.FirstOrDefaultAsync(id);
+            var subscription = await _bll.Subscription.FirstOrDefaultAsync(id);
 
             if (subscription == null) return NotFound();
 
@@ -46,15 +47,15 @@ namespace WebApp.ApiControllers
         {
             if (id != subscription.Id) return BadRequest();
 
-            var subscriptionFromDb = await _uow.Subscription.FirstOrDefaultAsync(id);
+            var subscriptionFromDb = await _bll.Subscription.FirstOrDefaultAsync(id);
             if (subscriptionFromDb == null) return NotFound();
             
             try
             {
                 subscriptionFromDb.Naming.SetTranslation(subscription.Naming);
                 subscriptionFromDb.Description.SetTranslation(subscription.Description);
-                _uow.Subscription.Update(subscriptionFromDb);
-                await _uow.SaveChangesAsync();
+                _bll.Subscription.Update(subscriptionFromDb);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -71,8 +72,8 @@ namespace WebApp.ApiControllers
         [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<Subscription>> PostSubscription(Subscription subscription)
         {
-            _uow.Subscription.Add(subscription);
-            await _uow.SaveChangesAsync();
+            _bll.Subscription.Add(subscription);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetSubscription", new { id = subscription.Id }, subscription);
         }
@@ -83,15 +84,15 @@ namespace WebApp.ApiControllers
         public async Task<IActionResult> DeleteSubscription(Guid id)
         {
 
-            await _uow.Subscription.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.Subscription.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
         private async Task<bool> SubscriptionExists(Guid id)
         {
-            return await _uow.Subscription.ExistsAsync(id);
+            return await _bll.Subscription.ExistsAsync(id);
         }
     }
 }

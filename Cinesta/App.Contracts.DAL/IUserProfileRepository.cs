@@ -1,9 +1,13 @@
-﻿using App.DTO;
+﻿using App.DAL.DTO;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface IUserProfileRepository : IEntityRepository<UserProfile>
+public interface IUserProfileRepository : IEntityRepository<UserProfile>, IUserProfileRepositoryCustom<UserProfile>
 {
-    Task<IEnumerable<UserProfile>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true);
+}
+
+public interface IUserProfileRepositoryCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true);
 }

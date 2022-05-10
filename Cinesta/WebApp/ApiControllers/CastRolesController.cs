@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.DAL;
-using App.DTO;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,18 @@ namespace WebApp.ApiControllers;
 [ApiController]
 public class CastRolesController : ControllerBase
 {
-    private readonly IAppUOW _uow;
+    private readonly IAppBll _bll;
 
-    public CastRolesController(IAppUOW uow)
+    public CastRolesController(IAppBll bll)
     {
-        _uow = uow;
+        _bll = bll;
     }
 
     // GET: api/CastRoles
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CastRoleDto>>> GetCastRoles()
     {
-        var res = (await _uow.CastRole.GetAllAsync())
+        var res = (await _bll.CastRole.GetAllAsync())
             .Select(c => new CastRoleDto
             {
                 Id = c.Id,
@@ -40,7 +41,7 @@ public class CastRolesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<CastRole>> GetCastRole(Guid id)
     {
-        var castRole = await _uow.CastRole.FirstOrDefaultAsync(id);
+        var castRole = await _bll.CastRole.FirstOrDefaultAsync(id);
 
         if (castRole == null) return NotFound();
 
@@ -54,14 +55,14 @@ public class CastRolesController : ControllerBase
     {
         if (id != castRole.Id) return BadRequest();
 
-        var castRoleFromDb = await _uow.CastRole.FirstOrDefaultAsync(id);
+        var castRoleFromDb = await _bll.CastRole.FirstOrDefaultAsync(id);
         if (castRoleFromDb == null) return NotFound();
 
         try
         {
             castRoleFromDb.Naming.SetTranslation(castRole.Naming);
-            _uow.CastRole.Update(castRoleFromDb);
-            await _uow.SaveChangesAsync();
+            _bll.CastRole.Update(castRoleFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -78,8 +79,8 @@ public class CastRolesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CastRole>> PostCastRole(CastRole castRole)
     {
-        _uow.CastRole.Add(castRole);
-        await _uow.SaveChangesAsync();
+        _bll.CastRole.Add(castRole);
+        await _bll.SaveChangesAsync();
 
         return CreatedAtAction("GetCastRole", new {id = castRole.Id}, castRole);
     }
@@ -88,14 +89,14 @@ public class CastRolesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCastRole(Guid id)
     {
-        await _uow.CastRole.RemoveAsync(id);
-        await _uow.SaveChangesAsync();
+        await _bll.CastRole.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> CastRoleExists(Guid id)
     {
-        return await _uow.CastRole.ExistsAsync(id);
+        return await _bll.CastRole.ExistsAsync(id);
     }
 }

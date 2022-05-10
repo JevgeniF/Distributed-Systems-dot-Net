@@ -1,13 +1,17 @@
-﻿using App.DTO;
+﻿using App.DAL.DTO;
 using Base.Contracts.DAL;
 
 namespace App.Contracts.DAL;
 
-public interface IProfileFavoriteMovieRepository : IEntityRepository<ProfileFavoriteMovie>
+public interface IProfileFavoriteMovieRepository : IEntityRepository<ProfileFavoriteMovie>, IProfileFavoriteMovieRepositoryCustom<ProfileFavoriteMovie>
 {
-    Task<IEnumerable<DTO.ProfileFavoriteMovie>> IncludeGetAllByProfileIdAsync(Guid profileId,
+}
+
+public interface IProfileFavoriteMovieRepositoryCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllByProfileIdAsync(Guid profileId,
         bool noTracking = true);
 
-    Task<IEnumerable<DTO.ProfileFavoriteMovie>> IncludeGetAllAsync(bool noTracking = true);
-    Task<DTO.ProfileFavoriteMovie?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
+    Task<IEnumerable<TEntity>> IncludeGetAllAsync(bool noTracking = true);
+    Task<TEntity?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
 }

@@ -1,4 +1,4 @@
-﻿using App.DTO;
+﻿using App.BLL.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApp.Areas.Authorized.ViewModels;

@@ -1,4 +1,4 @@
-﻿using App.DTO.Identity;
+﻿using App.DAL.DTO.Identity;
 using AutoMapper;
 using Base.Contracts;
 using Base.DAL;

@@ -1,4 +1,4 @@
-﻿using Base.Contracts;
+﻿using Base.Contracts.Mapper;
 
 namespace Base.DAL;
 

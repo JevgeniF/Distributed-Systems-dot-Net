@@ -2,7 +2,7 @@
 using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
 using Base.BLL;
-using Base.Contracts;
+using Base.Contracts.Mapper;
 
 namespace App.BLL.Services;
 

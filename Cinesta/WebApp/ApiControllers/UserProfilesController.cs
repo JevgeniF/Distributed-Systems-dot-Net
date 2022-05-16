@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserProfilesController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -22,6 +24,9 @@ public class UserProfilesController : ControllerBase
     }
 
     // GET: api/UserProfiles
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<UserProfile>), 200)]
     [HttpGet]
     public async Task<IEnumerable<UserProfile>> GetUserProfiles()
     {
@@ -29,6 +34,10 @@ public class UserProfilesController : ControllerBase
     }
 
     // GET: api/UserProfiles/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(UserProfile), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
     public async Task<ActionResult<UserProfile>> GetUserProfile(Guid id)
     {
@@ -41,6 +50,10 @@ public class UserProfilesController : ControllerBase
 
     // PUT: api/UserProfiles/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutUserProfile(Guid id, UserProfile userProfile)
     {
@@ -63,16 +76,24 @@ public class UserProfilesController : ControllerBase
 
     // POST: api/UserProfiles
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(UserProfile),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<UserProfile>> PostUserProfile(UserProfile userProfile)
     {
         _bll.UserProfile.Add(userProfile);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetUserProfile", new {id = userProfile.Id}, userProfile);
+        return CreatedAtAction("GetUserProfile", new {id = userProfile.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, userProfile);
     }
 
     // DELETE: api/UserProfiles/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserProfile(Guid id)
     {

@@ -11,8 +11,9 @@ using WebApp.DTO.Identity;
 
 namespace WebApp.ApiControllers.Identity;
 
-[Route("api/identity/[controller]/[action]")]
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/identity/[controller]/[action]")]
 public class AccountController : ControllerBase
 {
     private readonly SignInManager<AppUser> _signInManager;
@@ -34,6 +35,10 @@ public class AccountController : ControllerBase
         _context = context;
     }
 
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(JwtResponse),200)]
+    [ProducesResponseType(404)]
     [HttpPost]
     public async Task<ActionResult<JwtResponse>> LogIn([FromBody] Login loginData)
     {
@@ -64,6 +69,22 @@ public class AccountController : ControllerBase
             return NotFound("User/Password problem");
         }
 
+        appUser.RefreshTokens = await _context.Entry(appUser).Collection(a => a.RefreshTokens!)
+            .Query().Where(t => t.AppUserId == appUser.Id).ToListAsync();
+
+        foreach (var userRefreshToken in appUser.RefreshTokens)
+        {
+            if (userRefreshToken.ExpirationDateTime < DateTime.UtcNow &&
+                userRefreshToken.PreviousExpirationDateTime < DateTime.UtcNow)
+            {
+                _context.RefreshTokens.Remove(userRefreshToken);
+            }
+        }
+
+        var refreshToken = new RefreshToken();
+        refreshToken.AppUserId = appUser.Id;
+        _context.RefreshTokens.Add(refreshToken);
+
         //generate JWT
         var jwt = IdentityExtensions.GenerateJwt(
             claimsPrincipal.Claims, _configuration["JWT:Key"], _configuration["JWT:Issuer"],
@@ -73,11 +94,16 @@ public class AccountController : ControllerBase
         var res = new JwtResponse()
         {
             Token = jwt,
+            RefreshToken = refreshToken.Token,
             Email = appUser.Email
         };
         return Ok(res);
     }
 
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(JwtResponse),200)]
+    [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<JwtResponse>> Register(Register registrationData)
     {
@@ -156,6 +182,10 @@ public class AccountController : ControllerBase
         return Ok(res);
     }
 
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(JwtResponse),200)]
+    [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
     {

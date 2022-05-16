@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileFavoriteMoviesController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -22,6 +24,9 @@ public class ProfileFavoriteMoviesController : ControllerBase
     }
 
     // GET: api/ProfileFavoriteMovies
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<ProfileFavoriteMovie>), 200)]
     [HttpGet]
     public async Task<IEnumerable<ProfileFavoriteMovie>> GetProfileFavoriteMovies()
     {
@@ -29,6 +34,10 @@ public class ProfileFavoriteMoviesController : ControllerBase
     }
 
     // GET: api/ProfileFavoriteMovies/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(ProfileFavoriteMovie), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
     public async Task<ActionResult<ProfileFavoriteMovie>> GetProfileFavoriteMovie(Guid id)
     {
@@ -41,6 +50,10 @@ public class ProfileFavoriteMoviesController : ControllerBase
 
     // PUT: api/ProfileFavoriteMovies/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutProfileFavoriteMovie(Guid id, ProfileFavoriteMovie profileFavoriteMovie)
     {
@@ -63,6 +76,10 @@ public class ProfileFavoriteMoviesController : ControllerBase
 
     // POST: api/ProfileFavoriteMovies
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(ProfileFavoriteMovie),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<ProfileFavoriteMovie>> PostProfileFavoriteMovie(
         ProfileFavoriteMovie profileFavoriteMovie)
@@ -70,10 +87,14 @@ public class ProfileFavoriteMoviesController : ControllerBase
         _bll.ProfileFavoriteMovie.Add(profileFavoriteMovie);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetProfileFavoriteMovie", new {id = profileFavoriteMovie.Id}, profileFavoriteMovie);
+        return CreatedAtAction("GetProfileFavoriteMovie", new {id = profileFavoriteMovie.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, profileFavoriteMovie);
     }
 
     // DELETE: api/ProfileFavoriteMovies/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProfileFavoriteMovie(Guid id)
     {

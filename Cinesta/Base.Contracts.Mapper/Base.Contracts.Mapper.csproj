@@ -5,10 +5,4 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\Base.Contracts.DAL\Base.Contracts.DAL.csproj"/>
-        <ProjectReference Include="..\..\Base.Contracts.Domain\Base.Contracts.Domain.csproj"/>
-    </ItemGroup>
-
 </Project>

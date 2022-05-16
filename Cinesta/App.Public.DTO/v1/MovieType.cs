@@ -1,8 +1,8 @@
 ﻿using Base.Domain;
 
-namespace WebApp.DTO;
+namespace App.Public.DTO.v1;
 
-public class CastRoleDto : DomainEntityId
+public class MovieType : DomainEntityId
 {
     public string Naming { get; set; } = default!;
 }

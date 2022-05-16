@@ -1,9 +1,9 @@
 ﻿using App.BLL.DTO;
 using Base.Domain;
 
-namespace WebApp.DTO;
+namespace App.Public.DTO.v1;
 
-public class MovieDetailsDto : DomainEntityId
+public class MovieDetails : DomainEntityId
 {
     public string PosterUri { get; set; } = default!;
     public string Title { get; set; } = default!;
@@ -12,10 +12,10 @@ public class MovieDetailsDto : DomainEntityId
     public Guid AgeRatingId { get; set; }
     public AgeRating? AgeRating { get; set; }
     public Guid MovieTypeId { get; set; }
-    public MovieType? MovieType { get; set; }
+    public BLL.DTO.MovieType? MovieType { get; set; }
     public ICollection<MovieDbScore>? MovieDbScores { get; set; }
     public ICollection<MovieGenre>? Genres { get; set; }
-    public ICollection<Video>? Videos { get; set; }
-    public ICollection<UserRating>? UserRatings { get; set; }
-    public ICollection<CastInMovie>? CastInMovie { get; set; }
+    public ICollection<BLL.DTO.Video>? Videos { get; set; }
+    public ICollection<BLL.DTO.UserRating>? UserRatings { get; set; }
+    public ICollection<BLL.DTO.CastInMovie>? CastInMovie { get; set; }
 }

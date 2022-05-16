@@ -3,6 +3,7 @@ using App.DAL.EF.Mappers;
 using App.Domain;
 using AutoMapper;
 using Base.Contracts;
+using Base.Contracts.Mapper;
 using Base.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;

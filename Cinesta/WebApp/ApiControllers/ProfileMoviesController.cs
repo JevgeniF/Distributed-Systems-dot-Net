@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileMoviesController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -22,6 +24,9 @@ public class ProfileMoviesController : ControllerBase
     }
 
     // GET: api/ProfileMovies
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<ProfileMovie>), 200)]
     [HttpGet]
     public async Task<IEnumerable<ProfileMovie>> GetProfileMovies()
     {
@@ -29,6 +34,10 @@ public class ProfileMoviesController : ControllerBase
     }
 
     // GET: api/ProfileMovies/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(ProfileMovie), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
     public async Task<ActionResult<ProfileMovie>> GetProfileMovie(Guid id)
     {
@@ -41,6 +50,10 @@ public class ProfileMoviesController : ControllerBase
 
     // PUT: api/ProfileMovies/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutProfileMovie(Guid id, ProfileMovie profileMovie)
     {
@@ -63,16 +76,24 @@ public class ProfileMoviesController : ControllerBase
 
     // POST: api/ProfileMovies
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(ProfileMovie),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<ProfileMovie>> PostProfileMovie(ProfileMovie profileMovie)
     {
         _bll.ProfileMovie.Add(profileMovie);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetProfileMovie", new {id = profileMovie.Id}, profileMovie);
+        return CreatedAtAction("GetProfileMovie", new {id = profileMovie.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, profileMovie);
     }
 
     // DELETE: api/ProfileMovies/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProfileMovie(Guid id)
     {

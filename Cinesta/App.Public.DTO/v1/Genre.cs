@@ -1,8 +1,8 @@
 ﻿using Base.Domain;
 
-namespace WebApp.DTO;
+namespace App.Public.DTO.v1;
 
-public class GenreDto : DomainEntityId
+public class Genre : DomainEntityId
 {
     public LangStr Naming { get; set; } = default!;
 }

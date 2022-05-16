@@ -1,7 +1,6 @@
 #nullable disable
-using App.Contracts.DAL;
-using App.BLL.DTO;
 using App.Contracts.BLL;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class CastInMoviesController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -22,33 +22,84 @@ public class CastInMoviesController : ControllerBase
     }
 
     // GET: api/CastInMovies
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.CastInMovie>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<CastInMovie>> GetCastInMovies()
+    public async Task<IEnumerable<App.Public.DTO.v1.CastInMovie>> GetCastInMovies()
     {
-        return await _bll.CastInMovie.IncludeGetAllAsync();
+        return (await _bll.CastInMovie.IncludeGetAllAsync()).Select(c => new App.Public.DTO.v1.CastInMovie
+        {
+            Id = c.Id,
+            CastRoleId = c.CastRoleId,
+            CastRole = new App.Public.DTO.v1.CastRole
+            {
+                Id = c.CastRole!.Id,
+                Naming = c.CastRole.Naming
+            },
+            PersonId = c.PersonId,
+            Persons = c.Persons,
+            MovieDetailsId = c.MovieDetailsId,
+            MovieDetails = c.MovieDetails
+        });
     }
 
     // GET: api/CastInMovies/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(App.Public.DTO.v1.CastInMovie), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<CastInMovie>> GetCastInMovie(Guid id)
+    public async Task<ActionResult<App.Public.DTO.v1.CastInMovie>> GetCastInMovie(Guid id)
     {
         var castInMovie = await _bll.CastInMovie.IncludeFirstOrDefaultAsync(id);
         if (castInMovie == null) return NotFound();
+        var castInMovieDto = new App.Public.DTO.v1.CastInMovie
+        {
+            Id = castInMovie.Id,
+            CastRoleId = castInMovie.CastRoleId,
+            CastRole = new App.Public.DTO.v1.CastRole
+            {
+                Id = castInMovie.CastRole!.Id,
+                Naming = castInMovie.CastRole.Naming
+            },
+            PersonId = castInMovie.PersonId,
+            Persons = castInMovie.Persons,
+            MovieDetailsId = castInMovie.MovieDetailsId,
+            MovieDetails = castInMovie.MovieDetails
+        };
 
-        return castInMovie;
+        return castInMovieDto;
     }
 
     // PUT: api/CastInMovies/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> PutCastInMovie(Guid id, CastInMovie castInMovie)
+    public async Task<IActionResult> PutCastInMovie(Guid id, App.Public.DTO.v1.CastInMovie castInMovie)
     {
         if (id != castInMovie.Id) return BadRequest();
 
         try
         {
-            _bll.CastInMovie.Update(castInMovie);
+            _bll.CastInMovie.Update(new App.BLL.DTO.CastInMovie
+            {
+                Id = castInMovie.Id,
+                CastRoleId = castInMovie.CastRoleId,
+                CastRole = new App.BLL.DTO.CastRole
+                {
+                    Id = castInMovie.CastRole!.Id,
+                    Naming = castInMovie.CastRole.Naming
+                },
+                PersonId = castInMovie.PersonId,
+                Persons = castInMovie.Persons,
+                MovieDetailsId = castInMovie.MovieDetailsId,
+                MovieDetails = castInMovie.MovieDetails
+            });
             await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
@@ -63,17 +114,39 @@ public class CastInMoviesController : ControllerBase
 
     // POST: api/CastInMovies
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(App.Public.DTO.v1.CastInMovie), 201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<CastInMovie>> PostCastInMovie(CastInMovie castInMovie)
+    public async Task<ActionResult<App.Public.DTO.v1.CastInMovie>> PostCastInMovie(App.Public.DTO.v1.CastInMovie castInMovie)
     {
-        _bll.CastInMovie.Add(castInMovie);
+        _bll.CastInMovie.Add(new App.BLL.DTO.CastInMovie
+        {
+            Id = castInMovie.Id,
+            CastRoleId = castInMovie.CastRoleId,
+            CastRole = new App.BLL.DTO.CastRole
+            {
+                Id = castInMovie.CastRole!.Id,
+                Naming = castInMovie.CastRole.Naming
+            },
+            PersonId = castInMovie.PersonId,
+            Persons = castInMovie.Persons,
+            MovieDetailsId = castInMovie.MovieDetailsId,
+            MovieDetails = castInMovie.MovieDetails
+        });
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetCastInMovie", new {id = castInMovie.Id}, castInMovie);
+        return CreatedAtAction("GetCastInMovie",
+            new {id = castInMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, castInMovie);
     }
 
     // DELETE: api/CastInMovies/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteCastInMovie(Guid id)

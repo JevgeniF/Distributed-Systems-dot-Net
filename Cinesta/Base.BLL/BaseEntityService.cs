@@ -1,7 +1,7 @@
-﻿using Base.Contracts;
-using Base.Contracts.BLL;
+﻿using Base.Contracts.BLL;
 using Base.Contracts.DAL;
 using Base.Contracts.Domain;
+using Base.Contracts.Mapper;
 
 namespace Base.BLL;
 

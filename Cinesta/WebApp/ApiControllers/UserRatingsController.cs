@@ -2,17 +2,21 @@
 using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
+using UserRating = App.Public.DTO.v1.UserRating;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserRatingsController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -23,11 +27,14 @@ public class UserRatingsController : ControllerBase
     }
 
     // GET: api/UserRatings
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<UserRating>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserRatingDto>>> GetUserRatings()
+    public async Task<ActionResult<IEnumerable<UserRating>>> GetUserRatings()
     {
         var res = (await _bll.UserRating.GetAllAsync())
-            .Select(u => new UserRatingDto
+            .Select(u => new UserRating
             {
                 Id = u.Id,
                 Rating = u.Rating,
@@ -42,8 +49,12 @@ public class UserRatingsController : ControllerBase
     }
 
     // GET: api/UserRatings/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(App.BLL.DTO.UserRating), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserRating>> GetUserRating(Guid id)
+    public async Task<ActionResult<App.BLL.DTO.UserRating>> GetUserRating(Guid id)
     {
         var userRating = await _bll.UserRating.FirstOrDefaultAsync(id);
 
@@ -54,8 +65,12 @@ public class UserRatingsController : ControllerBase
 
     // PUT: api/UserRatings/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutUserRating(Guid id, UserRatingDto userRating)
+    public async Task<IActionResult> PutUserRating(Guid id, UserRating userRating)
     {
         if (id != userRating.Id) return BadRequest();
 
@@ -80,16 +95,24 @@ public class UserRatingsController : ControllerBase
 
     // POST: api/UserRatings
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(App.BLL.DTO.UserRating),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
-    public async Task<ActionResult<UserRating>> PostUserRating(UserRating userRating)
+    public async Task<ActionResult<App.BLL.DTO.UserRating>> PostUserRating(App.BLL.DTO.UserRating userRating)
     {
         _bll.UserRating.Add(userRating);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetUserRating", new {id = userRating.Id}, userRating);
+        return CreatedAtAction("GetUserRating", new {id = userRating.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, userRating);
     }
 
     // DELETE: api/UserRatings/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserRating(Guid id)
     {

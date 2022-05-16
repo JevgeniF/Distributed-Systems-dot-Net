@@ -9,9 +9,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class SubscriptionsController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -22,6 +24,9 @@ public class SubscriptionsController : ControllerBase
     }
 
     // GET: api/Subscriptions
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<Subscription>), 200)]
     [HttpGet]
     public async Task<IEnumerable<Subscription>> GetSubscriptions()
     {
@@ -29,6 +34,10 @@ public class SubscriptionsController : ControllerBase
     }
 
     // GET: api/Subscriptions/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(Subscription), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
     public async Task<ActionResult<Subscription>> GetSubscription(Guid id)
     {
@@ -41,6 +50,10 @@ public class SubscriptionsController : ControllerBase
 
     // PUT: api/Subscriptions/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutSubscription(Guid id, Subscription subscription)
@@ -68,6 +81,10 @@ public class SubscriptionsController : ControllerBase
 
     // POST: api/Subscriptions
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(Subscription),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<Subscription>> PostSubscription(Subscription subscription)
@@ -75,10 +92,14 @@ public class SubscriptionsController : ControllerBase
         _bll.Subscription.Add(subscription);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetSubscription", new {id = subscription.Id}, subscription);
+        return CreatedAtAction("GetSubscription", new {id = subscription.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, subscription);
     }
 
     // DELETE: api/Subscriptions/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteSubscription(Guid id)

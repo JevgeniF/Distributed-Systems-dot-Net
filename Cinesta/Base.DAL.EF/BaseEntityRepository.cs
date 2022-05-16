@@ -1,6 +1,6 @@
-﻿using Base.Contracts;
-using Base.Contracts.DAL;
+﻿using Base.Contracts.DAL;
 using Base.Contracts.Domain;
+using Base.Contracts.Mapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Base.DAL.EF;

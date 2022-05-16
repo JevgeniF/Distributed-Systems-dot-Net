@@ -2,6 +2,7 @@
 using App.DAL.EF.Mappers;
 using App.Domain;
 using Base.Contracts;
+using Base.Contracts.Mapper;
 using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories;

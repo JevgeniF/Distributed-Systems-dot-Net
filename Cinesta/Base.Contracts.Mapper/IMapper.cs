@@ -1,4 +1,4 @@
-﻿namespace Base.Contracts;
+﻿namespace Base.Contracts.Mapper;
 
 public interface IMapper<TOut, TIn>
 {

@@ -2,17 +2,20 @@
 using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
+using MovieDetails = App.Public.DTO.v1.MovieDetails;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class MovieDetailsController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -23,11 +26,14 @@ public class MovieDetailsController : ControllerBase
     }
 
     // GET: api/MovieDetails
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<MovieDetails>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MovieDetailsDto>>> GetMovieDetails()
+    public async Task<ActionResult<IEnumerable<MovieDetails>>> GetMovieDetails()
     {
         var res = (await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new MovieDetailsDto
+            .Select(m => new MovieDetails
             {
                 Id = m.Id,
                 PosterUri = m.PosterUri,
@@ -49,8 +55,12 @@ public class MovieDetailsController : ControllerBase
     }
 
     // GET: api/MovieDetails/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(App.BLL.DTO.MovieDetails), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<MovieDetails>> GetMovieDetails(Guid id)
+    public async Task<ActionResult<App.BLL.DTO.MovieDetails>> GetMovieDetails(Guid id)
     {
         var movieDetails = await _bll.MovieDetails.FirstOrDefaultAsync(id);
 
@@ -61,9 +71,13 @@ public class MovieDetailsController : ControllerBase
 
     // PUT: api/MovieDetails/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> PutMovieDetails(Guid id, MovieDetailsDto movieDetails)
+    public async Task<IActionResult> PutMovieDetails(Guid id, MovieDetails movieDetails)
     {
         if (id != movieDetails.Id) return BadRequest();
 
@@ -88,17 +102,25 @@ public class MovieDetailsController : ControllerBase
 
     // POST: api/MovieDetails
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(App.BLL.DTO.MovieDetails),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<MovieDetails>> PostMovieDetails(MovieDetails movieDetails)
+    public async Task<ActionResult<App.BLL.DTO.MovieDetails>> PostMovieDetails(App.BLL.DTO.MovieDetails movieDetails)
     {
         _bll.MovieDetails.Add(movieDetails);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetMovieDetails", new {id = movieDetails.Id}, movieDetails);
+        return CreatedAtAction("GetMovieDetails", new {id = movieDetails.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieDetails);
     }
 
     // DELETE: api/MovieDetails/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieDetails(Guid id)

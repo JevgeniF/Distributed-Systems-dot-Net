@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserSubscriptionsController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -21,6 +23,9 @@ public class UserSubscriptionsController : ControllerBase
     }
 
     // GET: api/UserSubscriptions
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<UserSubscription>), 200)]
     [HttpGet]
     public async Task<IEnumerable<UserSubscription>> GetUserSubscriptions()
     {
@@ -28,6 +33,10 @@ public class UserSubscriptionsController : ControllerBase
     }
 
     // GET: api/UserSubscriptions/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(UserSubscription), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
     public async Task<ActionResult<UserSubscription>> GetUserSubscription(Guid id)
     {
@@ -40,16 +49,24 @@ public class UserSubscriptionsController : ControllerBase
 
     // POST: api/UserSubscriptions
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(UserSubscription),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<UserSubscription>> PostUserSubscription(UserSubscription userSubscription)
     {
         _bll.UserSubscription.Add(userSubscription);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetUserSubscription", new {id = userSubscription.Id}, userSubscription);
+        return CreatedAtAction("GetUserSubscription", new {id = userSubscription.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, userSubscription);
     }
 
     // DELETE: api/UserSubscriptions/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserSubscription(Guid id)
     {

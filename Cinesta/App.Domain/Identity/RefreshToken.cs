@@ -14,4 +14,7 @@ public class RefreshToken : DomainEntityMetaId
 
     // UTC
     public DateTime? PreviousExpirationDateTime { get; set; }
+    
+    public Guid AppUserId { get; set; }
+    public AppUser? AppUser { get; set; }
 }

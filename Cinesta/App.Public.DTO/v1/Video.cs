@@ -1,9 +1,9 @@
 ﻿using App.BLL.DTO;
 using Base.Domain;
 
-namespace WebApp.DTO;
+namespace App.Public.DTO.v1;
 
-public class VideoDto : DomainEntityId
+public class Video : DomainEntityId
 {
     public int? Season { get; set; }
     public string Title { get; set; } = default!;
@@ -11,5 +11,5 @@ public class VideoDto : DomainEntityId
     public TimeOnly Duration { get; set; }
     public string Description { get; set; } = default!;
     public Guid? MovieDetailsId { get; set; }
-    public MovieDetails? MovieDetails { get; set; }
+    public BLL.DTO.MovieDetails? MovieDetails { get; set; }
 }

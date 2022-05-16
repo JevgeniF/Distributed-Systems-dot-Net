@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin, user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin, user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PaymentDetailsController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -22,6 +24,9 @@ public class PaymentDetailsController : ControllerBase
     }
 
     // GET: api/PaymentDetails
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<PaymentDetails>), 200)]
     [HttpGet]
     public async Task<IEnumerable<PaymentDetails>> GetPaymentDetails()
     {
@@ -29,6 +34,10 @@ public class PaymentDetailsController : ControllerBase
     }
 
     // GET: api/PaymentDetails/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(PaymentDetails), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
     public async Task<ActionResult<PaymentDetails>> GetPaymentDetails(Guid id)
     {
@@ -41,6 +50,10 @@ public class PaymentDetailsController : ControllerBase
 
     // PUT: api/PaymentDetails/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutPaymentDetails(Guid id, PaymentDetails paymentDetails)
     {
@@ -63,16 +76,24 @@ public class PaymentDetailsController : ControllerBase
 
     // POST: api/PaymentDetails
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(PaymentDetails),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<PaymentDetails>> PostPaymentDetails(PaymentDetails paymentDetails)
     {
         _bll.PaymentDetails.Add(paymentDetails);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetPaymentDetails", new {id = paymentDetails.Id}, paymentDetails);
+        return CreatedAtAction("GetPaymentDetails", new {id = paymentDetails.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, paymentDetails);
     }
 
     // DELETE: api/PaymentDetails/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePaymentDetails(Guid id)
     {

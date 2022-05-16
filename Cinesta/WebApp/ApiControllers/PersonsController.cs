@@ -9,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PersonsController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -22,6 +24,9 @@ public class PersonsController : ControllerBase
     }
 
     // GET: api/Persons
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<Person>), 200)]
     [HttpGet]
     public async Task<IEnumerable<Person>> GetPersons()
     {
@@ -29,6 +34,10 @@ public class PersonsController : ControllerBase
     }
 
     // GET: api/Persons/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(Person), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
     public async Task<ActionResult<Person>> GetPerson(Guid id)
     {
@@ -41,6 +50,10 @@ public class PersonsController : ControllerBase
 
     // PUT: api/Persons/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutPerson(Guid id, Person person)
     {
@@ -63,16 +76,24 @@ public class PersonsController : ControllerBase
 
     // POST: api/Persons
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(Person),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<Person>> PostPerson(Person person)
     {
         _bll.Person.Add(person);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetPerson", new {id = person.Id}, person);
+        return CreatedAtAction("GetPerson", new {id = person.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, person);
     }
 
     // DELETE: api/Persons/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePerson(Guid id)
     {

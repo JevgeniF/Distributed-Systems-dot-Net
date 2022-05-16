@@ -2,17 +2,21 @@
 using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.DTO;
+using Video = App.Public.DTO.v1.Video;
 
 namespace WebApp.ApiControllers;
 
-[Route("api/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 [ApiController]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
+[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class VideosController : ControllerBase
 {
     private readonly IAppBll _bll;
@@ -23,11 +27,14 @@ public class VideosController : ControllerBase
     }
 
     // GET: api/Videos
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(IEnumerable<Video>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<VideoDto>>> GetVideos()
+    public async Task<ActionResult<IEnumerable<Video>>> GetVideos()
     {
         var res = (await _bll.Video.GetAllAsync())
-            .Select(v => new VideoDto
+            .Select(v => new Video
             {
                 Id = v.Id,
                 Season = v.Season,
@@ -43,8 +50,12 @@ public class VideosController : ControllerBase
     }
 
     // GET: api/Videos/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(App.BLL.DTO.Video), 200)]
+    [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Video>> GetVideo(Guid id)
+    public async Task<ActionResult<App.BLL.DTO.Video>> GetVideo(Guid id)
     {
         var video = await _bll.Video.FirstOrDefaultAsync(id);
 
@@ -55,9 +66,13 @@ public class VideosController : ControllerBase
 
     // PUT: api/Videos/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(403)]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> PutVideo(Guid id, VideoDto video)
+    public async Task<IActionResult> PutVideo(Guid id, Video video)
     {
         if (id != video.Id) return BadRequest();
 
@@ -83,17 +98,25 @@ public class VideosController : ControllerBase
 
     // POST: api/Videos
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(App.BLL.DTO.Video),201)]
+    [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<Video>> PostVideo(Video video)
+    public async Task<ActionResult<App.BLL.DTO.Video>> PostVideo(App.BLL.DTO.Video video)
     {
         _bll.Video.Add(video);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetVideo", new {id = video.Id}, video);
+        return CreatedAtAction("GetVideo", new {id = video.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, video);
     }
 
     // DELETE: api/Videos/5
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteVideo(Guid id)

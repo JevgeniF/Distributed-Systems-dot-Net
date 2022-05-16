@@ -37,6 +37,8 @@ public static class AppDataHelper
             var roles = new (string name, string displayName)[]
             {
                 ("admin", "System administrator"),
+                ("moderator", "Data moderator"),
+                ("newbie", "New service user"),
                 ("user", "Service user")
             };
 
@@ -58,7 +60,7 @@ public static class AppDataHelper
             {
                 ("admin@cinesta.ee", "Jevgeni", "Fenko", "chtulhu", "user,admin"),
                 ("user@gmail.com", "Oskar", "Luts", "qwerty", "user"),
-                ("newuser@gmail.com", "Lev", "Tolstoi", "123456", "")
+                ("newuser@gmail.com", "Lev", "Tolstoi", "123456", "newbie")
             };
 
             foreach (var userInfo in users)

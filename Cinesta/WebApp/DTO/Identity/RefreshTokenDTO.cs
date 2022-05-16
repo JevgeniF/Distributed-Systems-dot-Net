@@ -2,6 +2,6 @@
 
 public class RefreshTokenDto
 {
-    public string JWT { get; set; } = default!;
+    public string Jwt { get; set; } = default!;
     public string RefreshToken { get; set; } = default!;
 }

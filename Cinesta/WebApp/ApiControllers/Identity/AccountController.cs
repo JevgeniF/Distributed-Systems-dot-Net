@@ -4,6 +4,8 @@ using App.Contracts.DAL;
 using App.DAL.EF;
 using App.Domain.Identity;
 using Base.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +44,7 @@ public class AccountController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<JwtResponse>> LogIn([FromBody] Login loginData)
     {
-        //verify username
+        // verify username
         var appUser = await _userManager.FindByEmailAsync(loginData.Email);
         if (appUser == null)
         {
@@ -51,7 +53,7 @@ public class AccountController : ControllerBase
             return NotFound("User/Password problem");
         }
 
-        //verify username and password
+        // verify username and password
         var result = await _signInManager.CheckPasswordSignInAsync(appUser, loginData.Password, false);
         if (!result.Succeeded)
         {
@@ -60,7 +62,7 @@ public class AccountController : ControllerBase
             return NotFound("User/Password problem");
         }
 
-        //get claims based user
+        // get claims based user
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
         if (claimsPrincipal == null)
         {
@@ -69,8 +71,12 @@ public class AccountController : ControllerBase
             return NotFound("User/Password problem");
         }
 
-        appUser.RefreshTokens = await _context.Entry(appUser).Collection(a => a.RefreshTokens!)
-            .Query().Where(t => t.AppUserId == appUser.Id).ToListAsync();
+        appUser.RefreshTokens = await _context
+            .Entry(appUser)
+            .Collection(a => a.RefreshTokens!)
+            .Query()
+            .Where(t => t.AppUserId == appUser.Id)
+            .ToListAsync();
 
         foreach (var userRefreshToken in appUser.RefreshTokens)
         {
@@ -80,14 +86,18 @@ public class AccountController : ControllerBase
                 _context.RefreshTokens.Remove(userRefreshToken);
             }
         }
-
-        var refreshToken = new RefreshToken();
-        refreshToken.AppUserId = appUser.Id;
+        
+        var refreshToken = new RefreshToken
+        {
+            AppUserId = appUser.Id
+        };
         _context.RefreshTokens.Add(refreshToken);
-
-        //generate JWT
+        
+        // generate jwt
         var jwt = IdentityExtensions.GenerateJwt(
-            claimsPrincipal.Claims, _configuration["JWT:Key"], _configuration["JWT:Issuer"],
+            claimsPrincipal.Claims,
+            _configuration["JWT:Key"],
+            _configuration["JWT:Issuer"],
             _configuration["JWT:Issuer"],
             DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpireInMinutes"))
         );
@@ -111,7 +121,7 @@ public class AccountController : ControllerBase
         var appUser = await _userManager.FindByEmailAsync(registrationData.Email);
         if (appUser != null)
         {
-            _logger.LogWarning("User with email {} not found", registrationData.Email);
+            _logger.LogWarning("User with email {} found", registrationData.Email);
             await Task.Delay(_rnd.Next(100, 1000));
             return BadRequest("Email/Password problem");
         }
@@ -193,7 +203,7 @@ public class AccountController : ControllerBase
         JwtSecurityToken jwt;
         try
         {
-            jwt = new JwtSecurityTokenHandler().ReadJwtToken(refreshTokenDto.JWT);
+            jwt = new JwtSecurityTokenHandler().ReadJwtToken(refreshTokenDto.Jwt);
             if (jwt == null) return BadRequest("No token");
         }
         catch (Exception e)
@@ -257,5 +267,48 @@ public class AccountController : ControllerBase
             Email = appUser.Email
         };
         return Ok(res);
+    }
+    
+    [HttpPost]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<ActionResult> ChangeRole([FromBody] UserAssignment userAssignmentData)
+    {
+        var appUser = await _userManager.FindByEmailAsync(userAssignmentData.Email);
+        if (appUser == null)
+        {
+            _logger.LogWarning("Assignment problem. App User with email {} not found", userAssignmentData.Email);
+            return BadRequest("User problem");
+        }
+
+        if (userAssignmentData.NewRole == "user")
+        {
+            var result = await _userManager.RemoveFromRolesAsync(appUser, new[] {"admin","moderator","newbie"});
+            if (result.Succeeded)
+            {
+                result = await _userManager.AddToRoleAsync(appUser, userAssignmentData.NewRole);
+                return Ok(result);
+            }
+        }
+        if (userAssignmentData.NewRole is "admin" or "moderator")
+        {
+            var result = await _userManager.RemoveFromRolesAsync(appUser, new[] {"admin","moderator","newbie"});
+            if (result.Succeeded)
+            {
+                result = await _userManager.AddToRolesAsync(appUser, new[] {"user", userAssignmentData.NewRole});
+                return Ok(result);
+            }
+        }
+        if (userAssignmentData.NewRole == "newbie")
+        {
+            var result = await _userManager.RemoveFromRolesAsync(appUser, new[] {"admin","moderator","user"});
+            if (result.Succeeded)
+            {
+                result = await _userManager.AddToRolesAsync(appUser, new[] {userAssignmentData.NewRole});
+                return Ok(result);
+            }
+        }
+        _logger.LogWarning("Assignment problem. Unable to change role to {}", userAssignmentData.NewRole);
+        return BadRequest("Unable to change roles");
+
     }
 }

@@ -8,7 +8,7 @@ public class RefreshToken: DomainEntityId
     [StringLength(36, MinimumLength = 36)] public string Token { get; set; } = Guid.NewGuid().ToString();
 
     // UTC
-    public DateTime ExpirationDateTime { get; set; } = DateTime.UtcNow.AddSeconds(30);
+    public DateTime ExpirationDateTime { get; set; } = DateTime.UtcNow.AddDays(7);
 
     [StringLength(36, MinimumLength = 36)] public string? PreviousToken { get; set; }
 

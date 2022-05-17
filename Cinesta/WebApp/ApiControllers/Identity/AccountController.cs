@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using App.Contracts.DAL;
 using App.DAL.EF;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WebApp.DTO.Identity;
 
 namespace WebApp.ApiControllers.Identity;
@@ -71,28 +73,6 @@ public class AccountController : ControllerBase
             return NotFound("User/Password problem");
         }
 
-        appUser.RefreshTokens = await _context
-            .Entry(appUser)
-            .Collection(a => a.RefreshTokens!)
-            .Query()
-            .Where(t => t.AppUserId == appUser.Id)
-            .ToListAsync();
-
-        foreach (var userRefreshToken in appUser.RefreshTokens)
-        {
-            if (userRefreshToken.ExpirationDateTime < DateTime.UtcNow &&
-                userRefreshToken.PreviousExpirationDateTime < DateTime.UtcNow)
-            {
-                _context.RefreshTokens.Remove(userRefreshToken);
-            }
-        }
-        
-        var refreshToken = new RefreshToken
-        {
-            AppUserId = appUser.Id
-        };
-        _context.RefreshTokens.Add(refreshToken);
-        
         // generate jwt
         var jwt = IdentityExtensions.GenerateJwt(
             claimsPrincipal.Claims,
@@ -101,12 +81,51 @@ public class AccountController : ControllerBase
             _configuration["JWT:Issuer"],
             DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpireInMinutes"))
         );
+        
+        appUser.RefreshTokens = await _context
+            .Entry(appUser)
+            .Collection(a => a.RefreshTokens!)
+            .Query()
+            .Where(t => t.AppUserId == appUser.Id)
+            .ToListAsync();
+
+
+        var refreshToken = new RefreshToken
+        {
+            AppUserId = appUser.Id
+        };
+        if (!appUser.RefreshTokens.IsNullOrEmpty())
+        {
+            //foreach (var userRefreshToken in appUser.RefreshTokens)
+            //{
+            //    if (userRefreshToken.ExpirationDateTime < DateTime.UtcNow &&
+            //        userRefreshToken.PreviousExpirationDateTime < DateTime.UtcNow)
+            //    {
+            //        _context.RefreshTokens.Remove(userRefreshToken);
+            //    }
+            //}
+
+            refreshToken = appUser.RefreshTokens!.First();
+            refreshToken.PreviousToken = refreshToken.Token;
+            refreshToken.PreviousExpirationDateTime = DateTime.UtcNow.AddMinutes(1);
+            refreshToken.Token = Guid.NewGuid().ToString();
+            refreshToken.ExpirationDateTime = DateTime.UtcNow.AddDays(7);
+            await _context.SaveChangesAsync();
+        }
+        else
+        {
+            appUser.RefreshTokens = new List<RefreshToken>();
+            appUser.RefreshTokens.Add(refreshToken);
+            await _context.SaveChangesAsync();
+        }
+        
         var res = new JwtResponse()
         {
             Token = jwt,
             RefreshToken = refreshToken.Token,
             Email = appUser.Email
         };
+        
         return Ok(res);
     }
 
@@ -143,7 +162,7 @@ public class AccountController : ControllerBase
         if (!result.Succeeded) return BadRequest(result);
         await _userManager.AddClaimAsync(appUser, new Claim("aspnet.name", appUser.Name));
         await _userManager.AddClaimAsync(appUser, new Claim("aspnet.surname", appUser.Surname));
-        await _userManager.AddToRoleAsync(appUser, "user");
+        await _userManager.AddToRoleAsync(appUser, "newbie");
 
         var person = await _uow.Person.GetByNames(appUser.Name, appUser.Surname);
         if (person == null)
@@ -280,9 +299,11 @@ public class AccountController : ControllerBase
             return BadRequest("User problem");
         }
 
+        var roles = await _userManager.GetRolesAsync(appUser);
+
         if (userAssignmentData.NewRole == "user")
         {
-            var result = await _userManager.RemoveFromRolesAsync(appUser, new[] {"admin","moderator","newbie"});
+            var result = await _userManager.RemoveFromRolesAsync(appUser, roles);
             if (result.Succeeded)
             {
                 result = await _userManager.AddToRoleAsync(appUser, userAssignmentData.NewRole);
@@ -291,7 +312,7 @@ public class AccountController : ControllerBase
         }
         if (userAssignmentData.NewRole is "admin" or "moderator")
         {
-            var result = await _userManager.RemoveFromRolesAsync(appUser, new[] {"admin","moderator","newbie"});
+            var result = await _userManager.RemoveFromRolesAsync(appUser, roles);
             if (result.Succeeded)
             {
                 result = await _userManager.AddToRolesAsync(appUser, new[] {"user", userAssignmentData.NewRole});
@@ -300,7 +321,7 @@ public class AccountController : ControllerBase
         }
         if (userAssignmentData.NewRole == "newbie")
         {
-            var result = await _userManager.RemoveFromRolesAsync(appUser, new[] {"admin","moderator","user"});
+            var result = await _userManager.RemoveFromRolesAsync(appUser, roles);
             if (result.Succeeded)
             {
                 result = await _userManager.AddToRolesAsync(appUser, new[] {userAssignmentData.NewRole});

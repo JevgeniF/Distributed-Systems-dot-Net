@@ -1,5 +1,4 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -79,7 +77,7 @@ public class MovieGenresController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(MovieGenre),201)]
+    [ProducesResponseType(typeof(MovieGenre), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -88,7 +86,8 @@ public class MovieGenresController : ControllerBase
         _bll.MovieGenre.Add(movieGenre);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetMovieGenre", new {id = movieGenre.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieGenre);
+        return CreatedAtAction("GetMovieGenre",
+            new {id = movieGenre.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieGenre);
     }
 
     // DELETE: api/MovieGenres/5

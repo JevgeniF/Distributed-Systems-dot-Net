@@ -3,21 +3,18 @@
 
 #nullable disable
 
-using System;
-using System.Threading.Tasks;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage;
 
 public class TwoFactorAuthenticationModel : PageModel
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly SignInManager<AppUser> _signInManager;
     private readonly ILogger<TwoFactorAuthenticationModel> _logger;
+    private readonly SignInManager<AppUser> _signInManager;
+    private readonly UserManager<AppUser> _userManager;
 
     public TwoFactorAuthenticationModel(
         UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,

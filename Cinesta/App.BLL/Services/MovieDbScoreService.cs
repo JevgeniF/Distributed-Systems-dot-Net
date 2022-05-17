@@ -6,7 +6,7 @@ using Base.Contracts.Mapper;
 
 namespace App.BLL.Services;
 
-public class MovieDbScoreService : BaseEntityService<MovieDbScore, App.DAL.DTO.MovieDbScore, IMovieDbScoreRepository>,
+public class MovieDbScoreService : BaseEntityService<MovieDbScore, DAL.DTO.MovieDbScore, IMovieDbScoreRepository>,
     IMovieDbScoreService
 {
     public MovieDbScoreService(IMovieDbScoreRepository repository, IMapper<MovieDbScore, DAL.DTO.MovieDbScore> mapper) :

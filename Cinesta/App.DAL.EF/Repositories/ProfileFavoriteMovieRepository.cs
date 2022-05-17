@@ -1,23 +1,21 @@
 ﻿using App.Contracts.DAL;
-using App.DAL.EF.Mappers;
-using App.Domain;
-using Base.Contracts;
+using App.DAL.DTO;
 using Base.Contracts.Mapper;
-using Microsoft.EntityFrameworkCore;
 using Base.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.EF.Repositories;
 
 public class ProfileFavoriteMovieRepository :
-    BaseEntityRepository<DTO.ProfileFavoriteMovie, ProfileFavoriteMovie, AppDbContext>,
+    BaseEntityRepository<ProfileFavoriteMovie, Domain.ProfileFavoriteMovie, AppDbContext>,
     IProfileFavoriteMovieRepository
 {
     public ProfileFavoriteMovieRepository(AppDbContext dbContext,
-        IMapper<DTO.ProfileFavoriteMovie, ProfileFavoriteMovie> mapper) : base(dbContext, mapper)
+        IMapper<ProfileFavoriteMovie, Domain.ProfileFavoriteMovie> mapper) : base(dbContext, mapper)
     {
     }
 
-    public async Task<IEnumerable<DTO.ProfileFavoriteMovie>> IncludeGetAllByProfileIdAsync(Guid profileId,
+    public async Task<IEnumerable<ProfileFavoriteMovie>> IncludeGetAllByProfileIdAsync(Guid profileId,
         bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
@@ -28,7 +26,7 @@ public class ProfileFavoriteMovieRepository :
         return (await query.ToListAsync()).Select(p => Mapper.Map(p)!);
     }
 
-    public async Task<IEnumerable<DTO.ProfileFavoriteMovie>> IncludeGetAllAsync(bool noTracking = true)
+    public async Task<IEnumerable<ProfileFavoriteMovie>> IncludeGetAllAsync(bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query = query.Include(p => p.MovieDetails)
@@ -37,7 +35,7 @@ public class ProfileFavoriteMovieRepository :
         return (await query.ToListAsync()).Select(p => Mapper.Map(p)!);
     }
 
-    public async Task<DTO.ProfileFavoriteMovie?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    public async Task<ProfileFavoriteMovie?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query = query.Include(p => p.MovieDetails)

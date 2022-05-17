@@ -24,8 +24,8 @@ public class AppUOW : BaseUOW<AppDbContext>, IAppUOW
     private IProfileMovieRepository? _profileMovie;
     private ISubscriptionRepository? _subscription;
     private IUserProfileRepository? _userProfile;
-    private IUserSubscriptionRepository? _userSubscription;
     private IUserRatingRepository? _userRating;
+    private IUserSubscriptionRepository? _userSubscription;
     private IVideoRepository? _video;
 
     public AppUOW(AppDbContext dbContext, IMapper mapper) : base(dbContext)

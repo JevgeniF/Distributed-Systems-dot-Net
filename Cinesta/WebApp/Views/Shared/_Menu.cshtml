@@ -3,14 +3,13 @@
 @using App.Resources.App.Domain.Movie
 @using App.Resources.App.Domain.MovieStandardDetails
 @using App.Resources.App.Domain.Profile
-@using App.Resources.App.Domain.User
 @using Base.Resources
 <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         @Common.Menu
     </a>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-        @if (User.IsInRole("admin") || User.IsInRole("user"))
+        @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.IsInRole("user"))
         {
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="Authorized" asp-controller="MovieDetails" asp-action="Index">@MovieDetails.MovieDetailsString</a>
@@ -33,17 +32,8 @@
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="Authorized" asp-controller="UserProfiles" asp-action="Index">@UserProfile.UserProfileString</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="Subscriptions" asp-action="Index">@Subscription.SubscriptionString</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="UserSubscriptions" asp-action="Index">User Subscriptions</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="PaymentDetails" asp-action="Index">@PaymentDetails.PaymentDetailsString</a>
-            </li>
         }
-        @if (User.IsInRole("admin"))
+        @if (User.IsInRole("admin") || User.IsInRole("moderator"))
         {
             <li class="nav-item">
                 <a class="nav-link text-dark" asp-area="Authorized" asp-controller="Persons" asp-action="Index">@Person.PesronString</a>

@@ -1,14 +1,12 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -83,7 +81,7 @@ public class SubscriptionsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(Subscription),201)]
+    [ProducesResponseType(typeof(Subscription), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -92,7 +90,8 @@ public class SubscriptionsController : ControllerBase
         _bll.Subscription.Add(subscription);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetSubscription", new {id = subscription.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, subscription);
+        return CreatedAtAction("GetSubscription",
+            new {id = subscription.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, subscription);
     }
 
     // DELETE: api/Subscriptions/5

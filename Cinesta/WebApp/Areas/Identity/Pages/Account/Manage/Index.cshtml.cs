@@ -3,11 +3,8 @@
 
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using App.Contracts.DAL;
 using App.Domain.Identity;
 using Base.Extensions;
@@ -19,9 +16,9 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage;
 
 public class IndexModel : PageModel
 {
-    private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly IAppUOW _uow;
+    private readonly UserManager<AppUser> _userManager;
 
     public IndexModel(
         UserManager<AppUser> userManager,
@@ -53,33 +50,6 @@ public class IndexModel : PageModel
     /// </summary>
     [BindProperty]
     public InputModel Input { get; set; }
-
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    public class InputModel
-    {
-        [Required]
-        [Display(Name = "Name")]
-        [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
-            MinimumLength = 1)]
-        public string Name { get; set; }
-
-        [Required]
-        [Display(Name = "Surname")]
-        [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
-            MinimumLength = 1)]
-        public string Surname { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [Phone]
-        [Display(Name = "Phone number")]
-        public string PhoneNumber { get; set; }
-    }
 
     private async Task LoadAsync(AppUser user)
     {
@@ -155,5 +125,32 @@ public class IndexModel : PageModel
         await _signInManager.RefreshSignInAsync(user);
         StatusMessage = "Your profile has been updated";
         return RedirectToPage();
+    }
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    public class InputModel
+    {
+        [Required]
+        [Display(Name = "Name")]
+        [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
+            MinimumLength = 1)]
+        public string Name { get; set; }
+
+        [Required]
+        [Display(Name = "Surname")]
+        [StringLength(25, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
+            MinimumLength = 1)]
+        public string Surname { get; set; }
+
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [Phone]
+        [Display(Name = "Phone number")]
+        public string PhoneNumber { get; set; }
     }
 }

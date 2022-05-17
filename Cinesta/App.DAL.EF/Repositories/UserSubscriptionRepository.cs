@@ -1,22 +1,21 @@
 ﻿using App.Contracts.DAL;
-using App.DAL.EF.Mappers;
-using App.Domain;
-using Base.Contracts;
+using App.DAL.DTO;
 using Base.Contracts.Mapper;
 using Base.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.EF.Repositories;
 
-public class UserSubscriptionRepository : BaseEntityRepository<DTO.UserSubscription, UserSubscription, AppDbContext>,
+public class UserSubscriptionRepository : BaseEntityRepository<UserSubscription, Domain.UserSubscription, AppDbContext>,
     IUserSubscriptionRepository
 {
-    public UserSubscriptionRepository(AppDbContext dbContext, IMapper<DTO.UserSubscription, UserSubscription> mapper) :
+    public UserSubscriptionRepository(AppDbContext dbContext,
+        IMapper<UserSubscription, Domain.UserSubscription> mapper) :
         base(dbContext, mapper)
     {
     }
 
-    public async Task<IEnumerable<DTO.UserSubscription>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true)
+    public async Task<IEnumerable<UserSubscription>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query = query.Include(u => u.Subscription)
@@ -26,7 +25,7 @@ public class UserSubscriptionRepository : BaseEntityRepository<DTO.UserSubscript
         return (await query.ToListAsync()).Select(u => Mapper.Map(u)!);
     }
 
-    public async Task<DTO.UserSubscription?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    public async Task<UserSubscription?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query = query.Include(u => u.Subscription)

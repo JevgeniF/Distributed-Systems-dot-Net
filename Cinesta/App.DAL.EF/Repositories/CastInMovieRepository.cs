@@ -1,13 +1,8 @@
 ﻿using App.Contracts.DAL;
-using App.DAL.EF.Mappers;
-using App.Domain;
-using AutoMapper;
-using Base.Contracts;
+using App.DAL.DTO;
 using Base.Contracts.Mapper;
 using Base.DAL.EF;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using CastInMovie = App.DAL.DTO.CastInMovie;
 
 namespace App.DAL.EF.Repositories;
 

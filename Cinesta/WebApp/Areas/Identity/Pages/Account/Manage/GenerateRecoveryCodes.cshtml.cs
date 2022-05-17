@@ -3,21 +3,17 @@
 
 #nullable disable
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage;
 
 public class GenerateRecoveryCodesModel : PageModel
 {
-    private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<GenerateRecoveryCodesModel> _logger;
+    private readonly UserManager<AppUser> _userManager;
 
     public GenerateRecoveryCodesModel(
         UserManager<AppUser> userManager,
@@ -49,7 +45,7 @@ public class GenerateRecoveryCodesModel : PageModel
         var isTwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
         if (!isTwoFactorEnabled)
             throw new InvalidOperationException(
-                $"Cannot generate recovery codes for user because they do not have 2FA enabled.");
+                "Cannot generate recovery codes for user because they do not have 2FA enabled.");
 
         return Page();
     }
@@ -63,7 +59,7 @@ public class GenerateRecoveryCodesModel : PageModel
         var userId = await _userManager.GetUserIdAsync(user);
         if (!isTwoFactorEnabled)
             throw new InvalidOperationException(
-                $"Cannot generate recovery codes for user as they do not have 2FA enabled.");
+                "Cannot generate recovery codes for user as they do not have 2FA enabled.");
 
         var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
         RecoveryCodes = recoveryCodes.ToArray();

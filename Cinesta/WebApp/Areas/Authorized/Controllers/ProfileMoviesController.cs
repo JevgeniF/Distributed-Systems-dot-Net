@@ -1,13 +1,13 @@
 #nullable disable
 using App.Contracts.BLL;
-using App.Contracts.DAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+// TODO: Decide if this controller required in API.
 namespace WebApp.Areas.Authorized.Controllers;
 
 [Area("Authorized")]
-[Authorize(Roles = "admin,user")]
+[Authorize(Roles = "admin,moderator,user")]
 public class ProfileMoviesController : Controller
 {
     private readonly IAppBll _bll;

@@ -6,7 +6,7 @@ using Base.Contracts.Mapper;
 
 namespace App.BLL.Services;
 
-public class PersonService : BaseEntityService<Person, App.DAL.DTO.Person, IPersonRepository>, IPersonService
+public class PersonService : BaseEntityService<Person, DAL.DTO.Person, IPersonRepository>, IPersonService
 {
     public PersonService(IPersonRepository repository, IMapper<Person, DAL.DTO.Person> mapper) : base(repository,
         mapper)

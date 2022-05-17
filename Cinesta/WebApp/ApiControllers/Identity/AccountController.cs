@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using App.Contracts.DAL;
+using App.DAL.DTO;
 using App.DAL.EF;
 using App.Domain.Identity;
 using Base.Extensions;
@@ -20,13 +20,13 @@ namespace WebApp.ApiControllers.Identity;
 [Route("api/v{version:apiVersion}/identity/[controller]/[action]")]
 public class AccountController : ControllerBase
 {
-    private readonly SignInManager<AppUser> _signInManager;
-    private readonly UserManager<AppUser> _userManager;
-    private readonly ILogger<AccountController> _logger;
     private readonly IConfiguration _configuration;
-    private readonly Random _rnd = new();
     private readonly AppDbContext _context;
+    private readonly ILogger<AccountController> _logger;
+    private readonly Random _rnd = new();
+    private readonly SignInManager<AppUser> _signInManager;
     private readonly IAppUOW _uow;
+    private readonly UserManager<AppUser> _userManager;
 
     public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,
         ILogger<AccountController> logger, IConfiguration configuration, IAppUOW uow, AppDbContext context)
@@ -41,7 +41,7 @@ public class AccountController : ControllerBase
 
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(JwtResponse),200)]
+    [ProducesResponseType(typeof(JwtResponse), 200)]
     [ProducesResponseType(404)]
     [HttpPost]
     public async Task<ActionResult<JwtResponse>> LogIn([FromBody] Login loginData)
@@ -81,7 +81,7 @@ public class AccountController : ControllerBase
             _configuration["JWT:Issuer"],
             DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpireInMinutes"))
         );
-        
+
         appUser.RefreshTokens = await _context
             .Entry(appUser)
             .Collection(a => a.RefreshTokens!)
@@ -118,20 +118,20 @@ public class AccountController : ControllerBase
             appUser.RefreshTokens.Add(refreshToken);
             await _context.SaveChangesAsync();
         }
-        
-        var res = new JwtResponse()
+
+        var res = new JwtResponse
         {
             Token = jwt,
             RefreshToken = refreshToken.Token,
             Email = appUser.Email
         };
-        
+
         return Ok(res);
     }
 
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(JwtResponse),200)]
+    [ProducesResponseType(typeof(JwtResponse), 200)]
     [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<JwtResponse>> Register(Register registrationData)
@@ -146,13 +146,13 @@ public class AccountController : ControllerBase
         }
 
         var refreshToken = new RefreshToken();
-        appUser = new AppUser()
+        appUser = new AppUser
         {
             Name = registrationData.Name,
             Surname = registrationData.Surname,
             Email = registrationData.Email,
             UserName = registrationData.Email,
-            RefreshTokens = new List<RefreshToken>()
+            RefreshTokens = new List<RefreshToken>
             {
                 refreshToken
             }
@@ -167,7 +167,7 @@ public class AccountController : ControllerBase
         var person = await _uow.Person.GetByNames(appUser.Name, appUser.Surname);
         if (person == null)
         {
-            person = new App.DAL.DTO.Person
+            person = new Person
             {
                 Id = Guid.NewGuid(),
                 Name = appUser.Name,
@@ -202,7 +202,7 @@ public class AccountController : ControllerBase
             _configuration["JWT:Issuer"],
             DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpireInMinutes"))
         );
-        var res = new JwtResponse()
+        var res = new JwtResponse
         {
             Token = jwt,
             RefreshToken = refreshToken.Token,
@@ -213,7 +213,7 @@ public class AccountController : ControllerBase
 
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(JwtResponse),200)]
+    [ProducesResponseType(typeof(JwtResponse), 200)]
     [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
@@ -240,10 +240,10 @@ public class AccountController : ControllerBase
 
         // compare refresh tokens
         await _context.Entry(appUser).Collection(u => u.RefreshTokens!)
-            .Query().Where(t => (t.Token == refreshTokenDto.RefreshToken &&
-                                 t.ExpirationDateTime > DateTime.UtcNow) ||
-                                (t.PreviousToken == refreshTokenDto.RefreshToken &&
-                                 t.PreviousExpirationDateTime > DateTime.UtcNow)).ToListAsync();
+            .Query().Where(t => t.Token == refreshTokenDto.RefreshToken &&
+                                t.ExpirationDateTime > DateTime.UtcNow ||
+                                t.PreviousToken == refreshTokenDto.RefreshToken &&
+                                t.PreviousExpirationDateTime > DateTime.UtcNow).ToListAsync();
 
         if (appUser.RefreshTokens == null) return Problem("RefreshTokens collection is null");
 
@@ -279,7 +279,7 @@ public class AccountController : ControllerBase
             await _context.SaveChangesAsync();
         }
 
-        var res = new JwtResponse()
+        var res = new JwtResponse
         {
             Token = newJwt,
             RefreshToken = refreshToken.Token,
@@ -287,7 +287,7 @@ public class AccountController : ControllerBase
         };
         return Ok(res);
     }
-    
+
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult> ChangeRole([FromBody] UserAssignment userAssignmentData)
@@ -310,6 +310,7 @@ public class AccountController : ControllerBase
                 return Ok(result);
             }
         }
+
         if (userAssignmentData.NewRole is "admin" or "moderator")
         {
             var result = await _userManager.RemoveFromRolesAsync(appUser, roles);
@@ -319,6 +320,7 @@ public class AccountController : ControllerBase
                 return Ok(result);
             }
         }
+
         if (userAssignmentData.NewRole == "newbie")
         {
             var result = await _userManager.RemoveFromRolesAsync(appUser, roles);
@@ -328,8 +330,8 @@ public class AccountController : ControllerBase
                 return Ok(result);
             }
         }
+
         _logger.LogWarning("Assignment problem. Unable to change role to {}", userAssignmentData.NewRole);
         return BadRequest("Unable to change roles");
-
     }
 }

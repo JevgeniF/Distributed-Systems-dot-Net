@@ -1,5 +1,4 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -78,7 +77,7 @@ public class MovieDBScoresController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(MovieDbScore),201)]
+    [ProducesResponseType(typeof(MovieDbScore), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -87,7 +86,8 @@ public class MovieDBScoresController : ControllerBase
         _bll.MovieDbScore.Add(movieDbScore);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetMovieDbScore", new {id = movieDbScore.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieDbScore);
+        return CreatedAtAction("GetMovieDbScore",
+            new {id = movieDbScore.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieDbScore);
     }
 
     // DELETE: api/MovieDBScores/5

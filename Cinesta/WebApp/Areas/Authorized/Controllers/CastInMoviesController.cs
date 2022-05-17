@@ -1,5 +1,4 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,7 @@ using WebApp.Areas.Authorized.ViewModels;
 namespace WebApp.Areas.Authorized.Controllers;
 
 [Area("Authorized")]
-[Authorize(Roles = "admin,user")]
+[Authorize(Roles = "admin,moderator,user")]
 public class CastInMoviesController : Controller
 {
     private readonly IAppBll _bll;

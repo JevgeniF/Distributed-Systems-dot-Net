@@ -3,11 +3,6 @@
 
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -18,8 +13,8 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage;
 
 public class ExternalLoginsModel : PageModel
 {
-    private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly UserManager<AppUser> _userManager;
     private readonly IUserStore<AppUser> _userStore;
 
     public ExternalLoginsModel(
@@ -113,7 +108,7 @@ public class ExternalLoginsModel : PageModel
         var userId = await _userManager.GetUserIdAsync(user);
         var info = await _signInManager.GetExternalLoginInfoAsync(userId);
         if (info == null)
-            throw new InvalidOperationException($"Unexpected error occurred loading external login info.");
+            throw new InvalidOperationException("Unexpected error occurred loading external login info.");
 
         var result = await _userManager.AddLoginAsync(user, info);
         if (!result.Succeeded)

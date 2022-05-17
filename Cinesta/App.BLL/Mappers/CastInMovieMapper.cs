@@ -1,6 +1,6 @@
-﻿using AutoMapper;
+﻿using App.BLL.DTO;
+using AutoMapper;
 using Base.DAL;
-using App.BLL.DTO;
 
 namespace App.BLL.Mappers;
 

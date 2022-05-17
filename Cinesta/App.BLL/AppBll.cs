@@ -10,8 +10,26 @@ namespace App.BLL;
 
 public class AppBll : BaseBll<IAppUOW>, IAppBll
 {
-    protected IAppUOW UOW;
     private readonly IMapper _mapper;
+
+    private IAgeRatingService? _ageRating;
+    private ICastInMovieService? _castInMovie;
+    private ICastRoleService? _castRole;
+    private IGenreService? _genre;
+    private IMovieDbScoreService? _movieDbScore;
+    private IMovieDetailsService? _movieDetails;
+    private IMovieGenreService? _movieGenre;
+    private IMovieTypeService? _movieType;
+    private IPaymentDetailsService? _paymentDetails;
+    private IPersonService? _person;
+    private IProfileFavoriteMovieService? _profileFavoriteMovie;
+    private IProfileMovieService? _profileMovie;
+    private ISubscriptionService? _subscription;
+    private IUserProfileService? _userProfile;
+    private IUserRatingService? _userRating;
+    private IUserSubscriptionService? _userSubscription;
+    private IVideoService? _video;
+    protected IAppUOW UOW;
 
     public AppBll(IAppUOW uow, IMapper mapper)
     {
@@ -28,24 +46,6 @@ public class AppBll : BaseBll<IAppUOW>, IAppBll
     {
         return UOW.SaveChanges();
     }
-
-    private IAgeRatingService? _ageRating;
-    private ICastInMovieService? _castInMovie;
-    private ICastRoleService? _castRole;
-    private IGenreService? _genre;
-    private IMovieDbScoreService? _movieDbScore;
-    private IMovieDetailsService? _movieDetails;
-    private IMovieGenreService? _movieGenre;
-    private IMovieTypeService? _movieType;
-    private IPaymentDetailsService? _paymentDetails;
-    private IPersonService? _person;
-    private IProfileFavoriteMovieService? _profileFavoriteMovie;
-    private IProfileMovieService? _profileMovie;
-    private ISubscriptionService? _subscription;
-    private IUserProfileService? _userProfile;
-    private IUserSubscriptionService? _userSubscription;
-    private IUserRatingService? _userRating;
-    private IVideoService? _video;
 
     public virtual ICastRoleService CastRole =>
         _castRole ??= new CastRoleService(UOW.CastRole, new CastRoleMapper(_mapper));

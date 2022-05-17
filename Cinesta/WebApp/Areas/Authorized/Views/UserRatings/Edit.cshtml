@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "Edit";
 }
-@if (User.GetUserId() == Model.UserRating.AppUserId || User.IsInRole("admin"))
+@if (User.GetUserId() == Model!.UserRating.AppUserId || User.IsInRole("admin") || User.IsInRole("moderator"))
 {
     <h1>@Base.Resources.Common.Edit</h1>
 

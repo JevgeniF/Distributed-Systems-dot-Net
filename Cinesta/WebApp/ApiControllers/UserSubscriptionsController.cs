@@ -1,13 +1,11 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -51,7 +49,7 @@ public class UserSubscriptionsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(UserSubscription),201)]
+    [ProducesResponseType(typeof(UserSubscription), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<UserSubscription>> PostUserSubscription(UserSubscription userSubscription)
@@ -59,7 +57,9 @@ public class UserSubscriptionsController : ControllerBase
         _bll.UserSubscription.Add(userSubscription);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetUserSubscription", new {id = userSubscription.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, userSubscription);
+        return CreatedAtAction("GetUserSubscription",
+            new {id = userSubscription.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()},
+            userSubscription);
     }
 
     // DELETE: api/UserSubscriptions/5

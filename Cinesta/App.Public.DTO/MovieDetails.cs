@@ -1,7 +1,7 @@
 ﻿using App.BLL.DTO;
 using Base.Domain;
 
-namespace App.Public.DTO.v1;
+namespace App.Public.DTO;
 
 public class MovieDetails : DomainEntityId
 {
@@ -15,7 +15,7 @@ public class MovieDetails : DomainEntityId
     public BLL.DTO.MovieType? MovieType { get; set; }
     public ICollection<MovieDbScore>? MovieDbScores { get; set; }
     public ICollection<MovieGenre>? Genres { get; set; }
-    public ICollection<BLL.DTO.Video>? Videos { get; set; }
+    public ICollection<Video>? Videos { get; set; }
     public ICollection<BLL.DTO.UserRating>? UserRatings { get; set; }
     public ICollection<BLL.DTO.CastInMovie>? CastInMovie { get; set; }
 }

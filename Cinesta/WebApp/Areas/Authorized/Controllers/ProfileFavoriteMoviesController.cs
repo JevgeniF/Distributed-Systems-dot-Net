@@ -1,17 +1,15 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WebApp.Areas.Authorized.ViewModels;
 
 namespace WebApp.Areas.Authorized.Controllers;
 
 [Area("Authorized")]
-[Authorize(Roles = "admin,user")]
+[Authorize(Roles = "admin,moderator,user")]
 public class ProfileFavoriteMoviesController : Controller
 {
     private readonly IAppBll _bll;

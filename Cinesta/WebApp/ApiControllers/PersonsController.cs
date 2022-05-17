@@ -1,5 +1,4 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -78,7 +76,7 @@ public class PersonsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(Person),201)]
+    [ProducesResponseType(typeof(Person), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<Person>> PostPerson(Person person)
@@ -86,7 +84,8 @@ public class PersonsController : ControllerBase
         _bll.Person.Add(person);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetPerson", new {id = person.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, person);
+        return CreatedAtAction("GetPerson",
+            new {id = person.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, person);
     }
 
     // DELETE: api/Persons/5

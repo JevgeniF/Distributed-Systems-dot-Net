@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "Delete";
 }
-@if (User.IsInRole("admin"))
+@if (User.IsInRole("admin") || User.IsInRole("moderator"))
 {
     <h1>@Common.Delete</h1>
 
@@ -23,7 +23,7 @@
                 @Html.DisplayNameFor(model => model.Title)
             </dt>
             <dd class="col-sm-10">
-                @Model.Title
+                @Model!.Title
             </dd>
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.Released)

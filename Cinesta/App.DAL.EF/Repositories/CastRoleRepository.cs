@@ -1,15 +1,14 @@
 ﻿using App.Contracts.DAL;
-using App.DAL.EF.Mappers;
-using App.Domain;
-using Base.Contracts;
+using App.DAL.DTO;
 using Base.Contracts.Mapper;
 using Base.DAL.EF;
 
 namespace App.DAL.EF.Repositories;
 
-public class CastRoleRepository : BaseEntityRepository<DTO.CastRole, CastRole, AppDbContext>, ICastRoleRepository
+public class CastRoleRepository : BaseEntityRepository<CastRole, Domain.CastRole, AppDbContext>, ICastRoleRepository
 {
-    public CastRoleRepository(AppDbContext dbContext, IMapper<DTO.CastRole, CastRole> mapper) : base(dbContext, mapper)
+    public CastRoleRepository(AppDbContext dbContext, IMapper<CastRole, Domain.CastRole> mapper) : base(dbContext,
+        mapper)
     {
     }
 }

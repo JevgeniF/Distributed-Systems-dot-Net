@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Edit";
 }
-@if (User.IsInRole("admin"))
+@if (User.IsInRole("admin") || User.IsInRole("moderator"))
 {
     <h1>Edit</h1>
 

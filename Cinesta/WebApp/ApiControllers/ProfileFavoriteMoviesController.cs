@@ -1,5 +1,4 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -78,7 +76,7 @@ public class ProfileFavoriteMoviesController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(ProfileFavoriteMovie),201)]
+    [ProducesResponseType(typeof(ProfileFavoriteMovie), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<ProfileFavoriteMovie>> PostProfileFavoriteMovie(
@@ -87,7 +85,9 @@ public class ProfileFavoriteMoviesController : ControllerBase
         _bll.ProfileFavoriteMovie.Add(profileFavoriteMovie);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetProfileFavoriteMovie", new {id = profileFavoriteMovie.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, profileFavoriteMovie);
+        return CreatedAtAction("GetProfileFavoriteMovie",
+            new {id = profileFavoriteMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()},
+            profileFavoriteMovie);
     }
 
     // DELETE: api/ProfileFavoriteMovies/5

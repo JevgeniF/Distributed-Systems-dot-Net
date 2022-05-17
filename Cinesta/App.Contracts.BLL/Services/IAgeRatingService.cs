@@ -1,7 +1,8 @@
-﻿using Base.Contracts.BLL;
+﻿using App.BLL.DTO;
+using Base.Contracts.BLL;
 
 namespace App.Contracts.BLL.Services;
 
-public interface IAgeRatingService : IEntityService<App.BLL.DTO.AgeRating>
+public interface IAgeRatingService : IEntityService<AgeRating>
 {
 }

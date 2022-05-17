@@ -1,15 +1,14 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Areas.Authorized.Controllers;
 
 [Area("Authorized")]
-[Authorize(Roles = "admin,user")]
+[Authorize(Roles = "admin,moderator,user")]
 public class SubscriptionsController : Controller
 {
     private readonly IAppBll _bll;
@@ -94,8 +93,7 @@ public class SubscriptionsController : Controller
             {
                 if (!await SubscriptionExists(subscription.Id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
 
             return RedirectToAction(nameof(Index));

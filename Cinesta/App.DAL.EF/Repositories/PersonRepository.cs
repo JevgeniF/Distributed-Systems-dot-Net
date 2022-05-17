@@ -1,20 +1,18 @@
 ﻿using App.Contracts.DAL;
-using App.DAL.EF.Mappers;
-using App.Domain;
-using Base.Contracts;
+using App.DAL.DTO;
 using Base.Contracts.Mapper;
-using Microsoft.EntityFrameworkCore;
 using Base.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.EF.Repositories;
 
-public class PersonRepository : BaseEntityRepository<DTO.Person, Person, AppDbContext>, IPersonRepository
+public class PersonRepository : BaseEntityRepository<Person, Domain.Person, AppDbContext>, IPersonRepository
 {
-    public PersonRepository(AppDbContext dbContext, IMapper<DTO.Person, Person> mapper) : base(dbContext, mapper)
+    public PersonRepository(AppDbContext dbContext, IMapper<Person, Domain.Person> mapper) : base(dbContext, mapper)
     {
     }
 
-    public async Task<DTO.Person?> GetByNames(string userName, string userSurname, bool noTracking = true)
+    public async Task<Person?> GetByNames(string userName, string userSurname, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query = query.Where(p => p!.Name == userName);

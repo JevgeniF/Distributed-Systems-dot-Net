@@ -1,17 +1,12 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
-using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApp.DTO;
-using Video = App.Public.DTO.v1.Video;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -52,10 +47,10 @@ public class VideosController : ControllerBase
     // GET: api/Videos/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.Video), 200)]
+    [ProducesResponseType(typeof(Video), 200)]
     [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<App.BLL.DTO.Video>> GetVideo(Guid id)
+    public async Task<ActionResult<Video>> GetVideo(Guid id)
     {
         var video = await _bll.Video.FirstOrDefaultAsync(id);
 
@@ -100,16 +95,17 @@ public class VideosController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.Video),201)]
+    [ProducesResponseType(typeof(Video), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<App.BLL.DTO.Video>> PostVideo(App.BLL.DTO.Video video)
+    public async Task<ActionResult<Video>> PostVideo(Video video)
     {
         _bll.Video.Add(video);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetVideo", new {id = video.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, video);
+        return CreatedAtAction("GetVideo",
+            new {id = video.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, video);
     }
 
     // DELETE: api/Videos/5

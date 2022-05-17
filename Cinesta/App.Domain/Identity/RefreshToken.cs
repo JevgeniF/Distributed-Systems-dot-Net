@@ -3,7 +3,7 @@ using Base.Domain;
 
 namespace App.Domain.Identity;
 
-public class RefreshToken: DomainEntityId
+public class RefreshToken : DomainEntityId
 {
     [StringLength(36, MinimumLength = 36)] public string Token { get; set; } = Guid.NewGuid().ToString();
 
@@ -14,7 +14,7 @@ public class RefreshToken: DomainEntityId
 
     // UTC
     public DateTime? PreviousExpirationDateTime { get; set; }
-    
+
     public Guid AppUserId { get; set; }
     public AppUser? AppUser { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿using App.BLL.DTO.Identity;
 using Base.Domain;
 
-namespace App.Public.DTO.v1;
+namespace App.Public.DTO;
 
 public class Subscription : DomainEntityId
 {

@@ -1,4 +1,8 @@
-﻿@using Base.Resources
+﻿@using App.BLL
+@using Base.Extensions
+@using Base.Resources
+@using Microsoft.IdentityModel.Tokens
+@inject AppBll _bll;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,8 +27,14 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@Common.Home</a>
                     </li>
-
-                    <partial name="_Menu"/>
+                    @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.IsInRole("user"))
+                    {
+                        <partial name="_UserAccountMenu"/>
+                    }
+                    @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.IsInRole("user") && !_bll.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()).Result.IsNullOrEmpty())
+                    {
+                        <partial name="_Menu"/>
+                    }
                     <partial name="_LanguageSelection"/>
 
                 </ul>

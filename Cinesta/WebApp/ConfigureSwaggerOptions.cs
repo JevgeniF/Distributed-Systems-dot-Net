@@ -6,7 +6,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace WebApp;
 
-public class ConfigureSwaggerOptions: IConfigureOptions<SwaggerGenOptions>
+public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 {
     private readonly IApiVersionDescriptionProvider _provider;
 
@@ -18,19 +18,17 @@ public class ConfigureSwaggerOptions: IConfigureOptions<SwaggerGenOptions>
     public void Configure(SwaggerGenOptions options)
     {
         foreach (var description in _provider.ApiVersionDescriptions)
-        {
             options.SwaggerDoc(description.GroupName, new OpenApiInfo
             {
                 Title = $"API {description.ApiVersion}",
                 Version = description.ApiVersion.ToString()
             });
-        }
 
         var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         options.IncludeXmlComments(xmlPath);
         options.CustomSchemaIds(i => i.FullName);
-        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Description =
                 "JWT Authorization header using the Bearer scheme.\r\n<br>" +
@@ -42,12 +40,12 @@ public class ConfigureSwaggerOptions: IConfigureOptions<SwaggerGenOptions>
             Type = SecuritySchemeType.ApiKey,
             Scheme = "Bearer"
         });
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             {
-                new OpenApiSecurityScheme()
+                new OpenApiSecurityScheme
                 {
-                    Reference = new OpenApiReference()
+                    Reference = new OpenApiReference
                     {
                         Type = ReferenceType.SecurityScheme,
                         Id = "Bearer"

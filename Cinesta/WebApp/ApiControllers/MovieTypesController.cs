@@ -1,17 +1,12 @@
 #nullable disable
-using App.Contracts.DAL;
-using App.BLL.DTO;
 using App.Contracts.BLL;
-using App.Public.DTO.v1;
+using App.Public.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApp.DTO;
-using MovieType = App.Public.DTO.v1.MovieType;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -93,7 +88,7 @@ public class MovieTypesController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.MovieType),201)]
+    [ProducesResponseType(typeof(App.BLL.DTO.MovieType), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -102,7 +97,8 @@ public class MovieTypesController : ControllerBase
         _bll.MovieType.Add(movieType);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetMovieType", new {id = movieType.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieType);
+        return CreatedAtAction("GetMovieType",
+            new {id = movieType.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieType);
     }
 
     // DELETE: api/MovieTypes/5

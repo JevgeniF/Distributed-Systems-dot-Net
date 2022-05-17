@@ -1,8 +1,7 @@
-﻿using App.BLL.DTO;
-using App.BLL.DTO.Identity;
+﻿using App.BLL.DTO.Identity;
 using Base.Domain;
 
-namespace App.Public.DTO.v1;
+namespace App.Public.DTO;
 
 public class UserRating : DomainEntityId
 {

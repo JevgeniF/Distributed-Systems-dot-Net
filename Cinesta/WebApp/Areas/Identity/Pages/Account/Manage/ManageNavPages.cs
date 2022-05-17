@@ -3,7 +3,6 @@
 
 #nullable disable
 
-using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage;

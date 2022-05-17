@@ -1,6 +1,6 @@
 ﻿using Base.Domain;
 
-namespace App.Public.DTO.v1;
+namespace App.Public.DTO;
 
 public class Genre : DomainEntityId
 {

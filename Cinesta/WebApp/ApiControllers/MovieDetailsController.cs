@@ -1,14 +1,10 @@
 #nullable disable
-using App.Contracts.DAL;
-using App.BLL.DTO;
 using App.Contracts.BLL;
-using App.Public.DTO.v1;
+using App.Public.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApp.DTO;
-using MovieDetails = App.Public.DTO.v1.MovieDetails;
 
 namespace WebApp.ApiControllers;
 
@@ -104,7 +100,7 @@ public class MovieDetailsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.MovieDetails),201)]
+    [ProducesResponseType(typeof(App.BLL.DTO.MovieDetails), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -113,7 +109,8 @@ public class MovieDetailsController : ControllerBase
         _bll.MovieDetails.Add(movieDetails);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetMovieDetails", new {id = movieDetails.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieDetails);
+        return CreatedAtAction("GetMovieDetails",
+            new {id = movieDetails.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieDetails);
     }
 
     // DELETE: api/MovieDetails/5

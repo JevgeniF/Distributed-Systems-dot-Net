@@ -1,5 +1,4 @@
-﻿using App.BLL.DTO;
-using Base.Domain;
+﻿using Base.Domain;
 
 namespace App.Public.DTO.v1;
 

@@ -3,11 +3,9 @@
 
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -19,9 +17,9 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage;
 
 public class EmailModel : PageModel
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly SignInManager<AppUser> _signInManager;
     private readonly IEmailSender _emailSender;
+    private readonly SignInManager<AppUser> _signInManager;
+    private readonly UserManager<AppUser> _userManager;
 
     public EmailModel(
         UserManager<AppUser> userManager,
@@ -58,22 +56,6 @@ public class EmailModel : PageModel
     /// </summary>
     [BindProperty]
     public InputModel Input { get; set; }
-
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    public class InputModel
-    {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [Required]
-        [EmailAddress]
-        [Display(Name = "New email")]
-        public string NewEmail { get; set; }
-    }
 
     private async Task LoadAsync(AppUser user)
     {
@@ -117,7 +99,7 @@ public class EmailModel : PageModel
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmailChange",
                 null,
-                new {area = "Identity", userId = userId, email = Input.NewEmail, code = code},
+                new {area = "Identity", userId, email = Input.NewEmail, code},
                 Request.Scheme);
             await _emailSender.SendEmailAsync(
                 Input.NewEmail,
@@ -150,7 +132,7 @@ public class EmailModel : PageModel
         var callbackUrl = Url.Page(
             "/Account/ConfirmEmail",
             null,
-            new {area = "Identity", userId = userId, code = code},
+            new {area = "Identity", userId, code},
             Request.Scheme);
         await _emailSender.SendEmailAsync(
             email,
@@ -159,5 +141,21 @@ public class EmailModel : PageModel
 
         StatusMessage = "Verification email sent. Please check your email.";
         return RedirectToPage();
+    }
+
+    /// <summary>
+    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+    ///     directly from your code. This API may change or be removed in future releases.
+    /// </summary>
+    public class InputModel
+    {
+        /// <summary>
+        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
+        [Required]
+        [EmailAddress]
+        [Display(Name = "New email")]
+        public string NewEmail { get; set; }
     }
 }

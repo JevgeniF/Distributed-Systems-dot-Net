@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "Delete";
 }
-@if (User.GetUserId() == Model.AppUserId || User.IsInRole("admin"))
+@if (User.GetUserId() == Model!.AppUserId || User.IsInRole("admin") || User.IsInRole("moderator"))
 {
     <h1>@Common.Delete</h1>
 

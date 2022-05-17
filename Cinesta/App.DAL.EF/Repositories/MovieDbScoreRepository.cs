@@ -1,29 +1,27 @@
 ﻿using App.Contracts.DAL;
-using App.DAL.EF.Mappers;
-using App.Domain;
-using Base.Contracts;
+using App.DAL.DTO;
 using Base.Contracts.Mapper;
-using Microsoft.EntityFrameworkCore;
 using Base.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.EF.Repositories;
 
-public class MovieDbScoreRepository : BaseEntityRepository<DTO.MovieDbScore, MovieDbScore, AppDbContext>,
+public class MovieDbScoreRepository : BaseEntityRepository<MovieDbScore, Domain.MovieDbScore, AppDbContext>,
     IMovieDbScoreRepository
 {
-    public MovieDbScoreRepository(AppDbContext dbContext, IMapper<DTO.MovieDbScore, MovieDbScore> mapper) : base(
+    public MovieDbScoreRepository(AppDbContext dbContext, IMapper<MovieDbScore, Domain.MovieDbScore> mapper) : base(
         dbContext, mapper)
     {
     }
 
-    public async Task<IEnumerable<DTO.MovieDbScore>> IncludeGetAllAsync(bool noTracking = true)
+    public async Task<IEnumerable<MovieDbScore>> IncludeGetAllAsync(bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query.Include(m => m.MovieDetails);
         return (await query.ToListAsync()).Select(m => Mapper.Map(m)!);
     }
 
-    public async Task<DTO.MovieDbScore?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    public async Task<MovieDbScore?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query.Include(m => m.MovieDetails);

@@ -1,5 +1,4 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Base.Extensions;
@@ -12,7 +11,7 @@ using WebApp.Areas.Authorized.ViewModels;
 namespace WebApp.Areas.Authorized.Controllers;
 
 [Area("Authorized")]
-[Authorize(Roles = "admin,user")]
+[Authorize(Roles = "admin,moderator,user")]
 public class UserRatingsController : Controller
 {
     private readonly IAppBll _bll;

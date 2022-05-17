@@ -6,7 +6,7 @@ using Base.Contracts.Mapper;
 
 namespace App.BLL.Services;
 
-public class VideoService : BaseEntityService<Video, App.DAL.DTO.Video, IVideoRepository>, IVideoService
+public class VideoService : BaseEntityService<Video, DAL.DTO.Video, IVideoRepository>, IVideoService
 {
     public VideoService(IVideoRepository repository, IMapper<Video, DAL.DTO.Video> mapper) : base(repository, mapper)
     {

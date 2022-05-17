@@ -1,8 +1,6 @@
-﻿using App.Domain;
+﻿using App.DAL.DTO;
 using AutoMapper;
-using Base.Contracts;
 using Base.DAL;
-using CastInMovie = App.DAL.DTO.CastInMovie;
 
 namespace App.DAL.EF.Mappers;
 

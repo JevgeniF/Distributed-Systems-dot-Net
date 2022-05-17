@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Base.Resources
+@{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
     {
         Layout = (string?) parentLayout;
@@ -9,10 +10,10 @@
     }
 }
 
-<h1>@Base.Resources.Identity.manageYourAccount</h1>
+<h1>@Identity.manageYourAccount</h1>
 
 <div>
-    <h2>@Base.Resources.Identity.changeYourAccountSettings</h2>
+    <h2>@Identity.changeYourAccountSettings</h2>
     <hr/>
     <div class="row">
         <div class="col-md-3">

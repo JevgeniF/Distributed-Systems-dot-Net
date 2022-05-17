@@ -1,6 +1,6 @@
 #nullable disable
 using App.Contracts.BLL;
-using App.Public.DTO.v1;
+using App.Public.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,15 +24,15 @@ public class CastInMoviesController : ControllerBase
     // GET: api/CastInMovies
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.CastInMovie>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<CastInMovie>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<App.Public.DTO.v1.CastInMovie>> GetCastInMovies()
+    public async Task<IEnumerable<CastInMovie>> GetCastInMovies()
     {
-        return (await _bll.CastInMovie.IncludeGetAllAsync()).Select(c => new App.Public.DTO.v1.CastInMovie
+        return (await _bll.CastInMovie.IncludeGetAllAsync()).Select(c => new CastInMovie
         {
             Id = c.Id,
             CastRoleId = c.CastRoleId,
-            CastRole = new App.Public.DTO.v1.CastRole
+            CastRole = new CastRole
             {
                 Id = c.CastRole!.Id,
                 Naming = c.CastRole.Naming
@@ -47,18 +47,18 @@ public class CastInMoviesController : ControllerBase
     // GET: api/CastInMovies/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.Public.DTO.v1.CastInMovie), 200)]
+    [ProducesResponseType(typeof(CastInMovie), 200)]
     [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<App.Public.DTO.v1.CastInMovie>> GetCastInMovie(Guid id)
+    public async Task<ActionResult<CastInMovie>> GetCastInMovie(Guid id)
     {
         var castInMovie = await _bll.CastInMovie.IncludeFirstOrDefaultAsync(id);
         if (castInMovie == null) return NotFound();
-        var castInMovieDto = new App.Public.DTO.v1.CastInMovie
+        var castInMovieDto = new CastInMovie
         {
             Id = castInMovie.Id,
             CastRoleId = castInMovie.CastRoleId,
-            CastRole = new App.Public.DTO.v1.CastRole
+            CastRole = new CastRole
             {
                 Id = castInMovie.CastRole!.Id,
                 Naming = castInMovie.CastRole.Naming
@@ -80,7 +80,7 @@ public class CastInMoviesController : ControllerBase
     [ProducesResponseType(403)]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> PutCastInMovie(Guid id, App.Public.DTO.v1.CastInMovie castInMovie)
+    public async Task<IActionResult> PutCastInMovie(Guid id, CastInMovie castInMovie)
     {
         if (id != castInMovie.Id) return BadRequest();
 
@@ -116,11 +116,11 @@ public class CastInMoviesController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.Public.DTO.v1.CastInMovie), 201)]
+    [ProducesResponseType(typeof(CastInMovie), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<App.Public.DTO.v1.CastInMovie>> PostCastInMovie(App.Public.DTO.v1.CastInMovie castInMovie)
+    public async Task<ActionResult<CastInMovie>> PostCastInMovie(CastInMovie castInMovie)
     {
         _bll.CastInMovie.Add(new App.BLL.DTO.CastInMovie
         {

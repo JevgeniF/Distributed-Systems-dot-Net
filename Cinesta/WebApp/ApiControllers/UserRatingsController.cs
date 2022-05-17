@@ -1,17 +1,12 @@
 #nullable disable
-using App.Contracts.DAL;
-using App.BLL.DTO;
 using App.Contracts.BLL;
-using App.Public.DTO.v1;
+using App.Public.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApp.DTO;
-using UserRating = App.Public.DTO.v1.UserRating;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -97,7 +92,7 @@ public class UserRatingsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.UserRating),201)]
+    [ProducesResponseType(typeof(App.BLL.DTO.UserRating), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<App.BLL.DTO.UserRating>> PostUserRating(App.BLL.DTO.UserRating userRating)
@@ -105,7 +100,8 @@ public class UserRatingsController : ControllerBase
         _bll.UserRating.Add(userRating);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetUserRating", new {id = userRating.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, userRating);
+        return CreatedAtAction("GetUserRating",
+            new {id = userRating.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, userRating);
     }
 
     // DELETE: api/UserRatings/5

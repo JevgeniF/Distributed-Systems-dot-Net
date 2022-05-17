@@ -3,7 +3,7 @@
 
 <div class="form-group">
     <label asp-for="CastInMovie.CastRoleId" class="control-label">@Common.Role</label>
-    <select asp-for="CastInMovie.CastRoleId" class="form-control" asp-items="Model.CastRoleSelectList">
+    <select asp-for="CastInMovie.CastRoleId" class="form-control" asp-items="Model!.CastRoleSelectList">
         <option value="wrongData">--- @Common.SelectRole ----</option>
     </select>
 </div>

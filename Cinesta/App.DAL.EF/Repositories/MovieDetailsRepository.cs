@@ -1,22 +1,20 @@
 ﻿using App.Contracts.DAL;
-using App.DAL.EF.Mappers;
-using App.Domain;
-using Base.Contracts;
+using App.DAL.DTO;
 using Base.Contracts.Mapper;
-using Microsoft.EntityFrameworkCore;
 using Base.DAL.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.EF.Repositories;
 
-public class MovieDetailsRepository : BaseEntityRepository<DTO.MovieDetails, MovieDetails, AppDbContext>,
+public class MovieDetailsRepository : BaseEntityRepository<MovieDetails, Domain.MovieDetails, AppDbContext>,
     IMovieDetailsRepository
 {
-    public MovieDetailsRepository(AppDbContext dbContext, IMapper<DTO.MovieDetails, MovieDetails> mapper) : base(
+    public MovieDetailsRepository(AppDbContext dbContext, IMapper<MovieDetails, Domain.MovieDetails> mapper) : base(
         dbContext, mapper)
     {
     }
 
-    public async Task<IEnumerable<DTO.MovieDetails>> IncludeGetAllAsync(bool noTracking = true)
+    public async Task<IEnumerable<MovieDetails>> IncludeGetAllAsync(bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query = query.Include(m => m.AgeRating)
@@ -24,7 +22,7 @@ public class MovieDetailsRepository : BaseEntityRepository<DTO.MovieDetails, Mov
         return (await query.ToListAsync()).Select(m => Mapper.Map(m)!);
     }
 
-    public async Task<DTO.MovieDetails?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    public async Task<MovieDetails?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query = query.Include(m => m.AgeRating)
@@ -32,7 +30,7 @@ public class MovieDetailsRepository : BaseEntityRepository<DTO.MovieDetails, Mov
         return Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id));
     }
 
-    public async Task<IEnumerable<DTO.MovieDetails>> IncludeGetByAgeAsync(int age, bool noTracking = true)
+    public async Task<IEnumerable<MovieDetails>> IncludeGetByAgeAsync(int age, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
         query = query.Include(m => m.AgeRating)

@@ -3,24 +3,18 @@
 
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage;
 
 public class DownloadPersonalDataModel : PageModel
 {
-    private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<DownloadPersonalDataModel> _logger;
+    private readonly UserManager<AppUser> _userManager;
 
     public DownloadPersonalDataModel(
         UserManager<AppUser> userManager,
@@ -51,7 +45,7 @@ public class DownloadPersonalDataModel : PageModel
         var logins = await _userManager.GetLoginsAsync(user);
         foreach (var l in logins) personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
 
-        personalData.Add($"Authenticator Key", await _userManager.GetAuthenticatorKeyAsync(user));
+        personalData.Add("Authenticator Key", await _userManager.GetAuthenticatorKeyAsync(user));
 
         Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
         return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");

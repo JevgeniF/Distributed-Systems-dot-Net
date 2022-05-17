@@ -23,7 +23,6 @@ public class BaseEntityService<TBllEntity, TDalEntity, TRepository, TKey> : IEnt
     where TKey : IEquatable<TKey>
     where TDalEntity : class, IDomainEntityId<TKey>
 {
-    protected TRepository Repository { get; set; }
     protected IMapper<TBllEntity, TDalEntity> Mapper;
 
     public BaseEntityService(TRepository repository, IMapper<TBllEntity, TDalEntity> mapper)
@@ -31,6 +30,8 @@ public class BaseEntityService<TBllEntity, TDalEntity, TRepository, TKey> : IEnt
         Repository = repository;
         Mapper = mapper;
     }
+
+    protected TRepository Repository { get; set; }
 
     public TBllEntity Add(TBllEntity entity)
     {

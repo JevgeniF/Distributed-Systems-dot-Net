@@ -1,5 +1,4 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -78,7 +76,7 @@ public class UserProfilesController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(UserProfile),201)]
+    [ProducesResponseType(typeof(UserProfile), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<UserProfile>> PostUserProfile(UserProfile userProfile)
@@ -86,7 +84,8 @@ public class UserProfilesController : ControllerBase
         _bll.UserProfile.Add(userProfile);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetUserProfile", new {id = userProfile.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, userProfile);
+        return CreatedAtAction("GetUserProfile",
+            new {id = userProfile.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, userProfile);
     }
 
     // DELETE: api/UserProfiles/5

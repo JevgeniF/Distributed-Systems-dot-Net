@@ -1,5 +1,4 @@
 #nullable disable
-using App.Contracts.DAL;
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
-
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -78,7 +76,7 @@ public class ProfileMoviesController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(ProfileMovie),201)]
+    [ProducesResponseType(typeof(ProfileMovie), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     public async Task<ActionResult<ProfileMovie>> PostProfileMovie(ProfileMovie profileMovie)
@@ -86,7 +84,8 @@ public class ProfileMoviesController : ControllerBase
         _bll.ProfileMovie.Add(profileMovie);
         await _bll.SaveChangesAsync();
 
-        return CreatedAtAction("GetProfileMovie", new {id = profileMovie.Id,  version = HttpContext.GetRequestedApiVersion()!.ToString()}, profileMovie);
+        return CreatedAtAction("GetProfileMovie",
+            new {id = profileMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, profileMovie);
     }
 
     // DELETE: api/ProfileMovies/5

@@ -6,7 +6,7 @@ using Base.Contracts.Mapper;
 
 namespace App.BLL.Services;
 
-public class MovieDetailsService : BaseEntityService<MovieDetails, App.DAL.DTO.MovieDetails, IMovieDetailsRepository>,
+public class MovieDetailsService : BaseEntityService<MovieDetails, DAL.DTO.MovieDetails, IMovieDetailsRepository>,
     IMovieDetailsService
 {
     public MovieDetailsService(IMovieDetailsRepository repository, IMapper<MovieDetails, DAL.DTO.MovieDetails> mapper) :

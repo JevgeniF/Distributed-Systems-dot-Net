@@ -1,7 +1,6 @@
 #nullable disable
-using App.Contracts.BLL;
-using App.Contracts.DAL;
 using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebApp.Areas.Authorized.Controllers;
 
 [Area("Authorized")]
-[Authorize(Roles = "admin")]
+[Authorize(Roles = "admin,moderator")]
 public class AgeRatingsController : Controller
 {
     private readonly IAppBll _bll;

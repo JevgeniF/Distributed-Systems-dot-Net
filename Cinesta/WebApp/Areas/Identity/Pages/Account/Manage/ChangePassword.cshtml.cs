@@ -3,22 +3,19 @@
 
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage;
 
 public class ChangePasswordModel : PageModel
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly SignInManager<AppUser> _signInManager;
     private readonly ILogger<ChangePasswordModel> _logger;
+    private readonly SignInManager<AppUser> _signInManager;
+    private readonly UserManager<AppUser> _userManager;
 
     public ChangePasswordModel(
         UserManager<AppUser> userManager,
@@ -43,6 +40,39 @@ public class ChangePasswordModel : PageModel
     /// </summary>
     [TempData]
     public string StatusMessage { get; set; }
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return NotFound(Base.Resources.Identity.unableToLoadUser);
+
+        var hasPassword = await _userManager.HasPasswordAsync(user);
+        if (!hasPassword) return RedirectToPage("./SetPassword");
+
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid) return Page();
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return NotFound(Base.Resources.Identity.unableToLoadUser);
+
+        var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
+        if (!changePasswordResult.Succeeded)
+        {
+            foreach (var error in changePasswordResult.Errors)
+                ModelState.AddModelError(string.Empty, error.Description);
+            return Page();
+        }
+
+        await _signInManager.RefreshSignInAsync(user);
+        _logger.LogInformation("User changed their password successfully.");
+        StatusMessage = Base.Resources.Identity.passwrdChangedMessage;
+
+        return RedirectToPage();
+    }
 
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -76,38 +106,5 @@ public class ChangePasswordModel : PageModel
         [Compare("NewPassword", ErrorMessageResourceName = "passwrdDoesntMatchError",
             ErrorMessageResourceType = typeof(Base.Resources.Identity))]
         public string ConfirmPassword { get; set; }
-    }
-
-    public async Task<IActionResult> OnGetAsync()
-    {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound(Base.Resources.Identity.unableToLoadUser);
-
-        var hasPassword = await _userManager.HasPasswordAsync(user);
-        if (!hasPassword) return RedirectToPage("./SetPassword");
-
-        return Page();
-    }
-
-    public async Task<IActionResult> OnPostAsync()
-    {
-        if (!ModelState.IsValid) return Page();
-
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null) return NotFound(Base.Resources.Identity.unableToLoadUser);
-
-        var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
-        if (!changePasswordResult.Succeeded)
-        {
-            foreach (var error in changePasswordResult.Errors)
-                ModelState.AddModelError(string.Empty, error.Description);
-            return Page();
-        }
-
-        await _signInManager.RefreshSignInAsync(user);
-        _logger.LogInformation("User changed their password successfully.");
-        StatusMessage = Base.Resources.Identity.passwrdChangedMessage;
-
-        return RedirectToPage();
     }
 }

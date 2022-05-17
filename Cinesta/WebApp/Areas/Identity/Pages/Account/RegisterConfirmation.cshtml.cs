@@ -3,11 +3,9 @@
 
 #nullable disable
 
-using System;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using App.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,8 +17,8 @@ namespace WebApp.Areas.Identity.Pages.Account;
 [AllowAnonymous]
 public class RegisterConfirmationModel : PageModel
 {
-    private readonly UserManager<AppUser> _userManager;
     private readonly IEmailSender _sender;
+    private readonly UserManager<AppUser> _userManager;
 
     public RegisterConfirmationModel(UserManager<AppUser> userManager, IEmailSender sender)
     {
@@ -65,7 +63,7 @@ public class RegisterConfirmationModel : PageModel
             EmailConfirmationUrl = Url.Page(
                 "/Account/ConfirmEmail",
                 null,
-                new {area = "Identity", userId = userId, code = code, returnUrl = returnUrl},
+                new {area = "Identity", userId, code, returnUrl},
                 Request.Scheme);
         }
 

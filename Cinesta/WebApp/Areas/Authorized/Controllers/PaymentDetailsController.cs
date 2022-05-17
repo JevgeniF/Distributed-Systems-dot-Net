@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebApp.Areas.Authorized.Controllers;
 
 [Area("Authorized")]
-[Authorize(Roles = "admin,user")]
+[Authorize(Roles = "admin,moderator,user")]
 public class PaymentDetailsController : Controller
 {
     private readonly IAppUOW _uow;

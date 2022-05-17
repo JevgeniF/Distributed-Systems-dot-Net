@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Base.Contracts.Mapper\Base.Contracts.Mapper.csproj" />
+        <ProjectReference Include="..\Base.Contracts.Mapper\Base.Contracts.Mapper.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="11.0.1" />
+        <PackageReference Include="AutoMapper" Version="11.0.1"/>
     </ItemGroup>
 
 </Project>

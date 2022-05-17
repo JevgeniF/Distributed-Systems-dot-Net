@@ -1,7 +1,6 @@
 #nullable disable
-using App.BLL.DTO;
 using App.Contracts.BLL;
-using App.Public.DTO.v1;
+using App.Public.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,12 +24,12 @@ public class CastRolesController : ControllerBase
     // GET: api/CastRoles
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<App.Public.DTO.v1.CastRole>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<CastRole>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<App.Public.DTO.v1.CastRole>>> GetCastRoles()
+    public async Task<ActionResult<IEnumerable<CastRole>>> GetCastRoles()
     {
         var res = (await _bll.CastRole.GetAllAsync())
-            .Select(c => new App.Public.DTO.v1.CastRole
+            .Select(c => new CastRole
             {
                 Id = c.Id,
                 Naming = c.Naming
@@ -42,16 +41,16 @@ public class CastRolesController : ControllerBase
     // GET: api/CastRoles/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.Public.DTO.v1.CastRole), 200)]
+    [ProducesResponseType(typeof(CastRole), 200)]
     [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<App.Public.DTO.v1.CastRole>> GetCastRole(Guid id)
+    public async Task<ActionResult<CastRole>> GetCastRole(Guid id)
     {
         var castRole = await _bll.CastRole.FirstOrDefaultAsync(id);
 
         if (castRole == null) return NotFound();
 
-        return new App.Public.DTO.v1.CastRole {Id = castRole.Id, Naming = castRole.Naming};
+        return new CastRole {Id = castRole.Id, Naming = castRole.Naming};
     }
 
     // PUT: api/CastRoles/5
@@ -61,7 +60,7 @@ public class CastRolesController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCastRole(Guid id, App.Public.DTO.v1.CastRole castRole)
+    public async Task<IActionResult> PutCastRole(Guid id, CastRole castRole)
     {
         if (id != castRole.Id) return BadRequest();
 
@@ -87,16 +86,15 @@ public class CastRolesController : ControllerBase
     // POST: api/CastRoles
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="castRole"></param>
     /// <returns></returns>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.Public.DTO.v1.CastRole), 201)]
+    [ProducesResponseType(typeof(CastRole), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
-    public async Task<ActionResult<App.Public.DTO.v1.CastRole>> PostCastRole(App.Public.DTO.v1.CastRole castRole)
+    public async Task<ActionResult<CastRole>> PostCastRole(CastRole castRole)
     {
         _bll.CastRole.Add(new App.BLL.DTO.CastRole {Id = castRole.Id, Naming = castRole.Naming});
         await _bll.SaveChangesAsync();
@@ -107,7 +105,6 @@ public class CastRolesController : ControllerBase
 
     // DELETE: api/CastRoles/5
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>

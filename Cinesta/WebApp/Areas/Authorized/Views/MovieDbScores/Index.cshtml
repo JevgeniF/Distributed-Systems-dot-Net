@@ -7,7 +7,7 @@
 
 <h1>@Common.Index</h1>
 
-@if (User.IsInRole("admin"))
+@if (User.IsInRole("admin") || User.IsInRole("moderator"))
 {
     <p>
         <a asp-action="Create">@Common.Create</a>
@@ -29,7 +29,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in Model!)
     {
         <tr>
             <td>
@@ -43,7 +43,7 @@
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a>
-                @if (User.IsInRole("admin"))
+                @if (User.IsInRole("admin") || User.IsInRole("moderator"))
                 {
                     <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a>
                     <a asp-action="Delete" asp-route-id="@item.Id">@Common.Delete</a>

@@ -24,9 +24,9 @@ public class BaseEntityRepository<TDalEntity, TDomainEntity, TKey, TDbContext> :
     where TKey : IEquatable<TKey>
     where TDbContext : DbContext
 {
+    protected readonly IMapper<TDalEntity, TDomainEntity> Mapper;
     protected readonly TDbContext RepoDbContext;
     protected readonly DbSet<TDomainEntity> RepoDbSet;
-    protected readonly IMapper<TDalEntity, TDomainEntity> Mapper;
 
     public BaseEntityRepository(TDbContext dbContext, IMapper<TDalEntity, TDomainEntity> mapper)
     {

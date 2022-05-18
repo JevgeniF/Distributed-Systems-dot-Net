@@ -12,14 +12,15 @@ namespace Tests.WebApp.Controllers;
 
 public class UnitTestHomeController
 {
-    private readonly ITestOutputHelper _testOutputHelper;
     private readonly HomeController _homeController;
+
+    private readonly ITestOutputHelper _testOutputHelper;
     //private readonly AppDbContext _context;
 
     public UnitTestHomeController(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
-        
+
         //set up mock db - inmemory
         //var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
         //optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
@@ -32,7 +33,6 @@ public class UnitTestHomeController
         var logger = loggerFactory.CreateLogger<HomeController>();
 
         _homeController = new HomeController(logger);
-
     }
 
     [Fact]
@@ -42,6 +42,5 @@ public class UnitTestHomeController
         _testOutputHelper.WriteLine(result?.ToString());
         Assert.NotNull(result);
         Assert.Null(result!.Model);
-        
     }
 }

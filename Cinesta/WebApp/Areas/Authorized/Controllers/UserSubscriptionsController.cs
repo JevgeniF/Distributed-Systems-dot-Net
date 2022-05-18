@@ -2,7 +2,6 @@
 #nullable disable
 using App.DAL.EF;
 using App.Domain;
-using App.Domain.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

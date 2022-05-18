@@ -2,7 +2,6 @@
 #nullable disable
 using App.DAL.EF;
 using App.Domain;
-using App.Domain.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,18 +32,12 @@ public class PaymentDetailsController : Controller
     // GET: Authorized/PaymentDetails/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
 
         var paymentDetails = await _context.PaymentDetails
             .Include(p => p.AppUser)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (paymentDetails == null)
-        {
-            return NotFound();
-        }
+        if (paymentDetails == null) return NotFound();
 
         return View(paymentDetails);
     }
@@ -145,6 +138,4 @@ public class PaymentDetailsController : Controller
     {
         return _context.PaymentDetails.Any(e => e.Id == id);
     }
-
-
 }

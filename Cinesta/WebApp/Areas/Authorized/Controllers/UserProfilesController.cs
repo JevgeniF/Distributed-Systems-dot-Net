@@ -2,7 +2,6 @@
 #nullable disable
 using App.DAL.EF;
 using App.Domain;
-using App.Domain.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -110,24 +109,19 @@ public class UserProfilesController : Controller
     // GET: Authorized/UserProfiles/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
+        if (id == null) return NotFound();
 
         var userProfile = await _context.UserProfiles
             .Include(u => u.AppUser)
             .FirstOrDefaultAsync(u => u.Id == id);
-        if (userProfile == null)
-        {
-            return NotFound();
-        }
+        if (userProfile == null) return NotFound();
 
         return View(userProfile);
     }
 
     // POST: Admin/UserProfiles/Delete/5
-    [HttpPost, ActionName("Delete")]
+    [HttpPost]
+    [ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {

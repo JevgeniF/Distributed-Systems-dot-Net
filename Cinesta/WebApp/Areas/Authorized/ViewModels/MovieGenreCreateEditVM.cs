@@ -1,6 +1,6 @@
 ﻿#pragma warning disable CS1591
+using App.Domain;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using MovieGenre = App.Domain.MovieGenre;
 
 namespace WebApp.Areas.Authorized.ViewModels;
 

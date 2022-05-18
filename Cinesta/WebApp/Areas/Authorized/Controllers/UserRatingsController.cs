@@ -1,6 +1,7 @@
+#pragma warning disable CS1591
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.DAL.EF;
+using App.Domain;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,36 +15,49 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class UserRatingsController : Controller
 {
-    private readonly IAppBll _bll;
+    private readonly AppDbContext _context;
+    private readonly ILogger<UserRatingsController> _logger;
 
-    public UserRatingsController(IAppBll bll)
+    public UserRatingsController(AppDbContext context, ILogger<UserRatingsController> logger)
     {
-        _bll = bll;
+        _context = context;
+        _logger = logger;
     }
 
-    // GET: Admin/UserRatings
+    // GET: Authorized/UserRatings
     public async Task<IActionResult> Index()
     {
-        return View(await _bll.UserRating.IncludeGetAllAsync());
+        return View(await _context.UserRatings.Include(u => u.AppUser)
+            .Include(u => u.MovieDetails).ToListAsync());
     }
 
-    // GET: Admin/UserRatings/Details/5
+    // GET: Authorized/UserRatings/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return NotFound();
+        }
 
-        var userRating = await _bll.UserRating.IncludeFirstOrDefaultAsync(id.Value);
-        if (userRating == null) return NotFound();
+        var userRating = await _context.UserRatings
+            .Include(u => u.AppUser)
+            .Include(u => u.MovieDetails)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (userRating == null)
+        {
+            return NotFound();
+        }
 
         return View(userRating);
     }
 
-    // GET: Admin/UserRatings/Create
+
+    // GET: Authorized/UserRatings/Create
     public async Task<IActionResult> Create()
     {
         var vm = new UserRatingCreateEditVM
         {
-            MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
+            MovieDetailsSelectList = new SelectList((await _context.MovieDetails.ToListAsync())
                 .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
@@ -57,16 +71,15 @@ public class UserRatingsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(UserRatingCreateEditVM vm)
     {
+        vm.UserRating.AppUserId = User.GetUserId();
         if (ModelState.IsValid)
         {
-            vm.UserRating.AppUserId = User.GetUserId();
-            vm.UserRating.Id = Guid.NewGuid();
-            _bll.UserRating.Add(vm.UserRating);
-            await _bll.SaveChangesAsync();
+            _context.UserRatings.Add(vm.UserRating);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _context.MovieDetails.ToListAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
@@ -76,15 +89,14 @@ public class UserRatingsController : Controller
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id == null) return NotFound();
-
-        var userRating = await _bll.UserRating.FirstOrDefaultAsync(id.Value);
+        var userRating = await _context.UserRatings.FirstOrDefaultAsync(u => u.Id == id);
         if (userRating == null) return NotFound();
 
         var vm = new UserRatingCreateEditVM
         {
             UserRating = userRating
         };
-        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _context.MovieDetails.ToListAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
@@ -98,12 +110,11 @@ public class UserRatingsController : Controller
     public async Task<IActionResult> Edit(Guid id, UserRating userRating)
     {
         if (id != userRating.Id) return NotFound();
-
         userRating.AppUserId = User.GetUserId();
-
+        
         if (ModelState.IsValid)
         {
-            var userRatingsFromDb = await _bll.UserRating.FirstOrDefaultAsync(id);
+            var userRatingsFromDb = await _context.UserRatings.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
             if (userRatingsFromDb == null) return NotFound();
 
             try
@@ -111,12 +122,12 @@ public class UserRatingsController : Controller
                 userRatingsFromDb.Comment.SetTranslation(userRating.Comment);
                 userRating.Comment = userRatingsFromDb.Comment;
 
-                _bll.UserRating.Update(userRating);
-                await _bll.SaveChangesAsync();
+                _context.UserRatings.Update(userRating);
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await UserRatingExists(userRating.Id))
+                if (!UserRatingExists(userRating.Id))
                     return NotFound();
                 throw;
             }
@@ -128,37 +139,50 @@ public class UserRatingsController : Controller
         {
             UserRating = userRating
         };
-        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _context.MovieDetails.ToListAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
     }
-
+    
 
     // GET: Admin/UserRatings/Delete/5
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return NotFound();
+        }
 
-        var userRating = await _bll.UserRating.FirstOrDefaultAsync(id.Value);
-        if (userRating == null) return NotFound();
+        var userRating = await _context.UserRatings
+            .Include(u => u.AppUser)
+            .Include(u => u.MovieDetails)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (userRating == null)
+        {
+            return NotFound();
+        }
 
         return View(userRating);
     }
 
     // POST: Admin/UserRatings/Delete/5
-    [HttpPost]
-    [ActionName("Delete")]
+    [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _bll.Subscription.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        var userRating = await _context.UserRatings.FindAsync(id);
+        _context.UserRatings.Remove(userRating!);
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task<bool> UserRatingExists(Guid id)
+    private bool UserRatingExists(Guid id)
     {
-        return await _bll.Subscription.ExistsAsync(id);
+        return _context.UserRatings.Any(e => e.Id == id);
     }
+
 }

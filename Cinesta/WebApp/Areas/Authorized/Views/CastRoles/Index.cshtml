@@ -1,5 +1,5 @@
 @using Base.Resources
-@model IEnumerable<App.BLL.DTO.CastRole>
+@model IEnumerable<App.Domain.CastRole>
 
 @{
     ViewData["Title"] = "Index";
@@ -20,7 +20,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model!)
+    @foreach (var item in Model)
     {
         <tr>
             <td>

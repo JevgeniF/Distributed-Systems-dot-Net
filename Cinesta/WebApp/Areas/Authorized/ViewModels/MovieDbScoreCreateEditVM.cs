@@ -1,5 +1,6 @@
-﻿using App.BLL.DTO;
+﻿#pragma warning disable CS1591
 using Microsoft.AspNetCore.Mvc.Rendering;
+using MovieDbScore = App.Domain.MovieDbScore;
 
 namespace WebApp.Areas.Authorized.ViewModels;
 

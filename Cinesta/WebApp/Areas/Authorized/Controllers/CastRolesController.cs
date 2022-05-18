@@ -1,6 +1,7 @@
+#pragma warning disable CS1591
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.DAL.EF;
+using App.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,81 +12,82 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class CastRolesController : Controller
 {
-    private readonly IAppBll _bll;
+    private readonly AppDbContext _context;
+    private readonly ILogger<CastRolesController> _logger;
 
-    public CastRolesController(IAppBll bll)
+    public CastRolesController(AppDbContext context, ILogger<CastRolesController> logger)
     {
-        _bll = bll;
+        _context = context;
+        _logger = logger;
     }
 
-    // GET: Admin/CastRoles
+    // GET: Authorized/CastRoles
     public async Task<IActionResult> Index()
     {
-        return View(await _bll.CastRole.GetAllAsync());
+        return View(await _context.CastRoles.ToListAsync());
     }
 
-    // GET: Admin/CastRoles/Details/5
+    // GET: Authorized/CastRoles/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var castRole = await _bll.CastRole.FirstOrDefaultAsync(id.Value);
-
+        var castRole = await _context.CastRoles
+            .FirstOrDefaultAsync(m => m.Id == id);
         if (castRole == null) return NotFound();
 
         return View(castRole);
     }
 
-    // GET: Admin/CastRoles/Create
+    // GET: Authorized/CastRoles/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: Admin/CastRoles/Create
+    // POST: Authorized/CastRoles/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
-        CastRole castRole)
+        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] CastRole castRole)
     {
         if (ModelState.IsValid)
         {
             castRole.Id = Guid.NewGuid();
-            _bll.CastRole.Add(castRole);
-            await _bll.SaveChangesAsync();
+            _context.Add(castRole);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         return View(castRole);
     }
 
-    // GET: Admin/CastRoles/Edit/5
+    // GET: Authorized/CastRoles/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var castRole = await _bll.CastRole.FirstOrDefaultAsync(id.Value);
+        var castRole = await _context.CastRoles.FindAsync(id);
         if (castRole == null) return NotFound();
         return View(castRole);
     }
 
-    // POST: Admin/CastRoles/Edit/5
+    // POST: Authorized/CastRoles/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id,
-        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
-        CastRole castRole)
+        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] CastRole castRole)
     {
         if (id != castRole.Id) return NotFound();
 
         if (ModelState.IsValid)
         {
-            var castRoleFromDb = await _bll.CastRole.FirstOrDefaultAsync(id);
+            var castRoleFromDb = await _context.CastRoles.AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == castRole.Id);
             if (castRoleFromDb == null) return NotFound();
 
             try
@@ -93,12 +95,12 @@ public class CastRolesController : Controller
                 castRoleFromDb.Naming.SetTranslation(castRole.Naming);
                 castRole.Naming = castRoleFromDb.Naming;
 
-                _bll.CastRole.Update(castRole);
-                await _bll.SaveChangesAsync();
+                _context.Update(castRole);
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await CastRoleExists(castRole.Id))
+                if (!CastRoleExists(castRole.Id))
                     return NotFound();
                 throw;
             }
@@ -109,30 +111,32 @@ public class CastRolesController : Controller
         return View(castRole);
     }
 
-    // GET: Admin/CastRoles/Delete/5
+    // GET: Authorized/CastRoles/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var castRole = await _bll.CastRole.FirstOrDefaultAsync(id.Value);
+        var castRole = await _context.CastRoles
+            .FirstOrDefaultAsync(m => m.Id == id);
         if (castRole == null) return NotFound();
 
         return View(castRole);
     }
 
-    // POST: Admin/CastRoles/Delete/5
+    // POST: Authorized/CastRoles/Delete/5
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _bll.CastRole.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        var castRole = await _context.CastRoles.FindAsync(id);
+        _context.CastRoles.Remove(castRole!);
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task<bool> CastRoleExists(Guid id)
+    private bool CastRoleExists(Guid id)
     {
-        return await _bll.CastRole.ExistsAsync(id);
+        return _context.CastRoles.Any(e => e.Id == id);
     }
 }

@@ -1,6 +1,7 @@
+#pragma warning disable CS1591
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.DAL.EF;
+using App.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,75 +12,75 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class AgeRatingsController : Controller
 {
-    private readonly IAppBll _bll;
+    private readonly AppDbContext _context;
+    private readonly ILogger<AgeRatingsController> _logger;
 
-    public AgeRatingsController(IAppBll bll)
+    public AgeRatingsController(AppDbContext context, ILogger<AgeRatingsController> logger)
     {
-        _bll = bll;
+        _logger = logger;
+        _context = context;
     }
 
-    // GET: Admin/AgeRatings
+    // GET: Authorized/AgeRatings
     public async Task<IActionResult> Index()
     {
-        var result = await _bll.AgeRating.GetAllAsync();
-        return View(result);
+        return View(await _context.AgeRatings.ToListAsync());
     }
 
-    // GET: Admin/AgeRatings/Details/5
+    // GET: Authorized/AgeRatings/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _bll.AgeRating.FirstOrDefaultAsync(id.Value);
+        var ageRating = await _context.AgeRatings
+            .FirstOrDefaultAsync(m => m.Id == id);
         if (ageRating == null) return NotFound();
 
         return View(ageRating);
     }
 
-    // GET: Admin/AgeRatings/Create
+    // GET: Authorized/AgeRatings/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: Admin/AgeRatings/Create
+    // POST: Authorized/AgeRatings/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Naming,AllowedAge,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
-        AgeRating ageRating)
+        [Bind("Naming,AllowedAge,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] AgeRating ageRating)
     {
         if (ModelState.IsValid)
         {
             ageRating.Id = Guid.NewGuid();
-            _bll.AgeRating.Add(ageRating);
-            await _bll.SaveChangesAsync();
+            _context.Add(ageRating);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         return View(ageRating);
     }
 
-    // GET: Admin/AgeRatings/Edit/5
+    // GET: Authorized/AgeRatings/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _bll.AgeRating.FirstOrDefaultAsync(id.Value);
+        var ageRating = await _context.AgeRatings.FindAsync(id);
         if (ageRating == null) return NotFound();
         return View(ageRating);
     }
 
-    // POST: Admin/AgeRatings/Edit/5
+    // POST: Authorized/AgeRatings/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id,
-        [Bind("Naming,AllowedAge,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
-        AgeRating ageRating)
+        [Bind("Naming,AllowedAge,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] AgeRating ageRating)
     {
         if (id != ageRating.Id) return NotFound();
 
@@ -87,12 +88,12 @@ public class AgeRatingsController : Controller
         {
             try
             {
-                _bll.AgeRating.Update(ageRating);
-                await _bll.SaveChangesAsync();
+                _context.Update(ageRating);
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await AgeRatingExists(ageRating.Id))
+                if (!AgeRatingExists(ageRating.Id))
                     return NotFound();
                 throw;
             }
@@ -103,30 +104,32 @@ public class AgeRatingsController : Controller
         return View(ageRating);
     }
 
-    // GET: Admin/AgeRatings/Delete/5
+    // GET: Authorized/AgeRatings/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _bll.AgeRating.FirstOrDefaultAsync(id.Value);
+        var ageRating = await _context.AgeRatings
+            .FirstOrDefaultAsync(m => m.Id == id);
         if (ageRating == null) return NotFound();
 
         return View(ageRating);
     }
 
-    // POST: Admin/AgeRatings/Delete/5
+    // POST: Authorized/AgeRatings/Delete/5
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _bll.AgeRating.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        var ageRating = await _context.AgeRatings.FindAsync(id);
+        _context.AgeRatings.Remove(ageRating!);
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task<bool> AgeRatingExists(Guid id)
+    private bool AgeRatingExists(Guid id)
     {
-        return await _bll.AgeRating.ExistsAsync(id);
+        return _context.AgeRatings.Any(e => e.Id == id);
     }
 }

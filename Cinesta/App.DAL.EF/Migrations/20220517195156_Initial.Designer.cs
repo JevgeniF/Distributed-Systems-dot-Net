@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220516222009_Initial")]
+    [Migration("20220517195156_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -744,6 +744,9 @@ namespace App.DAL.EF.Migrations
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("ExpirationDateTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("SubscriptionId")
                         .HasColumnType("uuid");

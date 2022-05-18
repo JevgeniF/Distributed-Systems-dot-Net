@@ -743,6 +743,9 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<DateTime?>("ExpirationDateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid?>("SubscriptionId")
                         .HasColumnType("uuid");
 

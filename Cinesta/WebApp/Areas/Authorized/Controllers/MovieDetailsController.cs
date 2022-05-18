@@ -1,6 +1,7 @@
+#pragma warning disable CS1591
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.DAL.EF;
+using App.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,41 +14,53 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class MovieDetailsController : Controller
 {
-    private readonly IAppBll _bll;
+    private readonly AppDbContext _context;
+    private readonly ILogger<MovieDetailsController> _logger;
 
-    public MovieDetailsController(IAppBll bll)
+    public MovieDetailsController(AppDbContext context, ILogger<MovieDetailsController> logger)
     {
-        _bll = bll;
+        _context = context;
+        _logger = logger;
     }
 
-    // GET: Admin/MovieDetails
+    // GET: Authorized/MovieDetails
     public async Task<IActionResult> Index()
     {
-        return View(await _bll.MovieDetails.IncludeGetAllAsync());
+        var appDbContext = _context.MovieDetails.Include(m => m.AgeRating).Include(m => m.MovieType);
+        return View(await appDbContext.ToListAsync());
     }
 
-    // GET: Admin/MovieDetails/Details/5
+    // GET: Authorized/MovieDetails/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return NotFound();
+        }
 
-        var movieDetails = await _bll.MovieDetails.IncludeFirstOrDefaultAsync(id.Value);
-        if (movieDetails == null) return NotFound();
+        var movieDetails = await _context.MovieDetails
+            .Include(m => m.AgeRating)
+            .Include(m => m.MovieType)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (movieDetails == null)
+        {
+            return NotFound();
+        }
 
         return View(movieDetails);
     }
 
-    // GET: Admin/MovieDetails/Create
+    // GET: Authorized/MovieDetails/Create
     public async Task<IActionResult> Create()
     {
         var vm = new MovieDetailsCreateEditVM
         {
-            AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
-                .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
-                nameof(AgeRating.Naming)),
-            MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
-                .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
-                nameof(MovieType.Naming))
+            AgeRatingSelectList = new SelectList(
+                await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
+                nameof(AgeRating.Id), nameof(AgeRating.Naming)),
+            MovieTypeSelectList = new SelectList(
+                await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
+                nameof(MovieType.Id), nameof(MovieType.Naming))
         };
         return View(vm);
     }
@@ -61,40 +74,48 @@ public class MovieDetailsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _bll.MovieDetails.Add(vm.MovieDetails);
-            await _bll.SaveChangesAsync();
+            _context.Add(vm.MovieDetails!);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
-            .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
-            nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-        vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
-            .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
-            nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
+        vm.AgeRatingSelectList = new SelectList(
+            await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
+            nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails!.AgeRatingId);
+        vm.MovieTypeSelectList = new SelectList(
+            await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
+            nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
     }
+
 
     // GET: MovieDetails/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return NotFound();
+        }
 
-        var movieDetails = await _bll.MovieDetails.FirstOrDefaultAsync(id.Value);
-        if (movieDetails == null) return NotFound();
+        var movieDetails = await _context.MovieDetails.FindAsync(id);
+        if (movieDetails == null)
+        {
+            return NotFound();
+        }
 
         var vm = new MovieDetailsCreateEditVM
         {
             MovieDetails = movieDetails
         };
-        vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
-            .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
-            nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-        vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
-            .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
-            nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
+        vm.AgeRatingSelectList = new SelectList(
+            await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
+            nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
+        vm.MovieTypeSelectList = new SelectList(
+            await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
+            nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
     }
+
+
 
     // POST: MovieDetails/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -102,72 +123,91 @@ public class MovieDetailsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, MovieDetails movieDetails)
-    {
-        if (id != movieDetails.Id) return NotFound();
-
-        if (ModelState.IsValid)
         {
-            var movieDetailsFromDb = await _bll.MovieDetails.FirstOrDefaultAsync(id);
-            if (movieDetailsFromDb == null) return NotFound();
-            try
+            if (id != movieDetails.Id)
             {
-                movieDetailsFromDb.Title.SetTranslation(movieDetails.Title);
-                movieDetails.Title = movieDetailsFromDb.Title;
-
-                movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
-                movieDetails.Description = movieDetailsFromDb.Description;
-
-                _bll.MovieDetails.Update(movieDetails);
-                await _bll.SaveChangesAsync();
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
+
+            if (ModelState.IsValid)
             {
-                if (!await MovieDetailsExists(movieDetails.Id))
+                var movieDetailsFromDb = await _context.MovieDetails.AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.Id == movieDetails.Id);
+                if (movieDetailsFromDb == null)
+                {
                     return NotFound();
-                throw;
+                }
+                try
+                {
+                    movieDetailsFromDb.Title.SetTranslation(movieDetails.Title);
+                    movieDetails.Title = movieDetailsFromDb.Title;
+                    
+                    movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
+                    movieDetails.Description = movieDetailsFromDb.Description;
+                    
+                    _context.Update(movieDetails);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MovieDetailsExists(movieDetails.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
-
-            return RedirectToAction(nameof(Index));
+            var vm = new MovieDetailsCreateEditVM
+            {
+                MovieDetails = movieDetails
+            };
+            vm.AgeRatingSelectList = new SelectList(
+                await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
+                nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
+            vm.MovieTypeSelectList = new SelectList(
+                await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
+                nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
+            return View(vm);
         }
 
-        var vm = new MovieDetailsCreateEditVM
-        {
-            MovieDetails = movieDetails
-        };
-        vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
-            .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
-            nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
-        vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
-            .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
-            nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
-        return View(vm);
-    }
-
-
-    // GET: Admin/MovieDetails/Delete/5
+    // GET: Authorized/MovieDetails/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return NotFound();
+        }
 
-        var movieDetails = await _bll.MovieDetails.IncludeFirstOrDefaultAsync(id.Value);
-        if (movieDetails == null) return NotFound();
+        var movieDetails = await _context.MovieDetails
+            .Include(m => m.AgeRating)
+            .Include(m => m.MovieType)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (movieDetails == null)
+        {
+            return NotFound();
+        }
 
         return View(movieDetails);
     }
 
-    // POST: Admin/MovieDetails/Delete/5
-    [HttpPost]
-    [ActionName("Delete")]
+    // POST: Authorized/MovieDetails/Delete/5
+    [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _bll.MovieDetails.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        var movieDetails = await _context.MovieDetails.FindAsync(id);
+        _context.MovieDetails.Remove(movieDetails!);
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task<bool> MovieDetailsExists(Guid id)
+    private bool MovieDetailsExists(Guid id)
     {
-        return await _bll.MovieDetails.ExistsAsync(id);
+        return _context.MovieDetails.Any(e => e.Id == id);
     }
+
 }

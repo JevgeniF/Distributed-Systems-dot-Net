@@ -2,7 +2,7 @@
 @using Base.Extensions
 @using Base.Resources
 @using Microsoft.IdentityModel.Tokens
-@inject AppBll _bll;
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +31,9 @@
                     {
                         <partial name="_UserAccountMenu"/>
                     }
-                    @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.IsInRole("user") && !_bll.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()).Result.IsNullOrEmpty())
+                    @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.IsInRole("user") 
+                         //&& !Bll.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()).Result.IsNullOrEmpty()
+                         )
                     {
                         <partial name="_Menu"/>
                     }

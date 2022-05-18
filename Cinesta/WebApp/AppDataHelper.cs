@@ -1,5 +1,8 @@
-﻿using System.Security.Claims;
+﻿#pragma warning disable CS1591
+
+using System.Security.Claims;
 using App.DAL.EF;
+using App.Domain;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebApp;
 
 public static class AppDataHelper
+
 {
     public static void SetupAppData(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration config)
     {
@@ -89,9 +93,46 @@ public static class AppDataHelper
             }
         }
 
-        if (config.GetValue<bool>("DataInitialization:SeedData"))
+        /*if (config.GetValue<bool>("DataInitialization:SeedData"))
         {
-            //TODO
-        }
+            //Age ratings seeding (Estonian system)
+            var pere = new AgeRating
+            {
+                Naming = "PERE",
+                AllowedAge = 0
+            };
+            var ms6 = new AgeRating
+            {
+                Naming = "MS-6",
+                AllowedAge = 6
+            };
+            var ms12 = new AgeRating
+            {
+                Naming = "MS-12",
+                AllowedAge = 12
+            };
+            var k12 = new AgeRating
+            {
+                Naming = "K-12",
+                AllowedAge = 12
+            };
+            var k14 = new AgeRating
+            {
+                Naming = "K-14",
+                AllowedAge = 14
+            };
+            var k16 = new AgeRating
+            {
+                Naming = "K-16",
+                AllowedAge = 16
+            };
+            context.AgeRatings.Add(pere);
+            context.AgeRatings.Add(ms6);
+            context.AgeRatings.Add(ms12);
+            context.AgeRatings.Add(k12);
+            context.AgeRatings.Add(k14);
+            context.AgeRatings.Add(k16);
+            context.SaveChanges();
+        }*/
     }
 }

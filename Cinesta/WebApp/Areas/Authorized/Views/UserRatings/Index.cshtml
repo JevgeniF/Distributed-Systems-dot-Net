@@ -1,6 +1,6 @@
 @using Base.Extensions
 @using Base.Resources
-@model IEnumerable<App.BLL.DTO.UserRating>
+@model IEnumerable<App.Domain.UserRating>
 
 @{
     ViewData["Title"] = "Index";
@@ -40,16 +40,19 @@
                 @item.Comment
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUser!.Name)
+                @(item.AppUser!.Name)
             </td>
             <td>
                 @item.MovieDetails!.Title
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a>
-                @if (User.GetUserId() == item.AppUserId || User.IsInRole("admin") || User.IsInRole("moderator"))
+                @if (User.GetUserId() == item.AppUserId)
                 {
                     <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a>
+                }
+                @if (User.GetUserId() == item.AppUserId || User.IsInRole("admin") || User.IsInRole("moderator"))
+                {
                     <a asp-action="Delete" asp-route-id="@item.Id">@Common.Delete</a>
                 }
             </td>

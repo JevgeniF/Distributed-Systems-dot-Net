@@ -17,9 +17,11 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using WebApp;
 using AutoMapperConfig = App.DAL.EF.AutoMapperConfig;
 
+
+// BUILDER SETUP
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Database service
 var connectionString = builder.Configuration.GetConnectionString("NpgsqlConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -103,8 +105,11 @@ builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerGen();
 
+// APP SETUP
+
 var app = builder.Build();
 
+// Set up application data
 AppDataHelper.SetupAppData(app, app.Environment, app.Configuration);
 
 // Configure the HTTP request pipeline.
@@ -139,6 +144,7 @@ app.UseRequestLocalization(app.Services.GetService<IOptions<RequestLocalizationO
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Areas support
 app.MapControllerRoute(
     "areas",
     "{area:exists}/{controller=Home}/{action=Index}/{id?}");

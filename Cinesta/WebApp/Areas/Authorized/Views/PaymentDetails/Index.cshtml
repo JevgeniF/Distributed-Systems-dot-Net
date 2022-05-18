@@ -1,5 +1,5 @@
 @using Base.Resources
-@model IEnumerable<App.DAL.DTO.PaymentDetails>
+@model IEnumerable<App.Domain.PaymentDetails>
 
 @{
     ViewData["Title"] = "Index";
@@ -32,7 +32,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model!)
+    @foreach (var item in Model)
     {
         <tr>
             <td>
@@ -48,7 +48,7 @@
                 @Html.DisplayFor(modelItem => item.SecurityCode)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppUser!.Name + " " + item.AppUser.Surname)
+                @(item.AppUser!.Name + " " + item.AppUser!.Surname)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a> |

@@ -1,6 +1,8 @@
+#pragma warning disable CS1591
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.DAL.EF;
+using App.Domain;
+using App.Domain.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,31 +14,34 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class UserProfilesController : Controller
 {
-    private readonly IAppBll _bll;
+    private readonly AppDbContext _context;
+    private readonly ILogger<UserProfilesController> _logger;
 
-    public UserProfilesController(IAppBll bll)
+    public UserProfilesController(AppDbContext context, ILogger<UserProfilesController> logger)
     {
-        _bll = bll;
+        _context = context;
+        _logger = logger;
     }
 
-    // GET: Admin/UserProfiles
+    // GET: Authorized/UserProfiles
     public async Task<IActionResult> Index()
     {
-        return View(await _bll.UserProfile.IncludeGetAllByUserIdAsync(User.GetUserId()));
+        return View(await _context.UserProfiles.Include(u => u.AppUser)
+            .Where(u => u.AppUserId == User.GetUserId()).ToListAsync());
     }
 
-    // GET: Admin/UserProfiles/Details/5
+    // GET: Authorized/UserProfiles/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var userProfile = await _bll.UserProfile.FirstOrDefaultAsync(id.Value);
+        var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(u => u.Id == id);
         if (userProfile == null) return NotFound();
 
         return View(userProfile);
     }
 
-    // GET: Admin/UserProfiles/Create
+    // GET: Authorized/UserProfiles/Create
     public IActionResult Create()
     {
         return View();
@@ -49,12 +54,11 @@ public class UserProfilesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(UserProfile userProfile)
     {
+        userProfile.AppUserId = User.GetUserId();
         if (ModelState.IsValid)
         {
-            userProfile.AppUserId = User.GetUserId();
-            userProfile.Id = Guid.NewGuid();
-            _bll.UserProfile.Add(userProfile);
-            await _bll.SaveChangesAsync();
+            _context.UserProfiles.Add(userProfile);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -66,7 +70,7 @@ public class UserProfilesController : Controller
     {
         if (id == null) return NotFound();
 
-        var userProfile = await _bll.UserProfile.FirstOrDefaultAsync(id.Value);
+        var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(u => u.Id == id);
         if (userProfile == null) return NotFound();
         return View(userProfile);
     }
@@ -86,12 +90,12 @@ public class UserProfilesController : Controller
         {
             try
             {
-                _bll.UserProfile.Update(userProfile);
-                await _bll.SaveChangesAsync();
+                _context.UserProfiles.Update(userProfile);
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await UserProfileExists(userProfile.Id))
+                if (!UserProfileExists(userProfile.Id))
                     return NotFound();
                 throw;
             }
@@ -103,30 +107,38 @@ public class UserProfilesController : Controller
     }
 
 
-    // GET: Admin/UserProfiles/Delete/5
+    // GET: Authorized/UserProfiles/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return NotFound();
+        }
 
-        var userProfile = await _bll.UserProfile.FirstOrDefaultAsync(id.Value);
-        if (userProfile == null) return NotFound();
+        var userProfile = await _context.UserProfiles
+            .Include(u => u.AppUser)
+            .FirstOrDefaultAsync(u => u.Id == id);
+        if (userProfile == null)
+        {
+            return NotFound();
+        }
 
         return View(userProfile);
     }
 
     // POST: Admin/UserProfiles/Delete/5
-    [HttpPost]
-    [ActionName("Delete")]
+    [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _bll.UserProfile.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        var userProfile = await _context.UserProfiles.FindAsync(id);
+        _context.UserProfiles.Remove(userProfile!);
+        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task<bool> UserProfileExists(Guid id)
+    private bool UserProfileExists(Guid id)
     {
-        return await _bll.UserProfile.ExistsAsync(id);
+        return _context.UserProfiles.Any(u => u.Id == id);
     }
 }

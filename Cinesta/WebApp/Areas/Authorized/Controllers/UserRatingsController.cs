@@ -34,13 +34,19 @@ public class UserRatingsController : Controller
     // GET: Authorized/UserRatings/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return NotFound();
+        }
 
         var userRating = await _context.UserRatings
             .Include(u => u.AppUser)
             .Include(u => u.MovieDetails)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (userRating == null) return NotFound();
+        if (userRating == null)
+        {
+            return NotFound();
+        }
 
         return View(userRating);
     }
@@ -105,7 +111,7 @@ public class UserRatingsController : Controller
     {
         if (id != userRating.Id) return NotFound();
         userRating.AppUserId = User.GetUserId();
-
+        
         if (ModelState.IsValid)
         {
             var userRatingsFromDb = await _context.UserRatings.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
@@ -138,7 +144,7 @@ public class UserRatingsController : Controller
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
     }
-
+    
 
     // GET: Admin/UserRatings/Delete/5
     [HttpPost]
@@ -146,20 +152,25 @@ public class UserRatingsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return NotFound();
+        }
 
         var userRating = await _context.UserRatings
             .Include(u => u.AppUser)
             .Include(u => u.MovieDetails)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (userRating == null) return NotFound();
+        if (userRating == null)
+        {
+            return NotFound();
+        }
 
         return View(userRating);
     }
 
     // POST: Admin/UserRatings/Delete/5
-    [HttpPost]
-    [ActionName("Delete")]
+    [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
@@ -173,4 +184,5 @@ public class UserRatingsController : Controller
     {
         return _context.UserRatings.Any(e => e.Id == id);
     }
+
 }

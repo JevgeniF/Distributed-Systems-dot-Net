@@ -78,8 +78,7 @@ public class GenresController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id,
-        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
-        Genre genre)
+        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] Genre genre)
     {
         if (id != genre.Id) return NotFound();
 

@@ -125,7 +125,9 @@ public class RegisterModel : PageModel
                     $"{Base.Resources.Identity.confirmEmailText} <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>{Base.Resources.Identity.clickingHere}</a>.");
 
                 if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                {
                     return RedirectToPage("RegisterConfirmation", new {email = Input.Email, returnUrl});
+                }
 
                 await _signInManager.SignInAsync(user, false);
                 return LocalRedirect(returnUrl);

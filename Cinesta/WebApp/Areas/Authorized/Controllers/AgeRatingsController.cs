@@ -51,8 +51,7 @@ public class AgeRatingsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Naming,AllowedAge,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
-        AgeRating ageRating)
+        [Bind("Naming,AllowedAge,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] AgeRating ageRating)
     {
         if (ModelState.IsValid)
         {
@@ -81,8 +80,7 @@ public class AgeRatingsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id,
-        [Bind("Naming,AllowedAge,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
-        AgeRating ageRating)
+        [Bind("Naming,AllowedAge,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] AgeRating ageRating)
     {
         if (id != ageRating.Id) return NotFound();
 

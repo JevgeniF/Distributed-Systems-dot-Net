@@ -2,6 +2,7 @@
 
 using System.Security.Claims;
 using App.DAL.EF;
+using App.Domain;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

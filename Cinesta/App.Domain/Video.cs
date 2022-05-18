@@ -10,7 +10,7 @@ public class Video : DomainEntityMetaId
 
     [Column(TypeName = "jsonb")] public LangStr Title { get; set; } = new();
 
-
+    
     //TODO: CHANGE TYPE FOR DURATION
     [MaxLength(100)] public string FileUri { get; set; } = default!;
     public TimeOnly Duration { get; set; }

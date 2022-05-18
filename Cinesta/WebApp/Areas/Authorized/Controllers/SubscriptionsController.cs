@@ -131,4 +131,5 @@ public class SubscriptionsController : Controller
     {
         return _context.Subscriptions.Any(e => e.Id == id);
     }
+
 }

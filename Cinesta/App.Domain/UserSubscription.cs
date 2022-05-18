@@ -10,6 +10,6 @@ public class UserSubscription : DomainEntityMetaId
 
     public Guid? SubscriptionId { get; set; }
     public Subscription? Subscription { get; set; }
-
+    
     public DateTime? ExpirationDateTime { get; set; }
 }

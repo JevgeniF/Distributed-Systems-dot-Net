@@ -1,9 +1,8 @@
 ﻿#pragma warning disable CS1591
-using App.Domain;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using CastInMovie = App.Domain.CastInMovie;
 
 namespace WebApp.Areas.Authorized.ViewModels;
-
 public class CastInMovieCreateEditVM
 {
     public CastInMovie CastInMovie { get; set; } = default!;

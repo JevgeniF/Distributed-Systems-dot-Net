@@ -240,10 +240,10 @@ public class AccountController : ControllerBase
 
         // compare refresh tokens
         await _context.Entry(appUser).Collection(u => u.RefreshTokens!)
-            .Query().Where(t => (t.Token == refreshTokenDto.RefreshToken &&
-                                 t.ExpirationDateTime > DateTime.UtcNow) ||
-                                (t.PreviousToken == refreshTokenDto.RefreshToken &&
-                                 t.PreviousExpirationDateTime > DateTime.UtcNow)).ToListAsync();
+            .Query().Where(t => t.Token == refreshTokenDto.RefreshToken &&
+                                t.ExpirationDateTime > DateTime.UtcNow ||
+                                t.PreviousToken == refreshTokenDto.RefreshToken &&
+                                t.PreviousExpirationDateTime > DateTime.UtcNow).ToListAsync();
 
         if (appUser.RefreshTokens == null) return Problem("RefreshTokens collection is null");
 

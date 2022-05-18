@@ -51,7 +51,8 @@ public class CastRolesController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] CastRole castRole)
+        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
+        CastRole castRole)
     {
         if (ModelState.IsValid)
         {
@@ -80,7 +81,8 @@ public class CastRolesController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id,
-        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] CastRole castRole)
+        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
+        CastRole castRole)
     {
         if (id != castRole.Id) return NotFound();
 

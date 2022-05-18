@@ -1,7 +1,6 @@
 ﻿#pragma warning disable CS1591
-using App.BLL.DTO;
+using App.Domain;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProfileFavoriteMovie = App.Domain.ProfileFavoriteMovie;
 
 namespace WebApp.Areas.Authorized.ViewModels;
 

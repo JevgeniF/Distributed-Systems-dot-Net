@@ -41,7 +41,7 @@ public class ProfileFavoriteMoviesController : Controller
         var vm = new ProfileFavoriteMovieCreateEditVM
         {
             MovieDetailsSelectList = new SelectList((await _context.MovieDetails
-                    .Where( m => m.AgeRating.AllowedAge <= profile!.Age).ToListAsync())
+                    .Where(m => m.AgeRating.AllowedAge <= profile!.Age).ToListAsync())
                 .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
@@ -70,7 +70,7 @@ public class ProfileFavoriteMoviesController : Controller
         }
 
         vm.MovieDetailsSelectList = new SelectList((await _context.MovieDetails
-                .Where( m => m.AgeRating.AllowedAge <= profile!.Age).ToListAsync())
+                .Where(m => m.AgeRating.AllowedAge <= profile!.Age).ToListAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.ProfileFavoriteMovie.MovieDetailsId);
         return View(vm);
@@ -103,7 +103,7 @@ public class ProfileFavoriteMoviesController : Controller
             .FirstOrDefaultAsync(p => p.Id == id))!.UserProfileId;
 
         var profileFavoriteMovie = await _context.ProfileFavoriteMovies.FindAsync(id);
-       _context.ProfileFavoriteMovies.Remove(profileFavoriteMovie!);
+        _context.ProfileFavoriteMovies.Remove(profileFavoriteMovie!);
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index), new {id = ViewData["id"]});

@@ -11,8 +11,8 @@ namespace Tests.WebApp.Controllers;
 
 public class UnitTestAgeRatingsController
 {
-    private readonly ITestOutputHelper _testOutputHelper;
     private readonly AgeRatingsController _ageRatingsController;
+    private readonly ITestOutputHelper _testOutputHelper;
 
     public UnitTestAgeRatingsController(ITestOutputHelper testOutputHelper)
     {
@@ -21,17 +21,17 @@ public class UnitTestAgeRatingsController
         //set up mock db - inmemory
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
         optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
-        
+
         var context = new AppDbContext(optionsBuilder.Options);
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
 
         using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
         var logger = loggerFactory.CreateLogger<AgeRatingsController>();
-        
+
         _ageRatingsController = new AgeRatingsController(context, logger);
     }
-    
+
     [Fact]
     public async Task IndexAction_ReturnsEmptyVm()
     {
@@ -39,6 +39,5 @@ public class UnitTestAgeRatingsController
         _testOutputHelper.WriteLine(result?.ToString());
         Assert.NotNull(result);
         Assert.Null(result!.Model);
-        
     }
 }

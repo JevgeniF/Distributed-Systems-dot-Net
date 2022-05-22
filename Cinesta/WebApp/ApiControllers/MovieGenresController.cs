@@ -83,6 +83,7 @@ public class MovieGenresController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieGenre>> PostMovieGenre(MovieGenre movieGenre)
     {
+        movieGenre.Id = Guid.NewGuid();
         _public.MovieGenre.Add(movieGenre);
         await _public.SaveChangesAsync();
 

@@ -8,3 +8,12 @@ public interface IProfileFavoriteMovieService : IEntityService<ProfileFavoriteMo
     IProfileFavoriteMovieRepositoryCustom<ProfileFavoriteMovie>
 {
 }
+
+public interface IProfileFavoriteMovieServiceCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllByProfileIdAsync(Guid profileId,
+        bool noTracking = true);
+
+    Task<IEnumerable<TEntity>> IncludeGetAllAsync(bool noTracking = true);
+    Task<TEntity?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
+}

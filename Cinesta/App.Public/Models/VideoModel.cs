@@ -13,4 +13,14 @@ public class VideoModel : BaseEntityModel<Video, BLL.DTO.Video, IVideoService>,
         service, mapper)
     {
     }
+
+    public async Task<IEnumerable<Video>> IncludeGetAllAsync(bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllAsync(noTracking)).Select(v => Mapper.Map(v)!);
+    }
+
+    public async Task<Video?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    {
+        return Mapper.Map(await Service.IncludeFirstOrDefaultAsync(id, noTracking));
+    }
 }

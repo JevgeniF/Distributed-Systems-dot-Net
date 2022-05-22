@@ -1,6 +1,8 @@
 #nullable disable
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using App.Public.DTO.v1.Identity;
+using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +27,10 @@ public class PaymentDetailsController : ControllerBase
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<PaymentDetails>), 200)]
-    [HttpGet]
-    public async Task<IEnumerable<PaymentDetails>> GetPaymentDetails()
+    [HttpGet()]
+    public async Task<IEnumerable<PaymentDetails>> GetUserPaymentDetails()
     {
-        return await _public.PaymentDetails.GetAllAsync();
+        return await _public.PaymentDetails.IncludeGetAllByUserIdAsync(User.GetUserId());
     }
 
     // GET: api/PaymentDetails/5
@@ -81,6 +83,8 @@ public class PaymentDetailsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PaymentDetails>> PostPaymentDetails(PaymentDetails paymentDetails)
     {
+        paymentDetails.Id = Guid.NewGuid();
+        paymentDetails.AppUserId = User.GetUserId();
         _public.PaymentDetails.Add(paymentDetails);
         await _public.SaveChangesAsync();
 

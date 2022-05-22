@@ -115,6 +115,7 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 
         foreach (var entity in editedEntitiesInTheDbContextGraph)
         {
+            // ReSharper disable once PossibleMultipleEnumeration
             var entityFields = dateProperties.Where(d => d.ParentName == entity.GetType().FullName);
 
             foreach (var property in entityFields)

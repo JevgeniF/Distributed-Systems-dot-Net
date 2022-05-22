@@ -1,9 +1,8 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
+using App.Contracts.Public;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 // TODO: Decide if this controller required in API.
 namespace WebApp.Areas.Authorized.Controllers;
@@ -12,12 +11,12 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class ProfileMoviesController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<ProfileMoviesController> _logger;
+    private readonly IAppPublic _public;
 
-    public ProfileMoviesController(AppDbContext context, ILogger<ProfileMoviesController> logger)
+    public ProfileMoviesController(IAppPublic appPublic, ILogger<ProfileMoviesController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
@@ -25,11 +24,7 @@ public class ProfileMoviesController : Controller
     public async Task<IActionResult> Index()
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
-        var profile = await _context.UserProfiles.FirstOrDefaultAsync(p => p.Id == profileId);
-        return View(await _context.MovieDetails
-            .Include(m => m.AgeRating)
-            .Include(m => m.MovieType)
-            .Where(m => m.AgeRating.AllowedAge <= profile.Age)
-            .ToListAsync());
+        var profile = await _public.UserProfile.FirstOrDefaultAsync(profileId);
+        return View(await _public.MovieDetails.IncludeGetByAgeAsync(profile!.Age));
     }
 }

@@ -1,4 +1,5 @@
 #nullable disable
+using System.Diagnostics;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,10 +26,14 @@ public class ProfileMoviesController : ControllerBase
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<ProfileMovie>), 200)]
-    [HttpGet]
-    public async Task<IEnumerable<ProfileMovie>> GetProfileMovies()
+    [HttpGet("{profileId}")]
+    public async Task<IEnumerable<MovieDetails>> GetAllowedProfileMovies(Guid profileId)
     {
-        return await _public.ProfileMovie.GetAllAsync();
+        var profile = await _public.UserProfile.FirstOrDefaultAsync(profileId);
+
+        if (profile != null) return await _public.MovieDetails.IncludeGetByAgeAsync(profile.Age);
+        return null;
+        //TODO FIX THIS THING
     }
 
     // GET: api/ProfileMovies/5
@@ -44,66 +49,5 @@ public class ProfileMoviesController : ControllerBase
         if (profileMovie == null) return NotFound();
 
         return profileMovie;
-    }
-
-    // PUT: api/ProfileMovies/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(403)]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutProfileMovie(Guid id, ProfileMovie profileMovie)
-    {
-        if (id != profileMovie.Id) return BadRequest();
-
-        try
-        {
-            _public.ProfileMovie.Update(profileMovie);
-            await _public.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await ProfileMovieExists(id))
-                return NotFound();
-            throw;
-        }
-
-        return NoContent();
-    }
-
-    // POST: api/ProfileMovies
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ProducesResponseType(typeof(ProfileMovie), 201)]
-    [ProducesResponseType(403)]
-    [HttpPost]
-    public async Task<ActionResult<ProfileMovie>> PostProfileMovie(ProfileMovie profileMovie)
-    {
-        _public.ProfileMovie.Add(profileMovie);
-        await _public.SaveChangesAsync();
-
-        return CreatedAtAction("GetProfileMovie",
-            new {id = profileMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, profileMovie);
-    }
-
-    // DELETE: api/ProfileMovies/5
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProfileMovie(Guid id)
-    {
-        await _public.ProfileMovie.RemoveAsync(id);
-        await _public.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    private async Task<bool> ProfileMovieExists(Guid id)
-    {
-        return await _public.ProfileMovie.ExistsAsync(id);
     }
 }

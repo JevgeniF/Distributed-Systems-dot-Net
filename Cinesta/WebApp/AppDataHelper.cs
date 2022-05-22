@@ -2,7 +2,9 @@
 
 using System.Security.Claims;
 using App.DAL.EF;
+using App.Domain;
 using App.Domain.Identity;
+using Base.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -92,7 +94,7 @@ public static class AppDataHelper
             }
         }
 
-        /*if (config.GetValue<bool>("DataInitialization:SeedData"))
+        if (config.GetValue<bool>("DataInitialization:SeedData"))
         {
             //Age ratings seeding (Estonian system)
             var pere = new AgeRating
@@ -131,7 +133,81 @@ public static class AppDataHelper
             context.AgeRatings.Add(k12);
             context.AgeRatings.Add(k14);
             context.AgeRatings.Add(k16);
+
+            var castRoleActor = new CastRole
+            {
+                Naming = new LangStr("actor", "en")
+            };
+            var castRoleDirector = new CastRole
+            {
+                Naming = new LangStr("director", "en")
+            };
+            context.CastRoles.Add(castRoleActor);
+            context.CastRoles.Add(castRoleDirector);
+            
+            var genreAction = new Genre
+            {
+                Naming = new LangStr("action", "en")
+            };
+            var genreHorror = new Genre
+            {
+                Naming = new LangStr("horror", "en")
+            };
+            var genreDrama = new Genre
+            {
+                Naming = new LangStr("drama", "en")
+            };
+            context.Genres.Add(genreAction);
+            context.Genres.Add(genreHorror);
+            context.Genres.Add(genreDrama);
+            
+            var typeMovie = new MovieType
+            {
+                Naming = new LangStr("movie", "en")
+            };
+            var typeSeries = new MovieType
+            {
+                Naming = new LangStr("series", "en")
+            };
+            context.MovieTypes.Add(typeMovie);
+            context.MovieTypes.Add(typeSeries);
+
+            var bruce = new Person
+            {
+                Name = "Bruce",
+                Surname = "Willis"
+            };
+            var chuck = new Person
+            {
+                Name = "Chuck",
+                Surname = "Norris"
+            };
+            var steven = new Person
+            {
+                Name = "Steven",
+                Surname = "Spielberg"
+            };
+            context.Persons.Add(bruce);
+            context.Persons.Add(chuck);
+            context.Persons.Add(steven);
+
+            var freeSub = new Subscription
+            {
+                Naming = new LangStr("Free", "en"),
+                Price = 0,
+                Description = new LangStr("Free sub for empty space", "en"),
+                ProfilesCount = 10
+            };
+            var vipSub = new Subscription
+            {
+                Naming = new LangStr("VIP", "en"),
+                Price = 1000,
+                Description = new LangStr("Same as free, but sounds expensive", "en"),
+                ProfilesCount = 10
+            };
+            context.Subscriptions.Add(freeSub);
+            context.Subscriptions.Add(vipSub);
             context.SaveChanges();
-        }*/
+        }
     }
 }

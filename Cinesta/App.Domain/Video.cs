@@ -11,10 +11,9 @@ public class Video : DomainEntityMetaId
     [MaxLength(100)]
     [Column(TypeName = "jsonb")]
     public LangStr Title { get; set; } = new();
-    
-    [MaxLength(150)]
-    public string FileUri { get; set; } = default!;
-    
+
+    [MaxLength(150)] public string FileUri { get; set; } = default!;
+
     [DataType(DataType.Time)] public DateTime Duration { get; set; }
 
     [Column(TypeName = "jsonb")]
@@ -22,6 +21,6 @@ public class Video : DomainEntityMetaId
     public LangStr Description { get; set; } = new();
 
     public Guid? MovieDetailsId { get; set; }
-    
+
     public MovieDetails? MovieDetails { get; set; }
 }

@@ -85,6 +85,7 @@ public class GenresController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Genre>> PostGenre(Genre genre)
     {
+        genre.Id = Guid.NewGuid();
         _public.Genre.Add(genre);
         await _public.SaveChangesAsync();
 

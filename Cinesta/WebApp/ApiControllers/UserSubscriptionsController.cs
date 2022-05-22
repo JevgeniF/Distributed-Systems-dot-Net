@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +26,9 @@ public class UserSubscriptionsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<UserSubscription>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<UserSubscription>> GetUserSubscriptions()
+    public async Task<IEnumerable<UserSubscription>> GetUserSubscriptionsByUserId()
     {
-        return await _public.UserSubscription.GetAllAsync();
+        return await _public.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId());
     }
 
     // GET: api/UserSubscriptions/5
@@ -54,6 +55,7 @@ public class UserSubscriptionsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserSubscription>> PostUserSubscription(UserSubscription userSubscription)
     {
+        userSubscription.Id = Guid.NewGuid();
         _public.UserSubscription.Add(userSubscription);
         await _public.SaveChangesAsync();
 

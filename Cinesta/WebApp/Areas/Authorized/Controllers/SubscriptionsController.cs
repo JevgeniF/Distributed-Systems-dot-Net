@@ -1,7 +1,7 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,19 +12,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class SubscriptionsController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<SubscriptionsController> _logger;
+    private readonly IAppPublic _public;
 
-    public SubscriptionsController(AppDbContext context, ILogger<SubscriptionsController> logger)
+    public SubscriptionsController(IAppPublic appPublic, ILogger<SubscriptionsController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
     // GET: Authorized/Subscriptions
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Subscriptions.ToListAsync());
+        return View(await _public.Subscription.GetAllAsync());
     }
 
     // GET: Authorized/Subscriptions/Details/5
@@ -32,7 +32,7 @@ public class SubscriptionsController : Controller
     {
         if (id == null) return NotFound();
 
-        var subscription = await _context.Subscriptions.FirstOrDefaultAsync(s => s.Id == id);
+        var subscription = await _public.Subscription.FirstOrDefaultAsync(id.Value);
         if (subscription == null) return NotFound();
 
         return View(subscription);
@@ -55,8 +55,8 @@ public class SubscriptionsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Subscriptions.Add(subscription);
-            await _context.SaveChangesAsync();
+            _public.Subscription.Add(subscription);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -68,7 +68,7 @@ public class SubscriptionsController : Controller
     {
         if (id == null) return NotFound();
 
-        var subscription = await _context.Subscriptions.FirstOrDefaultAsync(s => s.Id == id);
+        var subscription = await _public.Subscription.FirstOrDefaultAsync(id.Value);
         if (subscription == null) return NotFound();
         return View(subscription);
     }
@@ -88,12 +88,12 @@ public class SubscriptionsController : Controller
         {
             try
             {
-                _context.Subscriptions.Update(subscription);
-                await _context.SaveChangesAsync();
+                _public.Subscription.Update(subscription);
+                await _public.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubscriptionExists(subscription.Id))
+                if (!await SubscriptionExists(subscription.Id))
                     return NotFound();
                 throw;
             }
@@ -109,7 +109,7 @@ public class SubscriptionsController : Controller
     {
         if (id == null) return NotFound();
 
-        var subscription = await _context.Subscriptions.FirstOrDefaultAsync(s => s.Id == id);
+        var subscription = await _public.Subscription.FirstOrDefaultAsync(id.Value);
         if (subscription == null) return NotFound();
 
         return View(subscription);
@@ -121,14 +121,13 @@ public class SubscriptionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var subscription = await _context.Subscriptions.FindAsync(id);
-        _context.Subscriptions.Remove(subscription!);
-        await _context.SaveChangesAsync();
+        await _public.Subscription.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool SubscriptionExists(Guid id)
+    private async Task<bool> SubscriptionExists(Guid id)
     {
-        return _context.Subscriptions.Any(e => e.Id == id);
+        return await _public.Subscription.ExistsAsync(id);
     }
 }

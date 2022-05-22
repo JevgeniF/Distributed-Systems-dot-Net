@@ -26,28 +26,10 @@ public class MovieDetailsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<MovieDetails>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MovieDetails>>> GetMovieDetails()
+    public async Task<IEnumerable<MovieDetails>> GetMovieDetails()
     {
-        var res = (await _public.MovieDetails.GetAllAsync())
-            .Select(m => new MovieDetails
-            {
-                Id = m.Id,
-                PosterUri = m.PosterUri,
-                Title = m.Title,
-                Released = m.Released,
-                Description = m.Description,
-                AgeRatingId = m.AgeRatingId,
-                AgeRating = m.AgeRating,
-                MovieTypeId = m.MovieTypeId,
-                MovieType = m.MovieType,
-                MovieDbScores = m.MovieDbScores,
-                MovieGenres = m.MovieGenres,
-                Videos = m.Videos,
-                UserRatings = m.UserRatings,
-                CastInMovie = m.CastInMovie
-            })
-            .ToList();
-        return res;
+        return await _public.MovieDetails.GetAllAsync();
+        
     }
 
     // GET: api/MovieDetails/5
@@ -106,6 +88,7 @@ public class MovieDetailsController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieDetails>> PostMovieDetails(MovieDetails movieDetails)
     {
+        movieDetails.Id = Guid.NewGuid();
         _public.MovieDetails.Add(movieDetails);
         await _public.SaveChangesAsync();
 

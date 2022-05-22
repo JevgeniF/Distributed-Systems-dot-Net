@@ -1,7 +1,7 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,20 +13,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class PaymentDetailsController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<PaymentDetailsController> _logger;
+    private readonly IAppPublic _public;
 
-    public PaymentDetailsController(AppDbContext context, ILogger<PaymentDetailsController> logger)
+    public PaymentDetailsController(IAppPublic appPublic, ILogger<PaymentDetailsController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
     // GET: Authorized/PaymentDetails
     public async Task<IActionResult> Index()
     {
-        return View(await _context.PaymentDetails.Include(p => p.AppUser)
-            .Where(p => p.AppUserId == User.GetUserId()).ToListAsync());
+        return View(await _public.PaymentDetails.IncludeGetAllByUserIdAsync(User.GetUserId()));
     }
 
     // GET: Authorized/PaymentDetails/Details/5
@@ -34,9 +33,7 @@ public class PaymentDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var paymentDetails = await _context.PaymentDetails
-            .Include(p => p.AppUser)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var paymentDetails = await _public.PaymentDetails.FirstOrDefaultAsync(id.Value);
         if (paymentDetails == null) return NotFound();
 
         return View(paymentDetails);
@@ -59,8 +56,8 @@ public class PaymentDetailsController : Controller
         paymentDetails.AppUserId = User.GetUserId();
         if (ModelState.IsValid)
         {
-            _context.PaymentDetails.Add(paymentDetails);
-            await _context.SaveChangesAsync();
+            _public.PaymentDetails.Add(paymentDetails);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -72,7 +69,7 @@ public class PaymentDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var paymentDetails = await _context.PaymentDetails.FindAsync(id);
+        var paymentDetails = await _public.PaymentDetails.FirstOrDefaultAsync(id.Value);
         if (paymentDetails == null) return NotFound();
         return View(paymentDetails);
     }
@@ -92,12 +89,12 @@ public class PaymentDetailsController : Controller
         {
             try
             {
-                _context.PaymentDetails.Update(paymentDetails);
-                await _context.SaveChangesAsync();
+                _public.PaymentDetails.Update(paymentDetails);
+                await _public.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PaymentDetailsExists(paymentDetails.Id))
+                if (!await PaymentDetailsExists(paymentDetails.Id))
                     return NotFound();
                 throw;
             }
@@ -114,8 +111,7 @@ public class PaymentDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var paymentDetails = await _context.PaymentDetails.Include(p => p.AppUser)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var paymentDetails = await _public.PaymentDetails.FirstOrDefaultAsync(id.Value);
 
         if (paymentDetails == null) return NotFound();
 
@@ -128,14 +124,13 @@ public class PaymentDetailsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var paymentDetails = await _context.PaymentDetails.FindAsync(id);
-        _context.PaymentDetails.Remove(paymentDetails!);
-        await _context.SaveChangesAsync();
+        await _public.PaymentDetails.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool PaymentDetailsExists(Guid id)
+    private async Task<bool> PaymentDetailsExists(Guid id)
     {
-        return _context.PaymentDetails.Any(e => e.Id == id);
+        return await _public.PaymentDetails.ExistsAsync(id);
     }
 }

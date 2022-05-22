@@ -15,4 +15,14 @@ public class UserSubscriptionModel :
         service, mapper)
     {
     }
+
+    public async Task<IEnumerable<UserSubscription>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllByUserIdAsync(userId, noTracking)).Select(u => Mapper.Map(u)!);
+    }
+
+    public async Task<UserSubscription?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    {
+        return Mapper.Map(await Service.IncludeFirstOrDefaultAsync(id, noTracking));
+    }
 }

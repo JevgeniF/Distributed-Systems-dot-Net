@@ -26,16 +26,10 @@ public class CastRolesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<CastRole>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CastRole>>> GetCastRoles()
+    public async Task<IEnumerable<CastRole>> GetCastRoles()
     {
-        var res = (await _public.CastRole.GetAllAsync())
-            .Select(c => new CastRole
-            {
-                Id = c.Id,
-                Naming = c.Naming
-            })
-            .ToList();
-        return res;
+        return await _public.CastRole.GetAllAsync();
+        
     }
 
     // GET: api/CastRoles/5
@@ -50,7 +44,7 @@ public class CastRolesController : ControllerBase
 
         if (castRole == null) return NotFound();
 
-        return new CastRole {Id = castRole.Id, Naming = castRole.Naming};
+        return castRole;
     }
 
     // PUT: api/CastRoles/5
@@ -96,7 +90,8 @@ public class CastRolesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CastRole>> PostCastRole(CastRole castRole)
     {
-        _public.CastRole.Add(new CastRole {Id = castRole.Id, Naming = castRole.Naming});
+        castRole.Id = Guid.NewGuid();
+        _public.CastRole.Add(castRole);
         await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetCastRole",

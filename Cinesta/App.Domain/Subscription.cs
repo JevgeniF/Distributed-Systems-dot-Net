@@ -16,10 +16,6 @@ public class Subscription : DomainEntityMetaId
     public LangStr Description { get; set; } = new();
 
     public int ProfilesCount { get; set; }
-    
-    public double Price { get; set; }
 
-    public Guid AppUserId { get; set; }
-    
-    public AppUser? AppUser { get; set; }
+    public double Price { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Base.Domain.Identity;
 
 namespace App.Domain.Identity;

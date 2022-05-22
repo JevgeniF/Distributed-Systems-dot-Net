@@ -1,6 +1,7 @@
 #nullable disable
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +27,9 @@ public class UserProfilesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<UserProfile>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<UserProfile>> GetUserProfiles()
+    public async Task<IEnumerable<UserProfile>> GetUserProfilesByUserId()
     {
-        return await _public.UserProfile.GetAllAsync();
+        return await _public.UserProfile.IncludeGetAllByUserIdAsync(User.GetUserId());
     }
 
     // GET: api/UserProfiles/5
@@ -81,6 +82,7 @@ public class UserProfilesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserProfile>> PostUserProfile(UserProfile userProfile)
     {
+        userProfile.Id = Guid.NewGuid();
         _public.UserProfile.Add(userProfile);
         await _public.SaveChangesAsync();
 

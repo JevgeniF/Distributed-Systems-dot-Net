@@ -352,7 +352,7 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<LangStr>("Description")
                         .IsRequired()
-                        .HasMaxLength(250)
+                        .HasMaxLength(500)
                         .HasColumnType("jsonb");
 
                     b.Property<Guid>("MovieTypeId")
@@ -360,8 +360,8 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<string>("PosterUri")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime>("Released")
                         .HasColumnType("timestamp with time zone");
@@ -513,13 +513,13 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Surname")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -618,10 +618,12 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<LangStr>("Description")
                         .IsRequired()
+                        .HasMaxLength(250)
                         .HasColumnType("jsonb");
 
                     b.Property<LangStr>("Naming")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("jsonb");
 
                     b.Property<double>("Price")
@@ -663,8 +665,8 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<string>("IconUri")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -696,6 +698,7 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<LangStr>("Comment")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("jsonb");
 
                     b.Property<DateTime>("CreatedAt")
@@ -780,6 +783,7 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<LangStr>("Description")
                         .IsRequired()
+                        .HasMaxLength(250)
                         .HasColumnType("jsonb");
 
                     b.Property<DateTime>("Duration")
@@ -787,8 +791,8 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<string>("FileUri")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<Guid?>("MovieDetailsId")
                         .HasColumnType("uuid");
@@ -798,6 +802,7 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<LangStr>("Title")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("jsonb");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -1029,7 +1034,7 @@ namespace App.DAL.EF.Migrations
                         .IsRequired();
 
                     b.HasOne("App.Domain.UserProfile", "UserProfile")
-                        .WithMany("ProfileFavoriteMovies")
+                        .WithMany()
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1048,7 +1053,7 @@ namespace App.DAL.EF.Migrations
                         .IsRequired();
 
                     b.HasOne("App.Domain.UserProfile", "UserProfile")
-                        .WithMany("ProfileMovies")
+                        .WithMany()
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1181,13 +1186,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("UserRatings");
 
                     b.Navigation("Videos");
-                });
-
-            modelBuilder.Entity("App.Domain.UserProfile", b =>
-                {
-                    b.Navigation("ProfileFavoriteMovies");
-
-                    b.Navigation("ProfileMovies");
                 });
 #pragma warning restore 612, 618
         }

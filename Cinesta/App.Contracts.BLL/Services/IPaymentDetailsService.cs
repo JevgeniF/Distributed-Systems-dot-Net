@@ -8,3 +8,8 @@ public interface IPaymentDetailsService : IEntityService<PaymentDetails>,
     IPaymentDetailsRepositoryCustom<PaymentDetails>
 {
 }
+
+public interface IPaymentDetailsServiceCustom<TEntity>
+{
+    Task<IEnumerable<TEntity>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true);
+}

@@ -14,4 +14,9 @@ public class PaymentDetailsModel : BaseEntityModel<PaymentDetails, BLL.DTO.Payme
         service, mapper)
     {
     }
+
+    public async Task<IEnumerable<PaymentDetails>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllByUserIdAsync(userId, noTracking)).Select(p => Mapper.Map(p)!);
+    }
 }

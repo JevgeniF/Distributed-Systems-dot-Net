@@ -26,22 +26,9 @@ public class VideosController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<Video>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Video>>> GetVideos()
+    public async Task<IEnumerable<Video>> GetVideos()
     {
-        var res = (await _public.Video.GetAllAsync())
-            .Select(v => new Video
-            {
-                Id = v.Id,
-                Season = v.Season,
-                Title = v.Title,
-                FileUri = v.FileUri,
-                Duration = v.Duration,
-                Description = v.Description,
-                MovieDetailsId = v.MovieDetailsId,
-                MovieDetails = v.MovieDetails
-            })
-            .ToList();
-        return res;
+        return await _public.Video.GetAllAsync();
     }
 
     // GET: api/Videos/5
@@ -101,6 +88,7 @@ public class VideosController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<Video>> PostVideo(Video video)
     {
+        video.Id = Guid.NewGuid();
         _public.Video.Add(video);
         await _public.SaveChangesAsync();
 

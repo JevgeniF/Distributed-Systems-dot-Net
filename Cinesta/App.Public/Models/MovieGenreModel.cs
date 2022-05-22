@@ -13,4 +13,14 @@ public class MovieGenreModel : BaseEntityModel<MovieGenre, BLL.DTO.MovieGenre, I
         service, mapper)
     {
     }
+
+    public async Task<IEnumerable<MovieGenre>> IncludeGetAllAsync(bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllAsync(noTracking)).Select(m => Mapper.Map(m)!);
+    }
+
+    public async Task<MovieGenre?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    {
+        return Mapper.Map(await Service.IncludeFirstOrDefaultAsync(id, noTracking));
+    }
 }

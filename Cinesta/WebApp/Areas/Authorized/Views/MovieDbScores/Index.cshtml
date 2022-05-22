@@ -1,5 +1,5 @@
 @using Base.Resources
-@model IEnumerable<App.Domain.MovieDbScore>
+@model IEnumerable<App.Public.DTO.v1.MovieDbScore>
 
 @{
     ViewData["Title"] = "Index";
@@ -29,7 +29,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model!)
+    @foreach (var item in Model)
     {
         <tr>
             <td>
@@ -39,7 +39,7 @@
                 @Html.DisplayFor(modelItem => item.Score)
             </td>
             <td>
-                @item.MovieDetails!.Title
+                @item.MovieDetails!.Description
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a>

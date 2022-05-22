@@ -1,7 +1,7 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,19 +12,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class AgeRatingsController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<AgeRatingsController> _logger;
+    private readonly IAppPublic _public;
 
-    public AgeRatingsController(AppDbContext context, ILogger<AgeRatingsController> logger)
+    public AgeRatingsController(IAppPublic appPublic, ILogger<AgeRatingsController> logger)
     {
         _logger = logger;
-        _context = context;
+        _public = appPublic;
     }
 
     // GET: Authorized/AgeRatings
     public async Task<IActionResult> Index()
     {
-        return View(await _context.AgeRatings.ToListAsync());
+        return View(await _public.AgeRating.GetAllAsync());
     }
 
     // GET: Authorized/AgeRatings/Details/5
@@ -32,8 +32,7 @@ public class AgeRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _context.AgeRatings
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var ageRating = await _public.AgeRating.FirstOrDefaultAsync(id.Value);
         if (ageRating == null) return NotFound();
 
         return View(ageRating);
@@ -57,8 +56,8 @@ public class AgeRatingsController : Controller
         if (ModelState.IsValid)
         {
             ageRating.Id = Guid.NewGuid();
-            _context.Add(ageRating);
-            await _context.SaveChangesAsync();
+            _public.AgeRating.Add(ageRating);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -70,7 +69,7 @@ public class AgeRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _context.AgeRatings.FindAsync(id);
+        var ageRating = await _public.AgeRating.FirstOrDefaultAsync(id.Value);
         if (ageRating == null) return NotFound();
         return View(ageRating);
     }
@@ -90,12 +89,12 @@ public class AgeRatingsController : Controller
         {
             try
             {
-                _context.Update(ageRating);
-                await _context.SaveChangesAsync();
+                _public.AgeRating.Update(ageRating);
+                await _public.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AgeRatingExists(ageRating.Id))
+                if (!await AgeRatingExists(ageRating.Id))
                     return NotFound();
                 throw;
             }
@@ -111,8 +110,7 @@ public class AgeRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var ageRating = await _context.AgeRatings
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var ageRating = await _public.AgeRating.FirstOrDefaultAsync(id.Value);
         if (ageRating == null) return NotFound();
 
         return View(ageRating);
@@ -124,14 +122,13 @@ public class AgeRatingsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var ageRating = await _context.AgeRatings.FindAsync(id);
-        _context.AgeRatings.Remove(ageRating!);
-        await _context.SaveChangesAsync();
+        await _public.AgeRating.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool AgeRatingExists(Guid id)
+    private async Task<bool> AgeRatingExists(Guid id)
     {
-        return _context.AgeRatings.Any(e => e.Id == id);
+        return await _public.AgeRating.ExistsAsync(id);
     }
 }

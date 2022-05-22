@@ -20,7 +20,6 @@ public class UserSubscriptionRepository : BaseEntityRepository<UserSubscription,
         var query = CreateQuery(noTracking);
         query = query.Include(u => u.Subscription)
             .Include(u => u.AppUser).Where(u => u.AppUserId == userId);
-        ;
 
         return (await query.ToListAsync()).Select(u => Mapper.Map(u)!);
     }

@@ -19,7 +19,8 @@ public class Video : DomainEntityId
     public string FileUri { get; set; } = default!;
 
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Duration))]
-    [DataType(DataType.Time)] public DateTime Duration { get; set; }
+    [DataType(DataType.Time)]
+    public DateTime Duration { get; set; }
 
     [Column(TypeName = "jsonb")]
     [MaxLength(250)]

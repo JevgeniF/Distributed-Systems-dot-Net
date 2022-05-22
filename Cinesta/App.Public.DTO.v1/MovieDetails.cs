@@ -15,7 +15,8 @@ public class MovieDetails : DomainEntityId
     public LangStr Title { get; set; } = new();
 
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Released))]
-    [DataType(DataType.Date)] public DateTime Released { get; set; }
+    [DataType(DataType.Date)]
+    public DateTime Released { get; set; }
 
     [MaxLength(500)]
     [Column(TypeName = "jsonb")]

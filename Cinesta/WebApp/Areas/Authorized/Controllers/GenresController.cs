@@ -1,7 +1,7 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,19 +12,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class GenresController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<GenresController> _logger;
+    private readonly IAppPublic _public;
 
-    public GenresController(AppDbContext context, ILogger<GenresController> logger)
+    public GenresController(IAppPublic appPublic, ILogger<GenresController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
     // GET: Authorized/Genres
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Genres.ToListAsync());
+        return View(await _public.Genre.GetAllAsync());
     }
 
     // GET: Authorized/Genres/Details/5
@@ -32,7 +32,7 @@ public class GenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var genre = await _context.Genres.FirstOrDefaultAsync(m => m.Id == id);
+        var genre = await _public.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
 
         return View(genre);
@@ -54,8 +54,8 @@ public class GenresController : Controller
         if (ModelState.IsValid)
         {
             genre.Id = Guid.NewGuid();
-            _context.Add(genre);
-            await _context.SaveChangesAsync();
+            _public.Genre.Add(genre);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -67,7 +67,7 @@ public class GenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var genre = await _context.Genres.FindAsync(id);
+        var genre = await _public.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
         return View(genre);
     }
@@ -85,8 +85,7 @@ public class GenresController : Controller
 
         if (ModelState.IsValid)
         {
-            var genreFromDb = await _context.Genres.AsNoTracking()
-                .FirstOrDefaultAsync(g => g.Id == genre.Id);
+            var genreFromDb = await _public.Genre.FirstOrDefaultAsync(id);
             if (genreFromDb == null) return NotFound();
 
             try
@@ -94,12 +93,12 @@ public class GenresController : Controller
                 genreFromDb.Naming.SetTranslation(genre.Naming);
                 genre.Naming = genreFromDb.Naming;
 
-                _context.Update(genre);
-                await _context.SaveChangesAsync();
+                _public.Genre.Update(genre);
+                await _public.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GenreExists(genre.Id))
+                if (!await GenreExists(genre.Id))
                     return NotFound();
                 throw;
             }
@@ -116,8 +115,7 @@ public class GenresController : Controller
     {
         if (id == null) return NotFound();
 
-        var genre = await _context.Genres
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var genre = await _public.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
 
         return View(genre);
@@ -130,14 +128,13 @@ public class GenresController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var genre = await _context.Genres.FindAsync(id);
-        _context.Genres.Remove(genre!);
-        await _context.SaveChangesAsync();
+        await _public.Genre.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool GenreExists(Guid id)
+    private async Task<bool> GenreExists(Guid id)
     {
-        return _context.Genres.Any(e => e.Id == id);
+        return await _public.Genre.ExistsAsync(id);
     }
 }

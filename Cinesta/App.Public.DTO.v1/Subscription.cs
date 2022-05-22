@@ -21,9 +21,4 @@ public class Subscription : DomainEntityId
 
     [Display(ResourceType = typeof(Resources.App.Domain.User.Subscription), Name = nameof(Price))]
     public double Price { get; set; }
-
-    public Guid AppUserId { get; set; }
-
-    [Display(ResourceType = typeof(Resources.App.Domain.User.Subscription), Name = nameof(AppUser))]
-    public AppUser? AppUser { get; set; }
 }

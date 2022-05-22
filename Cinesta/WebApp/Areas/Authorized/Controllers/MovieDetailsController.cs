@@ -1,7 +1,7 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,20 +14,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class MovieDetailsController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<MovieDetailsController> _logger;
+    private readonly IAppPublic _public;
 
-    public MovieDetailsController(AppDbContext context, ILogger<MovieDetailsController> logger)
+    public MovieDetailsController(IAppPublic appPublic, ILogger<MovieDetailsController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
     // GET: Authorized/MovieDetails
     public async Task<IActionResult> Index()
     {
-        var appDbContext = _context.MovieDetails.Include(m => m.AgeRating).Include(m => m.MovieType);
-        return View(await appDbContext.ToListAsync());
+        return View(await _public.MovieDetails.IncludeGetAllAsync());
     }
 
     // GET: Authorized/MovieDetails/Details/5
@@ -35,10 +34,7 @@ public class MovieDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieDetails = await _context.MovieDetails
-            .Include(m => m.AgeRating)
-            .Include(m => m.MovieType)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var movieDetails = await _public.MovieDetails.FirstOrDefaultAsync(id.Value);
         if (movieDetails == null) return NotFound();
 
         return View(movieDetails);
@@ -50,10 +46,10 @@ public class MovieDetailsController : Controller
         var vm = new MovieDetailsCreateEditVM
         {
             AgeRatingSelectList = new SelectList(
-                await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
+                (await _public.AgeRating.GetAllAsync()).Select(r => new {r.Id, r.Naming}),
                 nameof(AgeRating.Id), nameof(AgeRating.Naming)),
             MovieTypeSelectList = new SelectList(
-                await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
+                (await _public.MovieType.GetAllAsync()).Select(t => new {t.Id, t.Naming}),
                 nameof(MovieType.Id), nameof(MovieType.Naming))
         };
         return View(vm);
@@ -68,16 +64,16 @@ public class MovieDetailsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(vm.MovieDetails!);
-            await _context.SaveChangesAsync();
+            _public.MovieDetails.Add(vm.MovieDetails!);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         vm.AgeRatingSelectList = new SelectList(
-            await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
+            (await _public.AgeRating.GetAllAsync()).Select(r => new {r.Id, r.Naming}),
             nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails!.AgeRatingId);
         vm.MovieTypeSelectList = new SelectList(
-            await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
+            (await _public.MovieType.GetAllAsync()).Select(t => new {t.Id, t.Naming}),
             nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
     }
@@ -88,7 +84,7 @@ public class MovieDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieDetails = await _context.MovieDetails.FindAsync(id);
+        var movieDetails = await _public.MovieDetails.FirstOrDefaultAsync(id.Value);
         if (movieDetails == null) return NotFound();
 
         var vm = new MovieDetailsCreateEditVM
@@ -96,10 +92,10 @@ public class MovieDetailsController : Controller
             MovieDetails = movieDetails
         };
         vm.AgeRatingSelectList = new SelectList(
-            await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
-            nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
+            (await _public.AgeRating.GetAllAsync()).Select(r => new {r.Id, r.Naming}),
+            nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails!.AgeRatingId);
         vm.MovieTypeSelectList = new SelectList(
-            await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
+            (await _public.MovieType.GetAllAsync()).Select(t => new {t.Id, t.Naming}),
             nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
     }
@@ -116,8 +112,7 @@ public class MovieDetailsController : Controller
 
         if (ModelState.IsValid)
         {
-            var movieDetailsFromDb = await _context.MovieDetails.AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == movieDetails.Id);
+            var movieDetailsFromDb = await _public.MovieDetails.FirstOrDefaultAsync(id);
             if (movieDetailsFromDb == null) return NotFound();
             try
             {
@@ -127,12 +122,12 @@ public class MovieDetailsController : Controller
                 movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
                 movieDetails.Description = movieDetailsFromDb.Description;
 
-                _context.Update(movieDetails);
-                await _context.SaveChangesAsync();
+                _public.MovieDetails.Update(movieDetails);
+                await _public.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieDetailsExists(movieDetails.Id))
+                if (!await MovieDetailsExists(movieDetails.Id))
                     return NotFound();
                 throw;
             }
@@ -145,10 +140,10 @@ public class MovieDetailsController : Controller
             MovieDetails = movieDetails
         };
         vm.AgeRatingSelectList = new SelectList(
-            await _context.AgeRatings.Select(r => new {r.Id, r.Naming}).ToListAsync(),
-            nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
+            (await _public.AgeRating.GetAllAsync()).Select(r => new {r.Id, r.Naming}),
+            nameof(AgeRating.Id), nameof(AgeRating.Naming), vm.MovieDetails!.AgeRatingId);
         vm.MovieTypeSelectList = new SelectList(
-            await _context.MovieTypes.Select(t => new {t.Id, t.Naming}).ToListAsync(),
+            (await _public.MovieType.GetAllAsync()).Select(t => new {t.Id, t.Naming}),
             nameof(MovieType.Id), nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
     }
@@ -158,10 +153,7 @@ public class MovieDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var movieDetails = await _context.MovieDetails
-            .Include(m => m.AgeRating)
-            .Include(m => m.MovieType)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var movieDetails = await _public.MovieDetails.IncludeFirstOrDefaultAsync(id.Value);
         if (movieDetails == null) return NotFound();
 
         return View(movieDetails);
@@ -173,14 +165,13 @@ public class MovieDetailsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var movieDetails = await _context.MovieDetails.FindAsync(id);
-        _context.MovieDetails.Remove(movieDetails!);
-        await _context.SaveChangesAsync();
+        await _public.MovieDetails.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool MovieDetailsExists(Guid id)
+    private async Task<bool> MovieDetailsExists(Guid id)
     {
-        return _context.MovieDetails.Any(e => e.Id == id);
+        return await _public.MovieDetails.ExistsAsync(id);
     }
 }

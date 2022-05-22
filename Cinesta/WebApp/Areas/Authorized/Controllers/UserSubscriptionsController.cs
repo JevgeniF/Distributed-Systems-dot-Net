@@ -1,12 +1,11 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WebApp.Areas.Authorized.ViewModels;
 
 namespace WebApp.Areas.Authorized.Controllers;
@@ -15,22 +14,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class UserSubscriptionsController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<UserSubscriptionsController> _logger;
+    private readonly IAppPublic _public;
 
-    public UserSubscriptionsController(AppDbContext context, ILogger<UserSubscriptionsController> logger)
+    public UserSubscriptionsController(IAppPublic appPublic, ILogger<UserSubscriptionsController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
     // GET: Authorized/UserSubscriptions
     public async Task<IActionResult> Index()
     {
-        return View(await _context.UserSubscriptions
-            .Include(u => u.Subscription)
-            .Include(u => u.AppUser)
-            .Where(u => u.AppUserId == User.GetUserId()).ToListAsync());
+        return View(await _public.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId()));
     }
 
     // GET: Authorized/UserSubscriptions/Details/5
@@ -39,9 +35,7 @@ public class UserSubscriptionsController : Controller
         if (id == null) return NotFound();
 
         var userSubscription =
-            await _context.UserSubscriptions
-                .Include(u => u.Subscription)
-                .Include(u => u.AppUser).FirstOrDefaultAsync(u => u.Id == id);
+            await _public.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
         if (userSubscription == null) return NotFound();
 
         return View(userSubscription);
@@ -52,7 +46,7 @@ public class UserSubscriptionsController : Controller
     {
         var vm = new UserSubscriptionCreateVM
         {
-            SubscriptionSelectList = new SelectList((await _context.Subscriptions.ToListAsync())
+            SubscriptionSelectList = new SelectList((await _public.Subscription.GetAllAsync())
                 .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
                 nameof(Subscription.Naming))
         };
@@ -69,12 +63,12 @@ public class UserSubscriptionsController : Controller
         vm.UserSubscription.AppUserId = User.GetUserId();
         if (ModelState.IsValid)
         {
-            _context.UserSubscriptions.Add(vm.UserSubscription);
-            await _context.SaveChangesAsync();
+            _public.UserSubscription.Add(vm.UserSubscription);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        vm.SubscriptionSelectList = new SelectList((await _context.Subscriptions.ToListAsync())
+        vm.SubscriptionSelectList = new SelectList((await _public.Subscription.GetAllAsync())
             .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
             nameof(Subscription.Naming), vm.UserSubscription.SubscriptionId);
         return View(vm);
@@ -86,9 +80,7 @@ public class UserSubscriptionsController : Controller
         if (id == null) return NotFound();
 
         var userSubscription =
-            await _context.UserSubscriptions
-                .Include(u => u.Subscription)
-                .Include(u => u.AppUser).FirstOrDefaultAsync(u => u.Id == id);
+            await _public.UserSubscription.IncludeFirstOrDefaultAsync(id.Value);
         if (userSubscription == null) return NotFound();
 
         return View(userSubscription);
@@ -100,14 +92,8 @@ public class UserSubscriptionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var userSubscription = await _context.UserSubscriptions.FindAsync(id);
-        _context.UserSubscriptions.Remove(userSubscription!);
-        await _context.SaveChangesAsync();
+        await _public.UserSubscription.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
-    }
-
-    private bool UserSubscriptionExists(Guid id)
-    {
-        return _context.UserSubscriptions.Any(u => u.Id == id);
     }
 }

@@ -14,10 +14,10 @@ public class UserRating : DomainEntityMetaId
     public LangStr Comment { get; set; } = new();
 
     public Guid AppUserId { get; set; }
-    
+
     public AppUser? AppUser { get; set; }
 
     public Guid MovieDetailsId { get; set; }
-    
+
     public MovieDetails? MovieDetails { get; set; }
 }

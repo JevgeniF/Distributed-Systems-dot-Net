@@ -26,16 +26,9 @@ public class MovieTypesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<MovieType>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MovieType>>> GetMovieTypes()
+    public async Task<IEnumerable<MovieType>> GetMovieTypes()
     {
-        var res = (await _public.MovieType.GetAllAsync())
-            .Select(m => new MovieType
-            {
-                Id = m.Id,
-                Naming = m.Naming
-            })
-            .ToList();
-        return res;
+        return await _public.MovieType.GetAllAsync();
     }
 
     // GET: api/MovieTypes/5
@@ -94,6 +87,7 @@ public class MovieTypesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieType>> PostMovieType(MovieType movieType)
     {
+        movieType.Id = Guid.NewGuid();
         _public.MovieType.Add(movieType);
         await _public.SaveChangesAsync();
 

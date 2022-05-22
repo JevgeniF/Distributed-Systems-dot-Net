@@ -15,4 +15,20 @@ public class ProfileFavoriteMovieModel :
         service, mapper)
     {
     }
+
+    public async Task<IEnumerable<ProfileFavoriteMovie>> IncludeGetAllByProfileIdAsync(Guid profileId,
+        bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllByProfileIdAsync(profileId, noTracking)).Select(p => Mapper.Map(p)!);
+    }
+
+    public async Task<IEnumerable<ProfileFavoriteMovie>> IncludeGetAllAsync(bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllAsync(noTracking)).Select(p => Mapper.Map(p)!);
+    }
+
+    public async Task<ProfileFavoriteMovie?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    {
+        return Mapper.Map(await Service.IncludeFirstOrDefaultAsync(id, noTracking));
+    }
 }

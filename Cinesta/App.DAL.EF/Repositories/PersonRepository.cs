@@ -15,7 +15,7 @@ public class PersonRepository : BaseEntityRepository<Person, Domain.Person, AppD
     public async Task<Person?> GetByNames(string userName, string userSurname, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
-        query = query.Where(p => p!.Name == userName && p.Surname == userSurname);
+        query = query.Where(p => p.Name == userName && p.Surname == userSurname);
 
         return Mapper.Map(await query.FirstOrDefaultAsync());
     }

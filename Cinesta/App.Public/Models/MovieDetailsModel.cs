@@ -13,4 +13,19 @@ public class MovieDetailsModel : BaseEntityModel<MovieDetails, BLL.DTO.MovieDeta
         service, mapper)
     {
     }
+
+    public async Task<IEnumerable<MovieDetails>> IncludeGetAllAsync(bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllAsync(noTracking)).Select(m => Mapper.Map(m)!);
+    }
+
+    public async Task<MovieDetails?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    {
+        return Mapper.Map(await Service.IncludeFirstOrDefaultAsync(id, noTracking));
+    }
+
+    public async Task<IEnumerable<MovieDetails>> IncludeGetByAgeAsync(int age, bool noTracking = true)
+    {
+        return (await Service.IncludeGetByAgeAsync(age)).Select(m => Mapper.Map(m)!);
+    }
 }

@@ -81,6 +81,7 @@ public class PersonsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Person>> PostPerson(Person person)
     {
+        person.Id = Guid.NewGuid();
         _public.Person.Add(person);
         await _public.SaveChangesAsync();
 

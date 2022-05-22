@@ -83,6 +83,7 @@ public class MovieDBScoresController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieDbScore>> PostMovieDbScore(MovieDbScore movieDbScore)
     {
+        movieDbScore.Id = Guid.NewGuid();
         _public.MovieDbScore.Add(movieDbScore);
         await _public.SaveChangesAsync();
 

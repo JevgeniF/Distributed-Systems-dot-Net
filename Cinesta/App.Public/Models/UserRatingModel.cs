@@ -13,4 +13,14 @@ public class UserRatingModel : BaseEntityModel<UserRating, BLL.DTO.UserRating, I
         service, mapper)
     {
     }
+
+    public async Task<IEnumerable<UserRating>> IncludeGetAllAsync(bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllAsync(noTracking)).Select(u => Mapper.Map(u)!);
+    }
+
+    public async Task<UserRating?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true)
+    {
+        return Mapper.Map(await Service.IncludeFirstOrDefaultAsync(id, noTracking));
+    }
 }

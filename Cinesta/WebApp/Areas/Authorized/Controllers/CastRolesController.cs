@@ -1,7 +1,7 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,19 +12,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class CastRolesController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<CastRolesController> _logger;
+    private readonly IAppPublic _public;
 
-    public CastRolesController(AppDbContext context, ILogger<CastRolesController> logger)
+    public CastRolesController(IAppPublic appPublic, ILogger<CastRolesController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
     // GET: Authorized/CastRoles
     public async Task<IActionResult> Index()
     {
-        return View(await _context.CastRoles.ToListAsync());
+        return View(await _public.CastRole.GetAllAsync());
     }
 
     // GET: Authorized/CastRoles/Details/5
@@ -32,8 +32,7 @@ public class CastRolesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castRole = await _context.CastRoles
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var castRole = await _public.CastRole.FirstOrDefaultAsync(id.Value);
         if (castRole == null) return NotFound();
 
         return View(castRole);
@@ -57,8 +56,8 @@ public class CastRolesController : Controller
         if (ModelState.IsValid)
         {
             castRole.Id = Guid.NewGuid();
-            _context.Add(castRole);
-            await _context.SaveChangesAsync();
+            _public.CastRole.Add(castRole);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -70,7 +69,7 @@ public class CastRolesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castRole = await _context.CastRoles.FindAsync(id);
+        var castRole = await _public.CastRole.FirstOrDefaultAsync(id.Value);
         if (castRole == null) return NotFound();
         return View(castRole);
     }
@@ -88,8 +87,7 @@ public class CastRolesController : Controller
 
         if (ModelState.IsValid)
         {
-            var castRoleFromDb = await _context.CastRoles.AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == castRole.Id);
+            var castRoleFromDb = await _public.CastRole.FirstOrDefaultAsync(id);
             if (castRoleFromDb == null) return NotFound();
 
             try
@@ -97,12 +95,12 @@ public class CastRolesController : Controller
                 castRoleFromDb.Naming.SetTranslation(castRole.Naming);
                 castRole.Naming = castRoleFromDb.Naming;
 
-                _context.Update(castRole);
-                await _context.SaveChangesAsync();
+                _public.CastRole.Update(castRole);
+                await _public.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CastRoleExists(castRole.Id))
+                if (!await CastRoleExists(castRole.Id))
                     return NotFound();
                 throw;
             }
@@ -118,8 +116,7 @@ public class CastRolesController : Controller
     {
         if (id == null) return NotFound();
 
-        var castRole = await _context.CastRoles
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var castRole = await _public.CastRole.FirstOrDefaultAsync(id.Value);
         if (castRole == null) return NotFound();
 
         return View(castRole);
@@ -131,14 +128,13 @@ public class CastRolesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var castRole = await _context.CastRoles.FindAsync(id);
-        _context.CastRoles.Remove(castRole!);
-        await _context.SaveChangesAsync();
+        await _public.CastRole.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool CastRoleExists(Guid id)
+    private async Task<bool> CastRoleExists(Guid id)
     {
-        return _context.CastRoles.Any(e => e.Id == id);
+        return await _public.CastRole.ExistsAsync(id);
     }
 }

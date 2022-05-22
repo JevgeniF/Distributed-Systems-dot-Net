@@ -1,7 +1,7 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,20 +13,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class UserProfilesController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<UserProfilesController> _logger;
+    private readonly IAppPublic _public;
 
-    public UserProfilesController(AppDbContext context, ILogger<UserProfilesController> logger)
+    public UserProfilesController(IAppPublic appPublic, ILogger<UserProfilesController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
     // GET: Authorized/UserProfiles
     public async Task<IActionResult> Index()
     {
-        return View(await _context.UserProfiles.Include(u => u.AppUser)
-            .Where(u => u.AppUserId == User.GetUserId()).ToListAsync());
+        return View(await _public.UserProfile.IncludeGetAllByUserIdAsync(User.GetUserId()));
     }
 
     // GET: Authorized/UserProfiles/Details/5
@@ -34,7 +33,7 @@ public class UserProfilesController : Controller
     {
         if (id == null) return NotFound();
 
-        var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(u => u.Id == id);
+        var userProfile = await _public.UserProfile.FirstOrDefaultAsync(id.Value);
         if (userProfile == null) return NotFound();
 
         return View(userProfile);
@@ -56,8 +55,8 @@ public class UserProfilesController : Controller
         userProfile.AppUserId = User.GetUserId();
         if (ModelState.IsValid)
         {
-            _context.UserProfiles.Add(userProfile);
-            await _context.SaveChangesAsync();
+            _public.UserProfile.Add(userProfile);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -69,7 +68,7 @@ public class UserProfilesController : Controller
     {
         if (id == null) return NotFound();
 
-        var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(u => u.Id == id);
+        var userProfile = await _public.UserProfile.FirstOrDefaultAsync(id.Value);
         if (userProfile == null) return NotFound();
         return View(userProfile);
     }
@@ -89,12 +88,12 @@ public class UserProfilesController : Controller
         {
             try
             {
-                _context.UserProfiles.Update(userProfile);
-                await _context.SaveChangesAsync();
+                _public.UserProfile.Update(userProfile);
+                await _public.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserProfileExists(userProfile.Id))
+                if (!await UserProfileExists(userProfile.Id))
                     return NotFound();
                 throw;
             }
@@ -111,9 +110,7 @@ public class UserProfilesController : Controller
     {
         if (id == null) return NotFound();
 
-        var userProfile = await _context.UserProfiles
-            .Include(u => u.AppUser)
-            .FirstOrDefaultAsync(u => u.Id == id);
+        var userProfile = await _public.UserProfile.FirstOrDefaultAsync(id.Value);
         if (userProfile == null) return NotFound();
 
         return View(userProfile);
@@ -125,14 +122,13 @@ public class UserProfilesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var userProfile = await _context.UserProfiles.FindAsync(id);
-        _context.UserProfiles.Remove(userProfile!);
-        await _context.SaveChangesAsync();
+        await _public.UserProfile.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool UserProfileExists(Guid id)
+    private async Task<bool> UserProfileExists(Guid id)
     {
-        return _context.UserProfiles.Any(u => u.Id == id);
+        return await _public.UserProfile.ExistsAsync(id);
     }
 }

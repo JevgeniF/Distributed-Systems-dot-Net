@@ -26,21 +26,9 @@ public class UserRatingsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<UserRating>), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserRating>>> GetUserRatings()
+    public async Task<IEnumerable<UserRating>> GetUserRatings()
     {
-        var res = (await _public.UserRating.GetAllAsync())
-            .Select(u => new UserRating
-            {
-                Id = u.Id,
-                Rating = u.Rating,
-                Comment = u.Comment,
-                AppUserId = u.AppUserId,
-                AppUser = u.AppUser,
-                MovieDetailsId = u.MovieDetailsId,
-                MovieDetails = u.MovieDetails
-            })
-            .ToList();
-        return res;
+        return await _public.UserRating.GetAllAsync();
     }
 
     // GET: api/UserRatings/5
@@ -97,6 +85,7 @@ public class UserRatingsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserRating>> PostUserRating(UserRating userRating)
     {
+        userRating.Id = Guid.NewGuid();
         _public.UserRating.Add(userRating);
         await _public.SaveChangesAsync();
 

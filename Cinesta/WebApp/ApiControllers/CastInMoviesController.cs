@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
+/// <summary>
+/// Controller for getting, adding, editing or deletion of cast.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
@@ -16,35 +19,35 @@ public class CastInMoviesController : ControllerBase
 {
     private readonly IAppPublic _public;
 
+    /// <summary>
+    /// Cast in movies controller's constructor.
+    /// </summary>
+    /// <param name="appPublic">Takes in public layer interface</param>
     public CastInMoviesController(IAppPublic appPublic)
     {
         _public = appPublic;
     }
 
     // GET: api/CastInMovies
+    /// <summary>
+    /// Get cast (actors, directors, etc) for all movies in database.
+    /// </summary>
+    /// <returns>List of cast for movies</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<CastInMovie>), 200)]
     [HttpGet]
     public async Task<IEnumerable<CastInMovie>> GetCastInMovies()
     {
-        return (await _public.CastInMovie.IncludeGetAllAsync()).Select(c => new CastInMovie
-        {
-            Id = c.Id,
-            CastRoleId = c.CastRoleId,
-            CastRole = new CastRole
-            {
-                Id = c.CastRole!.Id,
-                Naming = c.CastRole.Naming
-            },
-            PersonId = c.PersonId,
-            Persons = c.Persons,
-            MovieDetailsId = c.MovieDetailsId,
-            MovieDetails = c.MovieDetails
-        });
+        return await _public.CastInMovie.IncludeGetAllAsync();
     }
 
     // GET: api/CastInMovies/5
+    /// <summary>
+    /// Returns one specific cast from API database by id
+    /// </summary>
+    /// <param name="id">Id of queryable cast</param>
+    /// <returns>Cast on movie entity</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(CastInMovie), 200)]
@@ -54,26 +57,18 @@ public class CastInMoviesController : ControllerBase
     {
         var castInMovie = await _public.CastInMovie.IncludeFirstOrDefaultAsync(id);
         if (castInMovie == null) return NotFound();
-        var castInMovieDto = new CastInMovie
-        {
-            Id = castInMovie.Id,
-            CastRoleId = castInMovie.CastRoleId,
-            CastRole = new CastRole
-            {
-                Id = castInMovie.CastRole!.Id,
-                Naming = castInMovie.CastRole.Naming
-            },
-            PersonId = castInMovie.PersonId,
-            Persons = castInMovie.Persons,
-            MovieDetailsId = castInMovie.MovieDetailsId,
-            MovieDetails = castInMovie.MovieDetails
-        };
 
-        return castInMovieDto;
+        return castInMovie;
     }
 
     // PUT: api/CastInMovies/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    /// Edit one specific cast in API database, queryable by id.
+    /// </summary>
+    /// <param name="id">Id of cast to edit</param>
+    /// <param name="castInMovie">Updated cast data</param>
+    /// <returns>Nothing</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(201)]
@@ -86,20 +81,7 @@ public class CastInMoviesController : ControllerBase
 
         try
         {
-            _public.CastInMovie.Update(new CastInMovie
-            {
-                Id = castInMovie.Id,
-                CastRoleId = castInMovie.CastRoleId,
-                CastRole = new CastRole
-                {
-                    Id = castInMovie.CastRole!.Id,
-                    Naming = castInMovie.CastRole.Naming
-                },
-                PersonId = castInMovie.PersonId,
-                Persons = castInMovie.Persons,
-                MovieDetailsId = castInMovie.MovieDetailsId,
-                MovieDetails = castInMovie.MovieDetails
-            });
+            _public.CastInMovie.Update(castInMovie);
             await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
@@ -114,6 +96,11 @@ public class CastInMoviesController : ControllerBase
 
     // POST: api/CastInMovies
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    /// Add new cast to API database.
+    /// </summary>
+    /// <param name="castInMovie">New cast in movie entity</param>
+    /// <returns>Nothing</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(CastInMovie), 201)]
@@ -122,20 +109,8 @@ public class CastInMoviesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<CastInMovie>> PostCastInMovie(CastInMovie castInMovie)
     {
-        _public.CastInMovie.Add(new CastInMovie
-        {
-            Id = castInMovie.Id,
-            CastRoleId = castInMovie.CastRoleId,
-            CastRole = new CastRole
-            {
-                Id = castInMovie.CastRole!.Id,
-                Naming = castInMovie.CastRole.Naming
-            },
-            PersonId = castInMovie.PersonId,
-            Persons = castInMovie.Persons,
-            MovieDetailsId = castInMovie.MovieDetailsId,
-            MovieDetails = castInMovie.MovieDetails
-        });
+        castInMovie.Id = Guid.NewGuid();
+        _public.CastInMovie.Add(castInMovie);
         await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetCastInMovie",
@@ -143,6 +118,11 @@ public class CastInMoviesController : ControllerBase
     }
 
     // DELETE: api/CastInMovies/5
+    /// <summary>
+    /// Delete one specific cast in movie entity from API database. 
+    /// </summary>
+    /// <param name="id">Id of cast in movie entity for deletion</param>
+    /// <returns>Nothing</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(204)]

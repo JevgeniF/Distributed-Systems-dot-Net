@@ -13,4 +13,9 @@ public class UserProfileModel : BaseEntityModel<UserProfile, BLL.DTO.UserProfile
         service, mapper)
     {
     }
+
+    public async Task<IEnumerable<UserProfile>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true)
+    {
+        return (await Service.IncludeGetAllByUserIdAsync(userId, noTracking)).Select(u => Mapper.Map(u)!);
+    }
 }

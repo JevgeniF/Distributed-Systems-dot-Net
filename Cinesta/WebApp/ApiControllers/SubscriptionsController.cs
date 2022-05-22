@@ -87,6 +87,7 @@ public class SubscriptionsController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<Subscription>> PostSubscription(Subscription subscription)
     {
+        subscription.Id = Guid.NewGuid();
         _public.Subscription.Add(subscription);
         await _public.SaveChangesAsync();
 

@@ -1,7 +1,7 @@
 #pragma warning disable CS1591
 #nullable disable
-using App.DAL.EF;
-using App.Domain;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,20 +15,19 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class UserRatingsController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly ILogger<UserRatingsController> _logger;
+    private readonly IAppPublic _public;
 
-    public UserRatingsController(AppDbContext context, ILogger<UserRatingsController> logger)
+    public UserRatingsController(IAppPublic appPublic, ILogger<UserRatingsController> logger)
     {
-        _context = context;
+        _public = appPublic;
         _logger = logger;
     }
 
     // GET: Authorized/UserRatings
     public async Task<IActionResult> Index()
     {
-        return View(await _context.UserRatings.Include(u => u.AppUser)
-            .Include(u => u.MovieDetails).ToListAsync());
+        return View(await _public.UserRating.IncludeGetAllAsync());
     }
 
     // GET: Authorized/UserRatings/Details/5
@@ -36,10 +35,7 @@ public class UserRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var userRating = await _context.UserRatings
-            .Include(u => u.AppUser)
-            .Include(u => u.MovieDetails)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var userRating = await _public.UserRating.IncludeFirstOrDefaultAsync(id.Value);
         if (userRating == null) return NotFound();
 
         return View(userRating);
@@ -51,7 +47,7 @@ public class UserRatingsController : Controller
     {
         var vm = new UserRatingCreateEditVM
         {
-            MovieDetailsSelectList = new SelectList((await _context.MovieDetails.ToListAsync())
+            MovieDetailsSelectList = new SelectList((await _public.MovieDetails.GetAllAsync())
                 .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
@@ -68,12 +64,12 @@ public class UserRatingsController : Controller
         vm.UserRating.AppUserId = User.GetUserId();
         if (ModelState.IsValid)
         {
-            _context.UserRatings.Add(vm.UserRating);
-            await _context.SaveChangesAsync();
+            _public.UserRating.Add(vm.UserRating);
+            await _public.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        vm.MovieDetailsSelectList = new SelectList((await _context.MovieDetails.ToListAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _public.MovieDetails.GetAllAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
@@ -83,14 +79,14 @@ public class UserRatingsController : Controller
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id == null) return NotFound();
-        var userRating = await _context.UserRatings.FirstOrDefaultAsync(u => u.Id == id);
+        var userRating = await _public.UserRating.FirstOrDefaultAsync(id.Value);
         if (userRating == null) return NotFound();
 
         var vm = new UserRatingCreateEditVM
         {
             UserRating = userRating
         };
-        vm.MovieDetailsSelectList = new SelectList((await _context.MovieDetails.ToListAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _public.MovieDetails.GetAllAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
@@ -108,7 +104,7 @@ public class UserRatingsController : Controller
 
         if (ModelState.IsValid)
         {
-            var userRatingsFromDb = await _context.UserRatings.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+            var userRatingsFromDb = await _public.UserRating.FirstOrDefaultAsync(id);
             if (userRatingsFromDb == null) return NotFound();
 
             try
@@ -116,12 +112,12 @@ public class UserRatingsController : Controller
                 userRatingsFromDb.Comment.SetTranslation(userRating.Comment);
                 userRating.Comment = userRatingsFromDb.Comment;
 
-                _context.UserRatings.Update(userRating);
-                await _context.SaveChangesAsync();
+                _public.UserRating.Update(userRating);
+                await _public.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserRatingExists(userRating.Id))
+                if (!await UserRatingExists(userRating.Id))
                     return NotFound();
                 throw;
             }
@@ -133,7 +129,7 @@ public class UserRatingsController : Controller
         {
             UserRating = userRating
         };
-        vm.MovieDetailsSelectList = new SelectList((await _context.MovieDetails.ToListAsync())
+        vm.MovieDetailsSelectList = new SelectList((await _public.MovieDetails.GetAllAsync())
             .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
@@ -148,10 +144,7 @@ public class UserRatingsController : Controller
     {
         if (id == null) return NotFound();
 
-        var userRating = await _context.UserRatings
-            .Include(u => u.AppUser)
-            .Include(u => u.MovieDetails)
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var userRating = await _public.UserRating.IncludeFirstOrDefaultAsync(id.Value);
         if (userRating == null) return NotFound();
 
         return View(userRating);
@@ -163,14 +156,13 @@ public class UserRatingsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        var userRating = await _context.UserRatings.FindAsync(id);
-        _context.UserRatings.Remove(userRating!);
-        await _context.SaveChangesAsync();
+        await _public.UserRating.RemoveAsync(id);
+        await _public.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
-    private bool UserRatingExists(Guid id)
+    private async Task<bool> UserRatingExists(Guid id)
     {
-        return _context.UserRatings.Any(e => e.Id == id);
+        return await _public.UserRating.ExistsAsync(id);
     }
 }

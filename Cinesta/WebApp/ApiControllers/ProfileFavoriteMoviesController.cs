@@ -25,10 +25,10 @@ public class ProfileFavoriteMoviesController : ControllerBase
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<ProfileFavoriteMovie>), 200)]
-    [HttpGet]
-    public async Task<IEnumerable<ProfileFavoriteMovie>> GetProfileFavoriteMovies()
+    [HttpGet("{profileId}")]
+    public async Task<IEnumerable<ProfileFavoriteMovie>> GetProfileFavoriteMoviesByProfileId(Guid profileId)
     {
-        return await _public.ProfileFavoriteMovie.GetAllAsync();
+        return await _public.ProfileFavoriteMovie.IncludeGetAllByProfileIdAsync(profileId);
     }
 
     // GET: api/ProfileFavoriteMovies/5
@@ -82,6 +82,7 @@ public class ProfileFavoriteMoviesController : ControllerBase
     public async Task<ActionResult<ProfileFavoriteMovie>> PostProfileFavoriteMovie(
         ProfileFavoriteMovie profileFavoriteMovie)
     {
+        profileFavoriteMovie.Id = Guid.NewGuid();
         _public.ProfileFavoriteMovie.Add(profileFavoriteMovie);
         await _public.SaveChangesAsync();
 

@@ -72,8 +72,8 @@
             <LastGenOutput>Subscription.Designer.cs</LastGenOutput>
         </EmbeddedResource>
         <EmbeddedResource Update="App.Domain\User\UserSubscription.resx">
-          <Generator>PublicResXFileCodeGenerator</Generator>
-          <LastGenOutput>UserSubscription.Designer.cs</LastGenOutput>
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>UserSubscription.Designer.cs</LastGenOutput>
         </EmbeddedResource>
     </ItemGroup>
 
@@ -159,9 +159,9 @@
             <DependentUpon>Subsciption.resx</DependentUpon>
         </Compile>
         <Compile Update="App.Domain\User\UserSubscription.Designer.cs">
-          <DesignTime>True</DesignTime>
-          <AutoGen>True</AutoGen>
-          <DependentUpon>UserSubscription.resx</DependentUpon>
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>UserSubscription.resx</DependentUpon>
         </Compile>
     </ItemGroup>
 

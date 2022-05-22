@@ -22,15 +22,17 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.4"/>
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.5"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\App.BLL\App.BLL.csproj"/>
+        <ProjectReference Include="..\App.Contracts.Public\App.Contracts.Public.csproj"/>
         <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj"/>
-        <ProjectReference Include="..\App.Public.DTO\App.Public.DTO.csproj"/>
+        <ProjectReference Include="..\App.Public.DTO.v1\App.Public.DTO.v1.csproj"/>
+        <ProjectReference Include="..\App.Public\App.Public.csproj"/>
         <ProjectReference Include="..\Base.Extensions\Base.Extensions.csproj"/>
         <ProjectReference Include="..\Base.Resources\Base.Resources.csproj"/>
         <ProjectReference Include="..\Helpers.WebApp\Helpers.WebApp.csproj"/>

@@ -5,9 +5,8 @@ using Base.Contracts.Mapper;
 
 namespace Base.BLL;
 
-public class
-    BaseEntityService<TBllEntity, TDalEntity, TRepository> :
-        BaseEntityService<TBllEntity, TDalEntity, TRepository, Guid>, IEntityService<TBllEntity>
+public class BaseEntityService<TBllEntity, TDalEntity, TRepository> :
+    BaseEntityService<TBllEntity, TDalEntity, TRepository, Guid>, IEntityService<TBllEntity>
     where TDalEntity : class, IDomainEntityId
     where TBllEntity : class, IDomainEntityId
     where TRepository : IEntityRepository<TDalEntity>
@@ -78,9 +77,9 @@ public class BaseEntityService<TBllEntity, TDalEntity, TRepository, TKey> : IEnt
         return (await Repository.GetAllAsync(noTracking)).Select(e => Mapper.Map(e)!);
     }
 
-    public Task<bool> ExistsAsync(TKey id)
+    public async Task<bool> ExistsAsync(TKey id)
     {
-        return Repository.ExistsAsync(id);
+        return await Repository.ExistsAsync(id);
     }
 
     public async Task<TBllEntity> RemoveAsync(TKey id)

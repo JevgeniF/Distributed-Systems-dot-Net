@@ -1,17 +1,17 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using App.Contracts.DAL;
-using App.DAL.DTO;
+using App.Contracts.Public;
 using App.DAL.EF;
 using App.Domain.Identity;
+using App.Public.DTO.v1;
+using App.Public.DTO.v1.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using WebApp.DTO.Identity;
+using AppUser = App.Domain.Identity.AppUser;
 
 namespace WebApp.ApiControllers.Identity;
 
@@ -23,19 +23,19 @@ public class AccountController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly AppDbContext _context;
     private readonly ILogger<AccountController> _logger;
+    private readonly IAppPublic _public;
     private readonly Random _rnd = new();
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly IAppUOW _uow;
     private readonly UserManager<AppUser> _userManager;
 
     public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,
-        ILogger<AccountController> logger, IConfiguration configuration, IAppUOW uow, AppDbContext context)
+        ILogger<AccountController> logger, IConfiguration configuration, IAppPublic appPublic, AppDbContext context)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
         _configuration = configuration;
-        _uow = uow;
+        _public = appPublic;
         _context = context;
     }
 
@@ -73,6 +73,25 @@ public class AccountController : ControllerBase
             return NotFound("User/Password problem");
         }
 
+        appUser.RefreshTokens = await _context
+            .Entry(appUser)
+            .Collection(a => a.RefreshTokens!)
+            .Query()
+            .Where(t => t.AppUserId == appUser.Id)
+            .ToListAsync();
+
+        foreach (var userRefreshToken in appUser.RefreshTokens)
+            if (userRefreshToken.TokenExpirationDateTime < DateTime.UtcNow &&
+                userRefreshToken.PreviousTokenExpirationDateTime < DateTime.UtcNow)
+                _context.RefreshTokens.Remove(userRefreshToken);
+
+        var refreshToken = new AppRefreshToken
+        {
+            AppUserId = appUser.Id
+        };
+        _context.RefreshTokens.Add(refreshToken);
+        await _context.SaveChangesAsync();
+
         // generate jwt
         var jwt = IdentityExtensions.GenerateJwt(
             claimsPrincipal.Claims,
@@ -81,43 +100,6 @@ public class AccountController : ControllerBase
             _configuration["JWT:Issuer"],
             DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpireInMinutes"))
         );
-
-        appUser.RefreshTokens = await _context
-            .Entry(appUser)
-            .Collection(a => a.RefreshTokens!)
-            .Query()
-            .Where(t => t.AppUserId == appUser.Id)
-            .ToListAsync();
-
-
-        var refreshToken = new RefreshToken
-        {
-            AppUserId = appUser.Id
-        };
-        if (!appUser.RefreshTokens.IsNullOrEmpty())
-        {
-            //foreach (var userRefreshToken in appUser.RefreshTokens)
-            //{
-            //    if (userRefreshToken.ExpirationDateTime < DateTime.UtcNow &&
-            //        userRefreshToken.PreviousExpirationDateTime < DateTime.UtcNow)
-            //    {
-            //        _context.RefreshTokens.Remove(userRefreshToken);
-            //    }
-            //}
-
-            refreshToken = appUser.RefreshTokens!.First();
-            refreshToken.PreviousToken = refreshToken.Token;
-            refreshToken.PreviousExpirationDateTime = DateTime.UtcNow.AddMinutes(1);
-            refreshToken.Token = Guid.NewGuid().ToString();
-            refreshToken.ExpirationDateTime = DateTime.UtcNow.AddDays(7);
-            await _context.SaveChangesAsync();
-        }
-        else
-        {
-            appUser.RefreshTokens = new List<RefreshToken>();
-            appUser.RefreshTokens.Add(refreshToken);
-            await _context.SaveChangesAsync();
-        }
 
         var res = new JwtResponse
         {
@@ -145,14 +127,14 @@ public class AccountController : ControllerBase
             return BadRequest("Email/Password problem");
         }
 
-        var refreshToken = new RefreshToken();
+        var refreshToken = new AppRefreshToken();
         appUser = new AppUser
         {
             Name = registrationData.Name,
             Surname = registrationData.Surname,
             Email = registrationData.Email,
             UserName = registrationData.Email,
-            RefreshTokens = new List<RefreshToken>
+            RefreshTokens = new List<AppRefreshToken>
             {
                 refreshToken
             }
@@ -164,7 +146,7 @@ public class AccountController : ControllerBase
         await _userManager.AddClaimAsync(appUser, new Claim("aspnet.surname", appUser.Surname));
         await _userManager.AddToRoleAsync(appUser, "newbie");
 
-        var person = await _uow.Person.GetByNames(appUser.Name, appUser.Surname);
+        var person = await _public.Person.GetByNames(appUser.Name, appUser.Surname);
         if (person == null)
         {
             person = new Person
@@ -173,8 +155,8 @@ public class AccountController : ControllerBase
                 Name = appUser.Name,
                 Surname = appUser.Surname
             };
-            person = _uow.Person.Add(person);
-            await _uow.SaveChangesAsync();
+            person = _public.Person.Add(person);
+            await _public.SaveChangesAsync();
         }
 
         appUser.PersonId = person.Id;
@@ -216,13 +198,13 @@ public class AccountController : ControllerBase
     [ProducesResponseType(typeof(JwtResponse), 200)]
     [ProducesResponseType(403)]
     [HttpPost]
-    public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
+    public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenModel refreshTokenModel)
     {
         // get info from JWT
         JwtSecurityToken jwt;
         try
         {
-            jwt = new JwtSecurityTokenHandler().ReadJwtToken(refreshTokenDto.Jwt);
+            jwt = new JwtSecurityTokenHandler().ReadJwtToken(refreshTokenModel.Jwt);
             if (jwt == null) return BadRequest("No token");
         }
         catch (Exception e)
@@ -240,10 +222,10 @@ public class AccountController : ControllerBase
 
         // compare refresh tokens
         await _context.Entry(appUser).Collection(u => u.RefreshTokens!)
-            .Query().Where(t => (t.Token == refreshTokenDto.RefreshToken &&
-                                 t.ExpirationDateTime > DateTime.UtcNow) ||
-                                (t.PreviousToken == refreshTokenDto.RefreshToken &&
-                                 t.PreviousExpirationDateTime > DateTime.UtcNow)).ToListAsync();
+            .Query().Where(t => (t.Token == refreshTokenModel.RefreshToken &&
+                                 t.TokenExpirationDateTime > DateTime.UtcNow) ||
+                                (t.PreviousToken == refreshTokenModel.RefreshToken &&
+                                 t.PreviousTokenExpirationDateTime > DateTime.UtcNow)).ToListAsync();
 
         if (appUser.RefreshTokens == null) return Problem("RefreshTokens collection is null");
 
@@ -269,12 +251,12 @@ public class AccountController : ControllerBase
 
         // make new refresh token
         var refreshToken = appUser.RefreshTokens.First();
-        if (refreshToken.Token == refreshTokenDto.RefreshToken)
+        if (refreshToken.Token == refreshTokenModel.RefreshToken)
         {
             refreshToken.PreviousToken = refreshToken.Token;
-            refreshToken.PreviousExpirationDateTime = DateTime.UtcNow.AddMinutes(1);
+            refreshToken.PreviousTokenExpirationDateTime = DateTime.UtcNow.AddMinutes(1);
             refreshToken.Token = Guid.NewGuid().ToString();
-            refreshToken.ExpirationDateTime = DateTime.UtcNow.AddDays(7);
+            refreshToken.TokenExpirationDateTime = DateTime.UtcNow.AddDays(7);
 
             await _context.SaveChangesAsync();
         }

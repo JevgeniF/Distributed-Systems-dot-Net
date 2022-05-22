@@ -154,6 +154,37 @@ namespace App.DAL.EF.Migrations
                     b.ToTable("Genres");
                 });
 
+            modelBuilder.Entity("App.Domain.Identity.AppRefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PreviousToken")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTime>("PreviousTokenExpirationDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTime>("TokenExpirationDateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("App.Domain.Identity.AppRole", b =>
                 {
                     b.Property<Guid>("Id")
@@ -214,8 +245,8 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -242,8 +273,8 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<string>("Surname")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -266,37 +297,6 @@ namespace App.DAL.EF.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("App.Domain.Identity.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ExpirationDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("PreviousExpirationDateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PreviousToken")
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(36)
-                        .HasColumnType("character varying(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.ToTable("RefreshTokens");
-                });
-
             modelBuilder.Entity("App.Domain.MovieDbScore", b =>
                 {
                     b.Property<Guid>("Id")
@@ -317,7 +317,7 @@ namespace App.DAL.EF.Migrations
                     b.Property<Guid>("MovieDetailsId")
                         .HasColumnType("uuid");
 
-                    b.Property<double?>("Score")
+                    b.Property<double>("Score")
                         .HasColumnType("double precision");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -668,8 +668,8 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("character varying(25)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -743,7 +743,7 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime?>("ExpirationDateTime")
+                    b.Property<DateTime>("ExpirationDateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("SubscriptionId")
@@ -782,8 +782,8 @@ namespace App.DAL.EF.Migrations
                         .IsRequired()
                         .HasColumnType("jsonb");
 
-                    b.Property<TimeOnly>("Duration")
-                        .HasColumnType("time without time zone");
+                    b.Property<DateTime>("Duration")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FileUri")
                         .IsRequired()
@@ -944,16 +944,7 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Persons");
                 });
 
-            modelBuilder.Entity("App.Domain.Identity.AppUser", b =>
-                {
-                    b.HasOne("App.Domain.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId");
-
-                    b.Navigation("Person");
-                });
-
-            modelBuilder.Entity("App.Domain.Identity.RefreshToken", b =>
+            modelBuilder.Entity("App.Domain.Identity.AppRefreshToken", b =>
                 {
                     b.HasOne("App.Domain.Identity.AppUser", "AppUser")
                         .WithMany("RefreshTokens")
@@ -962,6 +953,15 @@ namespace App.DAL.EF.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("App.Domain.Identity.AppUser", b =>
+                {
+                    b.HasOne("App.Domain.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId");
+
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("App.Domain.MovieDbScore", b =>

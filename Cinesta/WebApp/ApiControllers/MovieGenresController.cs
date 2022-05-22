@@ -1,6 +1,6 @@
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class MovieGenresController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public MovieGenresController(IAppBll bll)
+    public MovieGenresController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/MovieGenres
@@ -28,7 +28,7 @@ public class MovieGenresController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<MovieGenre>> GetMovieGenres()
     {
-        return await _bll.MovieGenre.GetAllAsync();
+        return await _public.MovieGenre.GetAllAsync();
     }
 
     // GET: api/MovieGenres/5
@@ -39,7 +39,7 @@ public class MovieGenresController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<MovieGenre>> GetMovieGenre(Guid id)
     {
-        var movieGenre = await _bll.MovieGenre.FirstOrDefaultAsync(id);
+        var movieGenre = await _public.MovieGenre.FirstOrDefaultAsync(id);
 
         if (movieGenre == null) return NotFound();
 
@@ -60,8 +60,8 @@ public class MovieGenresController : ControllerBase
 
         try
         {
-            _bll.MovieGenre.Update(movieGenre);
-            await _bll.SaveChangesAsync();
+            _public.MovieGenre.Update(movieGenre);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -83,8 +83,8 @@ public class MovieGenresController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieGenre>> PostMovieGenre(MovieGenre movieGenre)
     {
-        _bll.MovieGenre.Add(movieGenre);
-        await _bll.SaveChangesAsync();
+        _public.MovieGenre.Add(movieGenre);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetMovieGenre",
             new {id = movieGenre.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieGenre);
@@ -99,14 +99,14 @@ public class MovieGenresController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieGenre(Guid id)
     {
-        await _bll.MovieGenre.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.MovieGenre.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> MovieGenreExists(Guid id)
     {
-        return await _bll.MovieGenre.ExistsAsync(id);
+        return await _public.MovieGenre.ExistsAsync(id);
     }
 }

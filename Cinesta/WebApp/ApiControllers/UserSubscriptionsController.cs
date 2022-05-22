@@ -1,6 +1,6 @@
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +13,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserSubscriptionsController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public UserSubscriptionsController(IAppBll bll)
+    public UserSubscriptionsController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/UserSubscriptions
@@ -27,7 +27,7 @@ public class UserSubscriptionsController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<UserSubscription>> GetUserSubscriptions()
     {
-        return await _bll.UserSubscription.GetAllAsync();
+        return await _public.UserSubscription.GetAllAsync();
     }
 
     // GET: api/UserSubscriptions/5
@@ -38,7 +38,7 @@ public class UserSubscriptionsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<UserSubscription>> GetUserSubscription(Guid id)
     {
-        var userSubscription = await _bll.UserSubscription.FirstOrDefaultAsync(id);
+        var userSubscription = await _public.UserSubscription.FirstOrDefaultAsync(id);
 
         if (userSubscription == null) return NotFound();
 
@@ -54,8 +54,8 @@ public class UserSubscriptionsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserSubscription>> PostUserSubscription(UserSubscription userSubscription)
     {
-        _bll.UserSubscription.Add(userSubscription);
-        await _bll.SaveChangesAsync();
+        _public.UserSubscription.Add(userSubscription);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetUserSubscription",
             new {id = userSubscription.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()},
@@ -70,14 +70,14 @@ public class UserSubscriptionsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserSubscription(Guid id)
     {
-        await _bll.UserSubscription.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.UserSubscription.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> UserSubscriptionExists(Guid id)
     {
-        return await _bll.UserSubscription.ExistsAsync(id);
+        return await _public.UserSubscription.ExistsAsync(id);
     }
 }

@@ -51,7 +51,8 @@ public class MovieTypesController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] MovieType movieType)
+        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
+        MovieType movieType)
     {
         if (ModelState.IsValid)
         {
@@ -80,7 +81,8 @@ public class MovieTypesController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id,
-        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")] MovieType movieType)
+        [Bind("Naming,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Id")]
+        MovieType movieType)
     {
         if (id != movieType.Id) return NotFound();
 

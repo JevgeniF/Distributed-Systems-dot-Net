@@ -1,8 +1,8 @@
 ﻿@using Base.Resources
 @using Microsoft.Extensions.Options
-@inject IOptions<RequestLocalizationOptions> _localizationOptions
+@inject IOptions<RequestLocalizationOptions> LocalizationOptions
 @{
-    var cultureItems = _localizationOptions.Value.SupportedUICultures!
+    var cultureItems = LocalizationOptions.Value.SupportedUICultures!
         .Select(c => new {Value = c.Name, Text = c.NativeName}).ToList();
 }
 

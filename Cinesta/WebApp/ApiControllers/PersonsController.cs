@@ -1,6 +1,6 @@
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PersonsController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public PersonsController(IAppBll bll)
+    public PersonsController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/Persons
@@ -28,7 +28,7 @@ public class PersonsController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<Person>> GetPersons()
     {
-        return await _bll.Person.GetAllAsync();
+        return await _public.Person.GetAllAsync();
     }
 
     // GET: api/Persons/5
@@ -39,7 +39,7 @@ public class PersonsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Person>> GetPerson(Guid id)
     {
-        var person = await _bll.Person.FirstOrDefaultAsync(id);
+        var person = await _public.Person.FirstOrDefaultAsync(id);
 
         if (person == null) return NotFound();
 
@@ -59,8 +59,8 @@ public class PersonsController : ControllerBase
 
         try
         {
-            _bll.Person.Update(person);
-            await _bll.SaveChangesAsync();
+            _public.Person.Update(person);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -81,8 +81,8 @@ public class PersonsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Person>> PostPerson(Person person)
     {
-        _bll.Person.Add(person);
-        await _bll.SaveChangesAsync();
+        _public.Person.Add(person);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetPerson",
             new {id = person.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, person);
@@ -96,14 +96,14 @@ public class PersonsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePerson(Guid id)
     {
-        await _bll.Person.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.Person.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> PersonExists(Guid id)
     {
-        return await _bll.Person.ExistsAsync(id);
+        return await _public.Person.ExistsAsync(id);
     }
 }

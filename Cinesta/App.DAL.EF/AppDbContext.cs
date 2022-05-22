@@ -1,5 +1,7 @@
-﻿using App.Domain;
+﻿using System.Text.Json;
+using App.Domain;
 using App.Domain.Identity;
+using Base.Domain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +15,7 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     }
 
     //identity
-    public DbSet<RefreshToken> RefreshTokens { get; set; } = default!;
+    public DbSet<AppRefreshToken> RefreshTokens { get; set; } = default!;
 
     //cast
     public DbSet<CastInMovie> CastInMovies { get; set; } = default!;
@@ -47,6 +49,38 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     public DbSet<Subscription> Subscriptions { get; set; } = default!;
     public DbSet<UserSubscription> UserSubscriptions { get; set; } = default!;
     public DbSet<PaymentDetails> PaymentDetails { get; set; } = default!;
+
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        if (Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
+            builder.Entity<AgeRating>().Property(a => a.Naming)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+
+        /*foreach (var mType in builder.Model.GetEntityTypes())
+        {
+            foreach (var property in mType.GetProperties())
+            {
+                if (property.ClrType == typeof(LangStr))
+                {
+                }
+            }
+        }*/
+    }
+
+
+    private static string SerializeLangStr(LangStr langStr)
+    {
+        return JsonSerializer.Serialize(langStr);
+    }
+
+    private static LangStr DeserializeLangStr(string jsonStr)
+    {
+        return JsonSerializer.Deserialize<LangStr>(jsonStr) ?? new LangStr();
+    }
 
     public override int SaveChanges()
     {

@@ -1,6 +1,6 @@
 #nullable disable
-using App.Contracts.BLL;
-using App.Public.DTO;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserRatingsController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public UserRatingsController(IAppBll bll)
+    public UserRatingsController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/UserRatings
@@ -28,7 +28,7 @@ public class UserRatingsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserRating>>> GetUserRatings()
     {
-        var res = (await _bll.UserRating.GetAllAsync())
+        var res = (await _public.UserRating.GetAllAsync())
             .Select(u => new UserRating
             {
                 Id = u.Id,
@@ -46,12 +46,12 @@ public class UserRatingsController : ControllerBase
     // GET: api/UserRatings/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.UserRating), 200)]
+    [ProducesResponseType(typeof(UserRating), 200)]
     [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<App.BLL.DTO.UserRating>> GetUserRating(Guid id)
+    public async Task<ActionResult<UserRating>> GetUserRating(Guid id)
     {
-        var userRating = await _bll.UserRating.FirstOrDefaultAsync(id);
+        var userRating = await _public.UserRating.FirstOrDefaultAsync(id);
 
         if (userRating == null) return NotFound();
 
@@ -69,14 +69,14 @@ public class UserRatingsController : ControllerBase
     {
         if (id != userRating.Id) return BadRequest();
 
-        var userRatingsFromDb = await _bll.UserRating.FirstOrDefaultAsync(id);
+        var userRatingsFromDb = await _public.UserRating.FirstOrDefaultAsync(id);
         if (userRatingsFromDb == null) return NotFound();
 
         try
         {
             userRatingsFromDb.Comment.SetTranslation(userRating.Comment);
-            _bll.UserRating.Update(userRatingsFromDb);
-            await _bll.SaveChangesAsync();
+            _public.UserRating.Update(userRatingsFromDb);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -92,13 +92,13 @@ public class UserRatingsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.UserRating), 201)]
+    [ProducesResponseType(typeof(UserRating), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
-    public async Task<ActionResult<App.BLL.DTO.UserRating>> PostUserRating(App.BLL.DTO.UserRating userRating)
+    public async Task<ActionResult<UserRating>> PostUserRating(UserRating userRating)
     {
-        _bll.UserRating.Add(userRating);
-        await _bll.SaveChangesAsync();
+        _public.UserRating.Add(userRating);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetUserRating",
             new {id = userRating.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, userRating);
@@ -112,14 +112,14 @@ public class UserRatingsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserRating(Guid id)
     {
-        await _bll.UserRating.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.UserRating.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> UserRatingExists(Guid id)
     {
-        return await _bll.UserRating.ExistsAsync(id);
+        return await _public.UserRating.ExistsAsync(id);
     }
 }

@@ -1,6 +1,6 @@
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class GenresController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public GenresController(IAppBll bll)
+    public GenresController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/Genres
@@ -28,7 +28,7 @@ public class GenresController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<Genre>> GetGenres()
     {
-        return await _bll.Genre.GetAllAsync();
+        return await _public.Genre.GetAllAsync();
     }
 
     // GET: api/Genres/5
@@ -39,7 +39,7 @@ public class GenresController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Genre>> GetGenre(Guid id)
     {
-        var genre = await _bll.Genre.FirstOrDefaultAsync(id);
+        var genre = await _public.Genre.FirstOrDefaultAsync(id);
 
         if (genre == null) return NotFound();
 
@@ -53,18 +53,18 @@ public class GenresController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutGenre(Guid id, App.Public.DTO.Genre genre)
+    public async Task<IActionResult> PutGenre(Guid id, Genre genre)
     {
         if (id != genre.Id) return BadRequest();
 
-        var genreFromDb = await _bll.Genre.FirstOrDefaultAsync(id);
+        var genreFromDb = await _public.Genre.FirstOrDefaultAsync(id);
         if (genreFromDb == null) return NotFound();
 
         try
         {
             genreFromDb.Naming.SetTranslation(genre.Naming);
-            _bll.Genre.Update(genreFromDb);
-            await _bll.SaveChangesAsync();
+            _public.Genre.Update(genreFromDb);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -85,8 +85,8 @@ public class GenresController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Genre>> PostGenre(Genre genre)
     {
-        _bll.Genre.Add(genre);
-        await _bll.SaveChangesAsync();
+        _public.Genre.Add(genre);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetGenre",
             new {id = genre.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, genre);
@@ -100,14 +100,14 @@ public class GenresController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGenre(Guid id)
     {
-        await _bll.Genre.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.Genre.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> GenreExists(Guid id)
     {
-        return await _bll.Genre.ExistsAsync(id);
+        return await _public.Genre.ExistsAsync(id);
     }
 }

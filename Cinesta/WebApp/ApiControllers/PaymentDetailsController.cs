@@ -1,6 +1,6 @@
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin, user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PaymentDetailsController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public PaymentDetailsController(IAppBll bll)
+    public PaymentDetailsController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/PaymentDetails
@@ -28,7 +28,7 @@ public class PaymentDetailsController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<PaymentDetails>> GetPaymentDetails()
     {
-        return await _bll.PaymentDetails.GetAllAsync();
+        return await _public.PaymentDetails.GetAllAsync();
     }
 
     // GET: api/PaymentDetails/5
@@ -39,7 +39,7 @@ public class PaymentDetailsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<PaymentDetails>> GetPaymentDetails(Guid id)
     {
-        var paymentDetails = await _bll.PaymentDetails.FirstOrDefaultAsync(id);
+        var paymentDetails = await _public.PaymentDetails.FirstOrDefaultAsync(id);
 
         if (paymentDetails == null) return NotFound();
 
@@ -59,8 +59,8 @@ public class PaymentDetailsController : ControllerBase
 
         try
         {
-            _bll.PaymentDetails.Update(paymentDetails);
-            await _bll.SaveChangesAsync();
+            _public.PaymentDetails.Update(paymentDetails);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -81,8 +81,8 @@ public class PaymentDetailsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PaymentDetails>> PostPaymentDetails(PaymentDetails paymentDetails)
     {
-        _bll.PaymentDetails.Add(paymentDetails);
-        await _bll.SaveChangesAsync();
+        _public.PaymentDetails.Add(paymentDetails);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetPaymentDetails",
             new {id = paymentDetails.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, paymentDetails);
@@ -96,14 +96,14 @@ public class PaymentDetailsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePaymentDetails(Guid id)
     {
-        await _bll.PaymentDetails.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.PaymentDetails.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> PaymentDetailsExists(Guid id)
     {
-        return await _bll.PaymentDetails.ExistsAsync(id);
+        return await _public.PaymentDetails.ExistsAsync(id);
     }
 }

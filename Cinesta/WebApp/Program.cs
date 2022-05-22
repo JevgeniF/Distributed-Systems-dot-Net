@@ -3,8 +3,10 @@ using System.Text;
 using App.BLL;
 using App.Contracts.BLL;
 using App.Contracts.DAL;
+using App.Contracts.Public;
 using App.DAL.EF;
 using App.Domain.Identity;
+using App.Public;
 using Helpers.WebApp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -27,33 +29,7 @@ var connectionString = builder.Configuration.GetConnectionString("NpgsqlConnecti
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddScoped<IAppUOW, AppUOW>();
-builder.Services.AddScoped<IAppBll, AppBll>();
-
-builder.Services.AddAutoMapper(typeof(AutoMapperConfig), typeof(App.BLL.AutoMapperConfig));
-
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Services.AddIdentity<AppUser, AppRole>(options => { options.SignIn.RequireConfirmedAccount = false; }
-    )
-    .AddDefaultUI()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddAuthentication().AddCookie(options => { options.SlidingExpiration = true; })
-    .AddJwtBearer(cfg =>
-    {
-        cfg.RequireHttpsMetadata = false;
-        cfg.SaveToken = true;
-        cfg.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidIssuer = builder.Configuration["JWT:Issuer"],
-            ValidAudience = builder.Configuration["JWT:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
+// Lang setup
 builder.Services.AddControllersWithViews(
     options => { options.ModelBinderProviders.Insert(0, new CustomLanguageStringBinderProvider()); }
 );
@@ -84,16 +60,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     };
 });
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequiredUniqueChars = 0;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 1;
-});
-
+// API versioning
 builder.Services.AddApiVersioning(options =>
 {
     options.ReportApiVersions = true;
@@ -104,6 +71,58 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerGen();
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsAllowAll", policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin();
+        policyBuilder.AllowAnyHeader();
+        policyBuilder.AllowAnyMethod();
+    });
+});
+
+// Identity and Authentication setup
+builder.Services.AddIdentity<AppUser, AppRole>(options => { options.SignIn.RequireConfirmedAccount = false; }
+    )
+    .AddDefaultUI()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication().AddCookie(options => { options.SlidingExpiration = true; })
+    .AddJwtBearer(cfg =>
+    {
+        cfg.RequireHttpsMetadata = false;
+        cfg.SaveToken = true;
+        cfg.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 1;
+});
+
+// Mapping setup
+builder.Services.AddScoped<IAppUOW, AppUOW>();
+builder.Services.AddScoped<IAppBll, AppBll>();
+builder.Services.AddScoped<IAppPublic, AppPublic>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperConfig), typeof(App.BLL.AutoMapperConfig),
+    typeof(App.Public.AutoMapperConfig));
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // APP SETUP
 
@@ -124,6 +143,7 @@ else
     app.UseHsts();
 }
 
+// Swagger setup
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
@@ -133,6 +153,8 @@ app.UseSwaggerUI(options =>
             $"/swagger/{description.GroupName}/swagger.json",
             description.GroupName.ToUpperInvariant());
 });
+
+app.UseCors("CorsAllowAll");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

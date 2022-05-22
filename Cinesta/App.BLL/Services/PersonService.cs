@@ -12,4 +12,9 @@ public class PersonService : BaseEntityService<Person, DAL.DTO.Person, IPersonRe
         mapper)
     {
     }
+
+    public async Task<Person?> GetByNames(string userName, string userSurname, bool noTracking = true)
+    {
+        return Mapper.Map(await Repository.GetByNames(userName, userSurname, noTracking));
+    }
 }

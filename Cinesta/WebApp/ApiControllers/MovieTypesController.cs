@@ -1,6 +1,6 @@
 #nullable disable
-using App.Contracts.BLL;
-using App.Public.DTO;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class MovieTypesController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public MovieTypesController(IAppBll uow)
+    public MovieTypesController(IAppPublic appPublic)
     {
-        _bll = uow;
+        _public = appPublic;
     }
 
     // GET: api/MovieTypes
@@ -28,7 +28,7 @@ public class MovieTypesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MovieType>>> GetMovieTypes()
     {
-        var res = (await _bll.MovieType.GetAllAsync())
+        var res = (await _public.MovieType.GetAllAsync())
             .Select(m => new MovieType
             {
                 Id = m.Id,
@@ -41,12 +41,12 @@ public class MovieTypesController : ControllerBase
     // GET: api/MovieTypes/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.MovieType), 200)]
+    [ProducesResponseType(typeof(MovieType), 200)]
     [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<App.BLL.DTO.MovieType>> GetMovieType(Guid id)
+    public async Task<ActionResult<MovieType>> GetMovieType(Guid id)
     {
-        var movieType = await _bll.MovieType.FirstOrDefaultAsync(id);
+        var movieType = await _public.MovieType.FirstOrDefaultAsync(id);
 
         if (movieType == null) return NotFound();
 
@@ -65,14 +65,14 @@ public class MovieTypesController : ControllerBase
     {
         if (id != movieType.Id) return BadRequest();
 
-        var movieTypeFromDb = await _bll.MovieType.FirstOrDefaultAsync(id);
+        var movieTypeFromDb = await _public.MovieType.FirstOrDefaultAsync(id);
         if (movieTypeFromDb == null) return NotFound();
 
         try
         {
             movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
-            _bll.MovieType.Update(movieTypeFromDb);
-            await _bll.SaveChangesAsync();
+            _public.MovieType.Update(movieTypeFromDb);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -88,14 +88,14 @@ public class MovieTypesController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.MovieType), 201)]
+    [ProducesResponseType(typeof(MovieType), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<App.BLL.DTO.MovieType>> PostMovieType(App.BLL.DTO.MovieType movieType)
+    public async Task<ActionResult<MovieType>> PostMovieType(MovieType movieType)
     {
-        _bll.MovieType.Add(movieType);
-        await _bll.SaveChangesAsync();
+        _public.MovieType.Add(movieType);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetMovieType",
             new {id = movieType.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieType);
@@ -110,14 +110,14 @@ public class MovieTypesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieType(Guid id)
     {
-        _bll.MovieType.Remove(id);
-        await _bll.SaveChangesAsync();
+        _public.MovieType.Remove(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> MovieTypeExists(Guid id)
     {
-        return await _bll.MovieType.ExistsAsync(id);
+        return await _public.MovieType.ExistsAsync(id);
     }
 }

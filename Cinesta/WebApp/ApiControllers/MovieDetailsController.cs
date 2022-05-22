@@ -1,6 +1,6 @@
 #nullable disable
-using App.Contracts.BLL;
-using App.Public.DTO;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class MovieDetailsController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public MovieDetailsController(IAppBll bll)
+    public MovieDetailsController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/MovieDetails
@@ -28,7 +28,7 @@ public class MovieDetailsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MovieDetails>>> GetMovieDetails()
     {
-        var res = (await _bll.MovieDetails.GetAllAsync())
+        var res = (await _public.MovieDetails.GetAllAsync())
             .Select(m => new MovieDetails
             {
                 Id = m.Id,
@@ -41,7 +41,7 @@ public class MovieDetailsController : ControllerBase
                 MovieTypeId = m.MovieTypeId,
                 MovieType = m.MovieType,
                 MovieDbScores = m.MovieDbScores,
-                Genres = m.MovieGenres,
+                MovieGenres = m.MovieGenres,
                 Videos = m.Videos,
                 UserRatings = m.UserRatings,
                 CastInMovie = m.CastInMovie
@@ -53,12 +53,12 @@ public class MovieDetailsController : ControllerBase
     // GET: api/MovieDetails/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.MovieDetails), 200)]
+    [ProducesResponseType(typeof(MovieDetails), 200)]
     [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<App.BLL.DTO.MovieDetails>> GetMovieDetails(Guid id)
+    public async Task<ActionResult<MovieDetails>> GetMovieDetails(Guid id)
     {
-        var movieDetails = await _bll.MovieDetails.FirstOrDefaultAsync(id);
+        var movieDetails = await _public.MovieDetails.FirstOrDefaultAsync(id);
 
         if (movieDetails == null) return NotFound();
 
@@ -77,15 +77,15 @@ public class MovieDetailsController : ControllerBase
     {
         if (id != movieDetails.Id) return BadRequest();
 
-        var movieDetailsFromDb = await _bll.MovieDetails.FirstOrDefaultAsync(id);
+        var movieDetailsFromDb = await _public.MovieDetails.FirstOrDefaultAsync(id);
         if (movieDetailsFromDb == null) return NotFound();
 
         try
         {
             movieDetailsFromDb.Title.SetTranslation(movieDetails.Title);
             movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
-            _bll.MovieDetails.Update(movieDetailsFromDb);
-            await _bll.SaveChangesAsync();
+            _public.MovieDetails.Update(movieDetailsFromDb);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -100,14 +100,14 @@ public class MovieDetailsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(App.BLL.DTO.MovieDetails), 201)]
+    [ProducesResponseType(typeof(MovieDetails), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<App.BLL.DTO.MovieDetails>> PostMovieDetails(App.BLL.DTO.MovieDetails movieDetails)
+    public async Task<ActionResult<MovieDetails>> PostMovieDetails(MovieDetails movieDetails)
     {
-        _bll.MovieDetails.Add(movieDetails);
-        await _bll.SaveChangesAsync();
+        _public.MovieDetails.Add(movieDetails);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetMovieDetails",
             new {id = movieDetails.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieDetails);
@@ -122,14 +122,14 @@ public class MovieDetailsController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieDetails(Guid id)
     {
-        await _bll.MovieDetails.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.MovieDetails.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> MovieDetailsExists(Guid id)
     {
-        return await _bll.MovieDetails.ExistsAsync(id);
+        return await _public.MovieDetails.ExistsAsync(id);
     }
 }

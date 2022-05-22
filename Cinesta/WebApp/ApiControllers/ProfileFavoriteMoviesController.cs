@@ -1,6 +1,6 @@
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileFavoriteMoviesController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public ProfileFavoriteMoviesController(IAppBll bll)
+    public ProfileFavoriteMoviesController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/ProfileFavoriteMovies
@@ -28,7 +28,7 @@ public class ProfileFavoriteMoviesController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<ProfileFavoriteMovie>> GetProfileFavoriteMovies()
     {
-        return await _bll.ProfileFavoriteMovie.GetAllAsync();
+        return await _public.ProfileFavoriteMovie.GetAllAsync();
     }
 
     // GET: api/ProfileFavoriteMovies/5
@@ -39,7 +39,7 @@ public class ProfileFavoriteMoviesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ProfileFavoriteMovie>> GetProfileFavoriteMovie(Guid id)
     {
-        var profileFavoriteMovie = await _bll.ProfileFavoriteMovie.FirstOrDefaultAsync(id);
+        var profileFavoriteMovie = await _public.ProfileFavoriteMovie.FirstOrDefaultAsync(id);
 
         if (profileFavoriteMovie == null) return NotFound();
 
@@ -59,8 +59,8 @@ public class ProfileFavoriteMoviesController : ControllerBase
 
         try
         {
-            _bll.ProfileFavoriteMovie.Update(profileFavoriteMovie);
-            await _bll.SaveChangesAsync();
+            _public.ProfileFavoriteMovie.Update(profileFavoriteMovie);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -82,8 +82,8 @@ public class ProfileFavoriteMoviesController : ControllerBase
     public async Task<ActionResult<ProfileFavoriteMovie>> PostProfileFavoriteMovie(
         ProfileFavoriteMovie profileFavoriteMovie)
     {
-        _bll.ProfileFavoriteMovie.Add(profileFavoriteMovie);
-        await _bll.SaveChangesAsync();
+        _public.ProfileFavoriteMovie.Add(profileFavoriteMovie);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetProfileFavoriteMovie",
             new {id = profileFavoriteMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()},
@@ -98,14 +98,14 @@ public class ProfileFavoriteMoviesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProfileFavoriteMovie(Guid id)
     {
-        await _bll.ProfileFavoriteMovie.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.ProfileFavoriteMovie.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> ProfileFavoriteMovieExists(Guid id)
     {
-        return await _bll.ProfileFavoriteMovie.ExistsAsync(id);
+        return await _public.ProfileFavoriteMovie.ExistsAsync(id);
     }
 }

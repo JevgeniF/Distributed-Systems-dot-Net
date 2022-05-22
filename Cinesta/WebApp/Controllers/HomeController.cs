@@ -5,6 +5,7 @@ using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
 
+#pragma warning disable CS1591
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

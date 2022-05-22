@@ -1,6 +1,6 @@
 #nullable disable
-using App.BLL.DTO;
-using App.Contracts.BLL;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserProfilesController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public UserProfilesController(IAppBll bll)
+    public UserProfilesController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/UserProfiles
@@ -28,7 +28,7 @@ public class UserProfilesController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<UserProfile>> GetUserProfiles()
     {
-        return await _bll.UserProfile.GetAllAsync();
+        return await _public.UserProfile.GetAllAsync();
     }
 
     // GET: api/UserProfiles/5
@@ -39,7 +39,7 @@ public class UserProfilesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<UserProfile>> GetUserProfile(Guid id)
     {
-        var userProfile = await _bll.UserProfile.FirstOrDefaultAsync(id);
+        var userProfile = await _public.UserProfile.FirstOrDefaultAsync(id);
 
         if (userProfile == null) return NotFound();
 
@@ -59,8 +59,8 @@ public class UserProfilesController : ControllerBase
 
         try
         {
-            _bll.UserProfile.Update(userProfile);
-            await _bll.SaveChangesAsync();
+            _public.UserProfile.Update(userProfile);
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -81,8 +81,8 @@ public class UserProfilesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserProfile>> PostUserProfile(UserProfile userProfile)
     {
-        _bll.UserProfile.Add(userProfile);
-        await _bll.SaveChangesAsync();
+        _public.UserProfile.Add(userProfile);
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetUserProfile",
             new {id = userProfile.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, userProfile);
@@ -96,14 +96,14 @@ public class UserProfilesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserProfile(Guid id)
     {
-        await _bll.UserProfile.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.UserProfile.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private Task<bool> UserProfileExists(Guid id)
     {
-        return _bll.UserProfile.ExistsAsync(id);
+        return _public.UserProfile.ExistsAsync(id);
     }
 }

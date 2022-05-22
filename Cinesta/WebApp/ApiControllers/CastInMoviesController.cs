@@ -1,6 +1,6 @@
 #nullable disable
-using App.Contracts.BLL;
-using App.Public.DTO;
+using App.Contracts.Public;
+using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class CastInMoviesController : ControllerBase
 {
-    private readonly IAppBll _bll;
+    private readonly IAppPublic _public;
 
-    public CastInMoviesController(IAppBll bll)
+    public CastInMoviesController(IAppPublic appPublic)
     {
-        _bll = bll;
+        _public = appPublic;
     }
 
     // GET: api/CastInMovies
@@ -28,7 +28,7 @@ public class CastInMoviesController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<CastInMovie>> GetCastInMovies()
     {
-        return (await _bll.CastInMovie.IncludeGetAllAsync()).Select(c => new CastInMovie
+        return (await _public.CastInMovie.IncludeGetAllAsync()).Select(c => new CastInMovie
         {
             Id = c.Id,
             CastRoleId = c.CastRoleId,
@@ -52,7 +52,7 @@ public class CastInMoviesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<CastInMovie>> GetCastInMovie(Guid id)
     {
-        var castInMovie = await _bll.CastInMovie.IncludeFirstOrDefaultAsync(id);
+        var castInMovie = await _public.CastInMovie.IncludeFirstOrDefaultAsync(id);
         if (castInMovie == null) return NotFound();
         var castInMovieDto = new CastInMovie
         {
@@ -86,11 +86,11 @@ public class CastInMoviesController : ControllerBase
 
         try
         {
-            _bll.CastInMovie.Update(new App.BLL.DTO.CastInMovie
+            _public.CastInMovie.Update(new CastInMovie
             {
                 Id = castInMovie.Id,
                 CastRoleId = castInMovie.CastRoleId,
-                CastRole = new App.BLL.DTO.CastRole
+                CastRole = new CastRole
                 {
                     Id = castInMovie.CastRole!.Id,
                     Naming = castInMovie.CastRole.Naming
@@ -100,7 +100,7 @@ public class CastInMoviesController : ControllerBase
                 MovieDetailsId = castInMovie.MovieDetailsId,
                 MovieDetails = castInMovie.MovieDetails
             });
-            await _bll.SaveChangesAsync();
+            await _public.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -122,11 +122,11 @@ public class CastInMoviesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<CastInMovie>> PostCastInMovie(CastInMovie castInMovie)
     {
-        _bll.CastInMovie.Add(new App.BLL.DTO.CastInMovie
+        _public.CastInMovie.Add(new CastInMovie
         {
             Id = castInMovie.Id,
             CastRoleId = castInMovie.CastRoleId,
-            CastRole = new App.BLL.DTO.CastRole
+            CastRole = new CastRole
             {
                 Id = castInMovie.CastRole!.Id,
                 Naming = castInMovie.CastRole.Naming
@@ -136,7 +136,7 @@ public class CastInMoviesController : ControllerBase
             MovieDetailsId = castInMovie.MovieDetailsId,
             MovieDetails = castInMovie.MovieDetails
         });
-        await _bll.SaveChangesAsync();
+        await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetCastInMovie",
             new {id = castInMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, castInMovie);
@@ -151,14 +151,14 @@ public class CastInMoviesController : ControllerBase
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteCastInMovie(Guid id)
     {
-        await _bll.CastInMovie.RemoveAsync(id);
-        await _bll.SaveChangesAsync();
+        await _public.CastInMovie.RemoveAsync(id);
+        await _public.SaveChangesAsync();
 
         return NoContent();
     }
 
     private async Task<bool> CastInMovieExists(Guid id)
     {
-        return await _bll.CastInMovie.ExistsAsync(id);
+        return await _public.CastInMovie.ExistsAsync(id);
     }
 }

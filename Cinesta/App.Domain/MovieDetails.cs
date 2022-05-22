@@ -10,7 +10,7 @@ public class MovieDetails : DomainEntityMetaId
 
     [Column(TypeName = "jsonb")] public LangStr Title { get; set; } = new();
 
-    public DateTime Released { get; set; }
+    [DataType(DataType.Date)] public DateTime Released { get; set; }
 
     [MaxLength(250)]
     [Column(TypeName = "jsonb")]

@@ -6,26 +6,22 @@ namespace App.BLL.DTO;
 
 public class Video : DomainEntityId
 {
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Season))]
     public int? Season { get; set; }
 
-    [Column(TypeName = "jsonb")]
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Title))]
-    public LangStr Title { get; set; } = new();
-
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(FileUri))]
     [MaxLength(100)]
+    [Column(TypeName = "jsonb")]
+    public LangStr Title { get; set; } = new();
+    
+    [MaxLength(150)]
     public string FileUri { get; set; } = default!;
-
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Duration))]
-    public TimeOnly Duration { get; set; }
+    
+    [DataType(DataType.Time)] public DateTime Duration { get; set; }
 
     [Column(TypeName = "jsonb")]
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Description))]
+    [MaxLength(250)]
     public LangStr Description { get; set; } = new();
 
     public Guid? MovieDetailsId { get; set; }
-
-    [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(MovieDetails))]
+    
     public MovieDetails? MovieDetails { get; set; }
 }

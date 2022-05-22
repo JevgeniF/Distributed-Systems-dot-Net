@@ -10,6 +10,7 @@ public class UserRating : DomainEntityId
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.UserRating), Name = nameof(Rating))]
     public double Rating { get; set; }
 
+    [MaxLength(500)]
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.UserRating), Name = nameof(Comment))]
     public LangStr Comment { get; set; } = new();

@@ -7,10 +7,12 @@ namespace App.Public.DTO.v1;
 
 public class Subscription : DomainEntityId
 {
+    [MaxLength(100)]
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.User.Subscription), Name = nameof(Naming))]
     public LangStr Naming { get; set; } = new();
 
+    [MaxLength(250)]
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.User.Subscription), Name = nameof(Description))]
     public LangStr Description { get; set; } = new();

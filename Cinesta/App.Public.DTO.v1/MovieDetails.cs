@@ -6,7 +6,7 @@ namespace App.Public.DTO.v1;
 
 public class MovieDetails : DomainEntityId
 {
-    [MaxLength(100)]
+    [MaxLength(150)]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(PosterUri))]
     public string PosterUri { get; set; } = default!;
 
@@ -15,9 +15,9 @@ public class MovieDetails : DomainEntityId
     public LangStr Title { get; set; } = new();
 
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Released))]
-    public DateTime Released { get; set; }
+    [DataType(DataType.Date)] public DateTime Released { get; set; }
 
-    [MaxLength(250)]
+    [MaxLength(500)]
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Description))]
     public LangStr Description { get; set; } = new();

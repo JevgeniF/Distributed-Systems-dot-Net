@@ -7,21 +7,19 @@ namespace App.DAL.DTO;
 
 public class Subscription : DomainEntityId
 {
+    [MaxLength(100)]
     [Column(TypeName = "jsonb")]
-    [Display(ResourceType = typeof(Resources.App.Domain.User.Subscription), Name = nameof(Naming))]
     public LangStr Naming { get; set; } = new();
 
+    [MaxLength(250)]
     [Column(TypeName = "jsonb")]
-    [Display(ResourceType = typeof(Resources.App.Domain.User.Subscription), Name = nameof(Description))]
     public LangStr Description { get; set; } = new();
 
     public int ProfilesCount { get; set; }
-
-    [Display(ResourceType = typeof(Resources.App.Domain.User.Subscription), Name = nameof(Price))]
+    
     public double Price { get; set; }
 
     public Guid AppUserId { get; set; }
-
-    [Display(ResourceType = typeof(Resources.App.Domain.User.Subscription), Name = nameof(AppUser))]
+    
     public AppUser? AppUser { get; set; }
 }

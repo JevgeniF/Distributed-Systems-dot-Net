@@ -9,18 +9,20 @@ public class Video : DomainEntityId
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Season))]
     public int? Season { get; set; }
 
+    [MaxLength(100)]
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Title))]
     public LangStr Title { get; set; } = new();
 
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(FileUri))]
-    [MaxLength(100)]
+    [MaxLength(150)]
     public string FileUri { get; set; } = default!;
 
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Duration))]
-    public DateTime Duration { get; set; }
+    [DataType(DataType.Time)] public DateTime Duration { get; set; }
 
     [Column(TypeName = "jsonb")]
+    [MaxLength(250)]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Description))]
     public LangStr Description { get; set; } = new();
 

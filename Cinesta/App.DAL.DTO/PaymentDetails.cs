@@ -7,22 +7,17 @@ namespace App.DAL.DTO;
 public class PaymentDetails : DomainEntityId
 {
     [MaxLength(25)]
-    [Display(ResourceType = typeof(Resources.App.Domain.User.PaymentDetails), Name = nameof(CardType))]
     public string CardType { get; set; } = default!;
 
-    [MaxLength(16)]
-    [Display(ResourceType = typeof(Resources.App.Domain.User.PaymentDetails), Name = nameof(CardNumber))]
+    [MinLength(16)][MaxLength(16)]
     public string CardNumber { get; set; } = default!;
+    
+    [DataType(DataType.Date)] public DateTime ValidDate { get; set; }
 
-    [Display(ResourceType = typeof(Resources.App.Domain.User.PaymentDetails), Name = nameof(ValidDate))]
-    public DateTime ValidDate { get; set; }
-
-    [MaxLength(3)]
-    [Display(ResourceType = typeof(Resources.App.Domain.User.PaymentDetails), Name = nameof(SecurityCode))]
+    [MinLength(3)][MaxLength(3)]
     public string SecurityCode { get; set; } = default!;
 
     public Guid AppUserId { get; set; }
-
-    [Display(ResourceType = typeof(Resources.App.Domain.User.PaymentDetails), Name = nameof(AppUser))]
+    
     public AppUser? AppUser { get; set; }
 }

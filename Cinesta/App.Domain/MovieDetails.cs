@@ -6,13 +6,13 @@ namespace App.Domain;
 
 public class MovieDetails : DomainEntityMetaId
 {
-    [MaxLength(100)] public string PosterUri { get; set; } = default!;
+    [MaxLength(150)] public string PosterUri { get; set; } = default!;
 
     [Column(TypeName = "jsonb")] public LangStr Title { get; set; } = new();
 
     [DataType(DataType.Date)] public DateTime Released { get; set; }
 
-    [MaxLength(250)]
+    [MaxLength(500)]
     [Column(TypeName = "jsonb")]
     public LangStr Description { get; set; } = new();
 

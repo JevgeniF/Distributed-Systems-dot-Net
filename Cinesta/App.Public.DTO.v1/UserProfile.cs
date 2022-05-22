@@ -6,11 +6,11 @@ namespace App.Public.DTO.v1;
 
 public class UserProfile : DomainEntityId
 {
-    [MaxLength(100)]
+    [MaxLength(150)]
     [Display(ResourceType = typeof(Resources.App.Domain.Profile.UserProfile), Name = nameof(IconUri))]
     public string IconUri { get; set; } = default!;
 
-    [MaxLength(25)]
+    [MaxLength(50)]
     [Display(ResourceType = typeof(Resources.App.Domain.Profile.UserProfile), Name = nameof(Name))]
     public string Name { get; set; } = default!;
 

@@ -5,11 +5,9 @@ namespace App.BLL.DTO;
 
 public class Person : DomainEntityId
 {
-    [MaxLength(25)]
-    [Display(ResourceType = typeof(Resources.App.Domain.Common.Person), Name = nameof(Name))]
+    [MaxLength(50)]
     public string Name { get; set; } = default!;
 
-    [MaxLength(25)]
-    [Display(ResourceType = typeof(Resources.App.Domain.Common.Person), Name = nameof(Surname))]
+    [MaxLength(50)]
     public string Surname { get; set; } = default!;
 }

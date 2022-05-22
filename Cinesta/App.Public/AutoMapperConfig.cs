@@ -1,4 +1,5 @@
 ﻿using App.Public.DTO.v1;
+using App.Public.DTO.v1.Identity;
 using AutoMapper;
 
 namespace App.Public;
@@ -24,6 +25,6 @@ public class AutoMapperConfig : Profile
         CreateMap<UserRating, BLL.DTO.UserRating>().ReverseMap();
         CreateMap<UserSubscription, BLL.DTO.UserSubscription>().ReverseMap();
         CreateMap<Video, BLL.DTO.Video>().ReverseMap();
-        //CreateMap<AppUser, BLL.DTO.Identity.AppUser>().ReverseMap();
+        CreateMap<AppUser, BLL.DTO.Identity.AppUser>().ReverseMap();
     }
 }

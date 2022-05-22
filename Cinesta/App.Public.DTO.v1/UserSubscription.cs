@@ -1,4 +1,5 @@
-﻿using App.BLL.DTO.Identity;
+﻿
+using App.Public.DTO.v1.Identity;
 using Base.Domain;
 
 namespace App.Public.DTO.v1;

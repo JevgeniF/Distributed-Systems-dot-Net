@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
+using WebApp.SwaggerExamples;
 
 namespace WebApp.ApiControllers;
 
@@ -33,13 +35,31 @@ public class CastInMoviesController : ControllerBase
     /// Get cast (actors, directors, etc) for all movies in database.
     /// </summary>
     /// <returns>List of cast for movies</returns>
+    /// <example>[{"id": "95f44037-90dd-4224-bf80-c65f44a01c9b"}]</example>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<CastInMovie>), 200)]
+    [ProducesResponseType(typeof(object), 200)]
+    [SwaggerResponseExample(200, typeof(GetListCastInMovieExample))]
     [HttpGet]
-    public async Task<IEnumerable<CastInMovie>> GetCastInMovies()
+    public async Task<IEnumerable<object>> GetCastInMovies()
     {
-        return await _public.CastInMovie.IncludeGetAllAsync();
+        return (await _public.CastInMovie.IncludeGetAllAsync())
+            .Select(c => new 
+            {
+                c.Id,
+                CastRole = new CastRole {
+                Id = c.CastRoleId,
+                Naming = c.CastRole!.Naming
+                },
+                Person = new Person {
+                Id = c.PersonId,
+                Name = c.Persons!.Name,
+                Surname = c.Persons.Surname
+                },
+                MovieDetails = new {
+                Id = c.MovieDetailsId, c.MovieDetails!.Title
+                }
+            });
     }
 
     // GET: api/CastInMovies/5
@@ -52,6 +72,7 @@ public class CastInMoviesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(CastInMovie), 200)]
     [ProducesResponseType(404)]
+    [SwaggerResponseExample(200, typeof(GetCastInMovieExample))]
     [HttpGet("{id}")]
     public async Task<ActionResult<CastInMovie>> GetCastInMovie(Guid id)
     {
@@ -73,6 +94,7 @@ public class CastInMoviesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(CastInMovie),typeof(PostCastInMovieExample))]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutCastInMovie(Guid id, CastInMovie castInMovie)
@@ -103,18 +125,28 @@ public class CastInMoviesController : ControllerBase
     /// <returns>Nothing</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(CastInMovie), 201)]
+    [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(CastInMovie),typeof(PostCastInMovieExample))]
+    [SwaggerResponseExample(200, typeof(PostResponseCastInMovieExample))]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<CastInMovie>> PostCastInMovie(CastInMovie castInMovie)
+    public async Task<ActionResult<object>> PostCastInMovie(CastInMovie castInMovie)
     {
         castInMovie.Id = Guid.NewGuid();
         _public.CastInMovie.Add(castInMovie);
         await _public.SaveChangesAsync();
 
+        var res = new
+        {
+            castInMovie.Id,
+            castInMovie.CastRoleId,
+            castInMovie.PersonId,
+            castInMovie.MovieDetailsId
+        };
+
         return CreatedAtAction("GetCastInMovie",
-            new {id = castInMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, castInMovie);
+            new {id = castInMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
     }
 
     // DELETE: api/CastInMovies/5

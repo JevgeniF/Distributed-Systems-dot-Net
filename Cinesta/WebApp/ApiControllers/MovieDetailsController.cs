@@ -26,10 +26,30 @@ public class MovieDetailsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<MovieDetails>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<MovieDetails>> GetMovieDetails()
+    public async Task<IEnumerable<object>> GetMovieDetails()
     {
-        return await _public.MovieDetails.GetAllAsync();
-        
+
+        var res = await _public.MovieDetails.IncludeGetAllAsync();
+        return res.Select(m => new
+        {
+            Id = m.Id,
+            m.PosterUri,
+            m.Title,
+            m.Released,
+            m.Description,
+            AgeRating = new AgeRating
+            {
+                Id = m.AgeRatingId,
+                Naming = m.AgeRating!.Naming,
+                AllowedAge = m.AgeRating.AllowedAge
+            },
+            MovieType = new MovieType
+            {
+                Id = m.MovieTypeId,
+                Naming = m.MovieType!.Naming
+            }
+        });
+
     }
 
     // GET: api/MovieDetails/5

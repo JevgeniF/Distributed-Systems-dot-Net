@@ -1,5 +1,5 @@
 @using Base.Resources
-@model IEnumerable<App.Public.DTO.v1.AgeRating>
+@model IEnumerable<App.BLL.DTO.AgeRating>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,10 +14,10 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Naming)
+            @App.Resources.App.Domain.MovieStandardDetails.AgeRating.Naming
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.AllowedAge)
+            @App.Resources.App.Domain.MovieStandardDetails.AgeRating.AllowedAge
         </th>
         <th></th>
     </tr>

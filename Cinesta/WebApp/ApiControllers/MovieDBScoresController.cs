@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
+using WebApp.SwaggerExamples;
 
 namespace WebApp.ApiControllers;
 
@@ -24,11 +26,19 @@ public class MovieDBScoresController : ControllerBase
     // GET: api/MovieDBScores
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<MovieDbScore>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<object>), 200)]
+    [SwaggerResponseExample(200, typeof(GetListMovieDBScoreExample))]
     [HttpGet]
-    public async Task<IEnumerable<MovieDbScore>> GetMovieDbScores()
+    public async Task<IEnumerable<object>> GetMovieDbScores()
     {
-        return await _public.MovieDbScore.IncludeGetAllAsync();
+        return (await _public.MovieDbScore.IncludeGetAllAsync())
+            .Select(m => new
+            {
+                m.Id,
+                m.ImdbId,
+                m.Score,
+                m.MovieDetailsId
+            });
     }
 
     // GET: api/MovieDBScores/5
@@ -36,6 +46,7 @@ public class MovieDBScoresController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(MovieDbScore), 200)]
     [ProducesResponseType(404)]
+    [SwaggerResponseExample(200, typeof(GetMovieDBScoreExample))]
     [HttpGet("{id}")]
     public async Task<ActionResult<MovieDbScore>> GetMovieDbScore(Guid id)
     {
@@ -52,6 +63,7 @@ public class MovieDBScoresController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(MovieDbScore), typeof(PostMovieDBScoreExample))]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutMovieDbScore(Guid id, MovieDbScore movieDbScore)
@@ -77,18 +89,28 @@ public class MovieDBScoresController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(MovieDbScore), 201)]
+    [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(MovieDbScore), typeof(PostMovieDBScoreExample))]
+    [SwaggerResponseExample(201, typeof(PostMovieDBScoreExample))]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<MovieDbScore>> PostMovieDbScore(MovieDbScore movieDbScore)
+    public async Task<ActionResult<object>> PostMovieDbScore(MovieDbScore movieDbScore)
     {
         movieDbScore.Id = Guid.NewGuid();
         _public.MovieDbScore.Add(movieDbScore);
         await _public.SaveChangesAsync();
 
+        var res = new
+        {
+            movieDbScore.Id,
+            movieDbScore.ImdbId,
+            movieDbScore.Score,
+            movieDbScore.MovieDetailsId
+        };
+
         return CreatedAtAction("GetMovieDbScore",
-            new {id = movieDbScore.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieDbScore);
+            new {id = movieDbScore.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
     }
 
     // DELETE: api/MovieDBScores/5

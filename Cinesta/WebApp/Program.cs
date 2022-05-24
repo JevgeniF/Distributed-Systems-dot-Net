@@ -7,6 +7,7 @@ using App.Contracts.Public;
 using App.DAL.EF;
 using App.Domain.Identity;
 using App.Public;
+using App.Public.DTO.v1;
 using Helpers.WebApp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -15,8 +16,10 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WebApp;
+using WebApp.SwaggerExamples;
 using AutoMapperConfig = App.DAL.EF.AutoMapperConfig;
 
 
@@ -70,7 +73,9 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddVersionedApiExplorer(options => options.GroupNameFormat = "'v'VVV");
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerExamplesFromAssemblyOf<GetCastInMovieExample>();
+builder.Services.AddSwaggerGen(c => c.ExampleFilters());
+
 
 // CORS
 builder.Services.AddCors(options =>

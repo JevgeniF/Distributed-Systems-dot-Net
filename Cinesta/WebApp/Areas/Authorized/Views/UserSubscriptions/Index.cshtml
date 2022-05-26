@@ -1,4 +1,4 @@
-@model IEnumerable<App.Public.DTO.v1.UserSubscription>
+@model IEnumerable<App.BLL.DTO.UserSubscription>
 
 @{
     ViewData["Title"] = "Index";
@@ -26,7 +26,7 @@
     {
         <tr>
             <td>
-                @(item.AppUser!.Name + " " + item.AppUser.Surname)
+                @Html.DisplayFor(modelItem => item.AppUser!.Name + " " + item.AppUser.Surname)
             </td>
             <td>
                 @item.Subscription!.Naming

@@ -1,7 +1,6 @@
-#pragma warning disable CS1591
 #nullable disable
-using App.Contracts.Public;
-using App.Public.DTO.v1;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,19 +11,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class SubscriptionsController : Controller
 {
-    private readonly ILogger<SubscriptionsController> _logger;
-    private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
-    public SubscriptionsController(IAppPublic appPublic, ILogger<SubscriptionsController> logger)
+    public SubscriptionsController(IAppBll bll)
     {
-        _public = appPublic;
-        _logger = logger;
+        _bll = bll;
     }
 
     // GET: Authorized/Subscriptions
     public async Task<IActionResult> Index()
     {
-        return View(await _public.Subscription.GetAllAsync());
+        return View(await _bll.Subscription.GetAllAsync());
     }
 
     // GET: Authorized/Subscriptions/Details/5
@@ -32,7 +29,7 @@ public class SubscriptionsController : Controller
     {
         if (id == null) return NotFound();
 
-        var subscription = await _public.Subscription.FirstOrDefaultAsync(id.Value);
+        var subscription = await _bll.Subscription.FirstOrDefaultAsync(id.Value);
         if (subscription == null) return NotFound();
 
         return View(subscription);
@@ -55,8 +52,9 @@ public class SubscriptionsController : Controller
     {
         if (ModelState.IsValid)
         {
-            _public.Subscription.Add(subscription);
-            await _public.SaveChangesAsync();
+            subscription.Id = Guid.NewGuid();
+            _bll.Subscription.Add(subscription);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -68,7 +66,7 @@ public class SubscriptionsController : Controller
     {
         if (id == null) return NotFound();
 
-        var subscription = await _public.Subscription.FirstOrDefaultAsync(id.Value);
+        var subscription = await _bll.Subscription.FirstOrDefaultAsync(id.Value);
         if (subscription == null) return NotFound();
         return View(subscription);
     }
@@ -88,8 +86,8 @@ public class SubscriptionsController : Controller
         {
             try
             {
-                _public.Subscription.Update(subscription);
-                await _public.SaveChangesAsync();
+                _bll.Subscription.Update(subscription);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -109,7 +107,7 @@ public class SubscriptionsController : Controller
     {
         if (id == null) return NotFound();
 
-        var subscription = await _public.Subscription.FirstOrDefaultAsync(id.Value);
+        var subscription = await _bll.Subscription.FirstOrDefaultAsync(id.Value);
         if (subscription == null) return NotFound();
 
         return View(subscription);
@@ -121,13 +119,13 @@ public class SubscriptionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _public.Subscription.RemoveAsync(id);
-        await _public.SaveChangesAsync();
+        await _bll.Subscription.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> SubscriptionExists(Guid id)
     {
-        return await _public.Subscription.ExistsAsync(id);
+        return await _bll.Subscription.ExistsAsync(id);
     }
 }

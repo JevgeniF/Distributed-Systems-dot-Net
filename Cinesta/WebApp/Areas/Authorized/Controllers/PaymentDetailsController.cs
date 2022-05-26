@@ -1,7 +1,6 @@
-#pragma warning disable CS1591
 #nullable disable
-using App.Contracts.Public;
-using App.Public.DTO.v1;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,32 +12,29 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class PaymentDetailsController : Controller
 {
-    private readonly ILogger<PaymentDetailsController> _logger;
-    private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
-    public PaymentDetailsController(IAppPublic appPublic, ILogger<PaymentDetailsController> logger)
+    public PaymentDetailsController(IAppBll bll)
     {
-        _public = appPublic;
-        _logger = logger;
+        _bll = bll;
     }
 
-    // GET: Authorized/PaymentDetails
+    // GET: Admin/PaymentDetails
     public async Task<IActionResult> Index()
     {
-        return View(await _public.PaymentDetails.IncludeGetByUserIdAsync(User.GetUserId()));
+        return View(await _bll.PaymentDetails.IncludeGetByUserIdAsync(User.GetUserId()));
     }
 
-    // GET: Authorized/PaymentDetails/Details/5
+    // GET: Admin/PaymentDetails/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var paymentDetails = await _public.PaymentDetails.FirstOrDefaultAsync(id.Value);
+        var paymentDetails = await _bll.PaymentDetails.FirstOrDefaultAsync(id.Value);
         if (paymentDetails == null) return NotFound();
 
         return View(paymentDetails);
     }
-
 
     // GET: PaymentDetails/Create
     public IActionResult Create()
@@ -53,11 +49,12 @@ public class PaymentDetailsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(PaymentDetails paymentDetails)
     {
-        paymentDetails.AppUserId = User.GetUserId();
         if (ModelState.IsValid)
         {
-            _public.PaymentDetails.Add(paymentDetails);
-            await _public.SaveChangesAsync();
+            paymentDetails.AppUserId = User.GetUserId();
+            paymentDetails.Id = Guid.NewGuid();
+            _bll.PaymentDetails.Add(paymentDetails);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -69,7 +66,7 @@ public class PaymentDetailsController : Controller
     {
         if (id == null) return NotFound();
 
-        var paymentDetails = await _public.PaymentDetails.FirstOrDefaultAsync(id.Value);
+        var paymentDetails = await _bll.PaymentDetails.FirstOrDefaultAsync(id.Value);
         if (paymentDetails == null) return NotFound();
         return View(paymentDetails);
     }
@@ -89,8 +86,8 @@ public class PaymentDetailsController : Controller
         {
             try
             {
-                _public.PaymentDetails.Update(paymentDetails);
-                await _public.SaveChangesAsync();
+                _bll.PaymentDetails.Update(paymentDetails);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -106,31 +103,30 @@ public class PaymentDetailsController : Controller
     }
 
 
-    // GET: Authorized/PaymentDetails/Delete/5
+    // GET: Admin/PaymentDetails/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var paymentDetails = await _public.PaymentDetails.FirstOrDefaultAsync(id.Value);
-
+        var paymentDetails = await _bll.PaymentDetails.FirstOrDefaultAsync(id.Value);
         if (paymentDetails == null) return NotFound();
 
         return View(paymentDetails);
     }
 
-    // POST: Authorized/PaymentDetails/Delete/5
+    // POST: Admin/PaymentDetails/Delete/5
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _public.PaymentDetails.RemoveAsync(id);
-        await _public.SaveChangesAsync();
+        await _bll.PaymentDetails.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> PaymentDetailsExists(Guid id)
     {
-        return await _public.PaymentDetails.ExistsAsync(id);
+        return await _bll.PaymentDetails.ExistsAsync(id);
     }
 }

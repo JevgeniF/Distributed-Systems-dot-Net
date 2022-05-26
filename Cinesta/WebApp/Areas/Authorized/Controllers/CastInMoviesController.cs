@@ -1,4 +1,3 @@
-#pragma warning disable CS1591
 #nullable disable
 using App.BLL.DTO;
 using App.Contracts.BLL;
@@ -14,16 +13,14 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class CastInMoviesController : Controller
 {
-    private readonly ILogger<CastInMoviesController> _logger;
     private readonly IAppBll _bll;
 
-    public CastInMoviesController(IAppBll bll, ILogger<CastInMoviesController> logger)
+    public CastInMoviesController(IAppBll bll)
     {
         _bll = bll;
-        _logger = logger;
     }
 
-    // GET: Authorized/CastInMovies
+    // GET: Admin/CastInMovies
     public async Task<IActionResult> Index()
     {
         return View(await _bll.CastInMovie.IncludeGetAllAsync());
@@ -39,7 +36,6 @@ public class CastInMoviesController : Controller
 
         return View(castInMovie);
     }
-
 
     // GET: CastInMovies/Create
     public async Task<IActionResult> Create()
@@ -60,11 +56,9 @@ public class CastInMoviesController : Controller
         return View(vm);
     }
 
-
     // POST: CastInMovies/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    // TODO: NAME + SURNAME in Person Select List
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CastInMovieCreateEditVM vm)
@@ -89,7 +83,6 @@ public class CastInMoviesController : Controller
         return View(vm);
     }
 
-
     // GET: CastInMovies/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
@@ -113,7 +106,6 @@ public class CastInMoviesController : Controller
             "FullName", vm.CastInMovie.PersonId);
         return View(vm);
     }
-
 
     // POST: CastInMovies/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -159,7 +151,6 @@ public class CastInMoviesController : Controller
     }
 
 
-
     // GET: Admin/CastInMovies/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
@@ -186,5 +177,4 @@ public class CastInMoviesController : Controller
     {
         return await _bll.CastInMovie.ExistsAsync(id);
     }
-
 }

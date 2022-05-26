@@ -1,4 +1,3 @@
-#pragma warning disable CS1591
 #nullable disable
 using App.BLL.DTO;
 using App.Contracts.BLL;
@@ -12,24 +11,21 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class AgeRatingsController : Controller
 {
-    private readonly ILogger<AgeRatingsController> _logger;
     private readonly IAppBll _bll;
 
-    public AgeRatingsController(IAppBll bll, ILogger<AgeRatingsController> logger)
+    public AgeRatingsController(IAppBll bll)
     {
-        _logger = logger;
         _bll = bll;
     }
 
-    // GET: Authorized/AgeRatings
+    // GET: Admin/AgeRatings
     public async Task<IActionResult> Index()
     {
         var result = await _bll.AgeRating.GetAllAsync();
         return View(result);
     }
 
-
-    // GET: Authorized/AgeRatings/Details/5
+    // GET: Admin/AgeRatings/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null) return NotFound();
@@ -40,8 +36,7 @@ public class AgeRatingsController : Controller
         return View(ageRating);
     }
 
-
-    // GET: Authorized/AgeRatings/Create
+    // GET: Admin/AgeRatings/Create
     public IActionResult Create()
     {
         return View();
@@ -67,8 +62,7 @@ public class AgeRatingsController : Controller
         return View(ageRating);
     }
 
-
-    // GET: Authorized/AgeRatings/Edit/5
+    // GET: Admin/AgeRatings/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id == null) return NotFound();
@@ -78,8 +72,7 @@ public class AgeRatingsController : Controller
         return View(ageRating);
     }
 
-
-    // POST: Authorized/AgeRatings/Edit/5
+    // POST: Admin/AgeRatings/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
@@ -110,8 +103,7 @@ public class AgeRatingsController : Controller
         return View(ageRating);
     }
 
-
-    // GET: Authorized/AgeRatings/Delete/5
+    // GET: Admin/AgeRatings/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id == null) return NotFound();
@@ -122,8 +114,7 @@ public class AgeRatingsController : Controller
         return View(ageRating);
     }
 
-
-    // POST: Authorized/AgeRatings/Delete/5
+    // POST: Admin/AgeRatings/Delete/5
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]

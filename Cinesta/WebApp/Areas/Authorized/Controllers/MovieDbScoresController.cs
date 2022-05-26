@@ -1,7 +1,6 @@
-#pragma warning disable CS1591
 #nullable disable
-using App.Contracts.Public;
-using App.Public.DTO.v1;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,27 +13,25 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class MovieDbScoresController : Controller
 {
-    private readonly ILogger<MovieDbScoresController> _logger;
-    private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
-    public MovieDbScoresController(IAppPublic appPublic, ILogger<MovieDbScoresController> logger)
+    public MovieDbScoresController(IAppBll bll)
     {
-        _public = appPublic;
-        _logger = logger;
+        _bll = bll;
     }
 
-    // GET: Authorized/MovieDbScores
+    // GET: Admin/MovieDbScores
     public async Task<IActionResult> Index()
     {
-        return View(await _public.MovieDbScore.IncludeGetAllAsync());
+        return View(await _bll.MovieDbScore.IncludeGetAllAsync());
     }
 
-    // GET: Authorized/MovieDbScores/Details/5
+    // GET: Admin/MovieDbScores/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var movieDbScore = await _public.MovieDbScore.IncludeFirstOrDefaultAsync(id.Value);
+        var movieDbScore = await _bll.MovieDbScore.IncludeFirstOrDefaultAsync(id.Value);
         if (movieDbScore == null) return NotFound();
 
         return View(movieDbScore);
@@ -45,9 +42,9 @@ public class MovieDbScoresController : Controller
     {
         var vm = new MovieDbScoreCreateEditVM
         {
-            MovieDetailsSelectList = new SelectList(
-                (await _public.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
-                nameof(MovieDetails.Id), nameof(MovieDetails.Title))
+            MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
+                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+                nameof(MovieDetails.Title))
         };
         return View(vm);
     }
@@ -61,36 +58,34 @@ public class MovieDbScoresController : Controller
     {
         if (ModelState.IsValid)
         {
-            _public.MovieDbScore.Add(vm.MovieDbScore!);
-            await _public.SaveChangesAsync();
+            _bll.MovieDbScore.Add(vm.MovieDbScore);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        vm.MovieDetailsSelectList = new SelectList(
-            (await _public.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieDbScore!.MovieDetailsId);
+        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
+            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
         return View(vm);
     }
-
 
     // GET: MovieDbScores/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var movieDbScore = await _public.MovieDbScore.IncludeFirstOrDefaultAsync(id.Value);
+        var movieDbScore = await _bll.MovieDbScore.FirstOrDefaultAsync(id.Value);
         if (movieDbScore == null) return NotFound();
 
         var vm = new MovieDbScoreCreateEditVM
         {
             MovieDbScore = movieDbScore
         };
-        vm.MovieDetailsSelectList = new SelectList(
-            (await _public.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
+        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
+            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
         return View(vm);
     }
-
 
     // POST: MovieDbScores/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -105,8 +100,8 @@ public class MovieDbScoresController : Controller
         {
             try
             {
-                _public.MovieDbScore.Update(movieDbScore);
-                await _public.SaveChangesAsync();
+                _bll.MovieDbScore.Update(movieDbScore);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -122,37 +117,37 @@ public class MovieDbScoresController : Controller
         {
             MovieDbScore = movieDbScore
         };
-        vm.MovieDetailsSelectList = new SelectList(
-            (await _public.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
-            nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
+        vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
+            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
         return View(vm);
     }
 
 
-    // GET: Authorized/MovieDbScores/Delete/5
+    // GET: Admin/MovieDbScores/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var movieDbScore = await _public.MovieDbScore.IncludeFirstOrDefaultAsync(id.Value);
+        var movieDbScore = await _bll.MovieDbScore.IncludeFirstOrDefaultAsync(id.Value);
         if (movieDbScore == null) return NotFound();
 
         return View(movieDbScore);
     }
 
-    // POST: Authorized/MovieDbScores/Delete/5
+    // POST: Admin/MovieDbScores/Delete/5
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _public.MovieDbScore.RemoveAsync(id);
-        await _public.SaveChangesAsync();
+        await _bll.MovieDbScore.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> MovieDbScoreExists(Guid id)
     {
-        return await _public.MovieDbScore.ExistsAsync(id);
+        return await _bll.MovieDbScore.ExistsAsync(id);
     }
 }

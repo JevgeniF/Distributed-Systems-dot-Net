@@ -1,5 +1,4 @@
-﻿#pragma warning disable CS1591
-using App.Public.DTO.v1;
+﻿using App.BLL.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApp.Areas.Authorized.ViewModels;

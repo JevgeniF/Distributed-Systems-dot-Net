@@ -1,5 +1,5 @@
 @using Base.Resources
-@model IEnumerable<App.Public.DTO.v1.Genre>
+@model IEnumerable<App.BLL.DTO.Genre>
 
 @{
     ViewData["Title"] = "Index";
@@ -20,7 +20,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in Model!)
     {
         <tr>
             <td>

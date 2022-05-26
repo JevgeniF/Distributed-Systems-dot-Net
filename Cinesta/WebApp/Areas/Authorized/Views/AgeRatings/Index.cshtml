@@ -14,16 +14,16 @@
     <thead>
     <tr>
         <th>
-            @App.Resources.App.Domain.MovieStandardDetails.AgeRating.Naming
+            @Html.DisplayNameFor(model => model.Naming)
         </th>
         <th>
-            @App.Resources.App.Domain.MovieStandardDetails.AgeRating.AllowedAge
+            @Html.DisplayNameFor(model => model.AllowedAge)
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (var item in Model!)
     {
         <tr>
             <td>

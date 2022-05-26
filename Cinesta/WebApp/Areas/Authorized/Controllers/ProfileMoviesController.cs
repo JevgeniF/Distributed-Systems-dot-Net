@@ -1,6 +1,5 @@
-#pragma warning disable CS1591
 #nullable disable
-using App.Contracts.Public;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,20 +10,18 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator,user")]
 public class ProfileMoviesController : Controller
 {
-    private readonly ILogger<ProfileMoviesController> _logger;
-    private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
-    public ProfileMoviesController(IAppPublic appPublic, ILogger<ProfileMoviesController> logger)
+    public ProfileMoviesController(IAppBll bll)
     {
-        _public = appPublic;
-        _logger = logger;
+        _bll = bll;
     }
 
-    // GET: Authorized/ProfileMovies
+    // GET: Admin/ProfileMovies
     public async Task<IActionResult> Index()
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
-        var profile = await _public.UserProfile.FirstOrDefaultAsync(profileId);
-        return View(await _public.MovieDetails.IncludeGetByAgeAsync(profile!.Age));
+        var profile = await _bll.UserProfile.FirstOrDefaultAsync(profileId);
+        return View(await _bll.MovieDetails.IncludeGetByAgeAsync(profile!.Age));
     }
 }

@@ -1,7 +1,6 @@
-#pragma warning disable CS1591
 #nullable disable
-using App.Contracts.Public;
-using App.Public.DTO.v1;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,39 +11,37 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class GenresController : Controller
 {
-    private readonly ILogger<GenresController> _logger;
-    private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
-    public GenresController(IAppPublic appPublic, ILogger<GenresController> logger)
+    public GenresController(IAppBll bll)
     {
-        _public = appPublic;
-        _logger = logger;
+        _bll = bll;
     }
 
-    // GET: Authorized/Genres
+    // GET: Admin/Genres
     public async Task<IActionResult> Index()
     {
-        return View(await _public.Genre.GetAllAsync());
+        return View(await _bll.Genre.GetAllAsync());
     }
 
-    // GET: Authorized/Genres/Details/5
+    // GET: Admin/Genres/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var genre = await _public.Genre.FirstOrDefaultAsync(id.Value);
+        var genre = await _bll.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
 
         return View(genre);
     }
 
-    // GET: Authorized/Genres/Create
+    // GET: Admin/Genres/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: Authorized/Genres/Create
+    // POST: Admin/Genres/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
@@ -54,25 +51,25 @@ public class GenresController : Controller
         if (ModelState.IsValid)
         {
             genre.Id = Guid.NewGuid();
-            _public.Genre.Add(genre);
-            await _public.SaveChangesAsync();
+            _bll.Genre.Add(genre);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         return View(genre);
     }
 
-    // GET: Authorized/Genres/Edit/5
+    // GET: Admin/Genres/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var genre = await _public.Genre.FirstOrDefaultAsync(id.Value);
+        var genre = await _bll.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
         return View(genre);
     }
 
-    // POST: Authorized/Genres/Edit/5
+    // POST: Admin/Genres/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
@@ -85,7 +82,7 @@ public class GenresController : Controller
 
         if (ModelState.IsValid)
         {
-            var genreFromDb = await _public.Genre.FirstOrDefaultAsync(id);
+            var genreFromDb = await _bll.Genre.FirstOrDefaultAsync(id);
             if (genreFromDb == null) return NotFound();
 
             try
@@ -93,8 +90,8 @@ public class GenresController : Controller
                 genreFromDb.Naming.SetTranslation(genre.Naming);
                 genre.Naming = genreFromDb.Naming;
 
-                _public.Genre.Update(genre);
-                await _public.SaveChangesAsync();
+                _bll.Genre.Update(genre);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -109,32 +106,30 @@ public class GenresController : Controller
         return View(genre);
     }
 
-
-    // GET: Authorized/Genres/Delete/5
+    // GET: Admin/Genres/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var genre = await _public.Genre.FirstOrDefaultAsync(id.Value);
+        var genre = await _bll.Genre.FirstOrDefaultAsync(id.Value);
         if (genre == null) return NotFound();
 
         return View(genre);
     }
 
-
-    // POST: Authorized/Genres/Delete/5
+    // POST: Admin/Genres/Delete/5
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _public.Genre.RemoveAsync(id);
-        await _public.SaveChangesAsync();
+        await _bll.Genre.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> GenreExists(Guid id)
     {
-        return await _public.Genre.ExistsAsync(id);
+        return await _bll.Genre.ExistsAsync(id);
     }
 }

@@ -1,7 +1,6 @@
-#pragma warning disable CS1591
 #nullable disable
-using App.Contracts.Public;
-using App.Public.DTO.v1;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,19 +11,17 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class PersonsController : Controller
 {
-    private readonly ILogger<PersonsController> _logger;
-    private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
-    public PersonsController(IAppPublic appPublic, ILogger<PersonsController> logger)
+    public PersonsController(IAppBll bll)
     {
-        _public = appPublic;
-        _logger = logger;
+        _bll = bll;
     }
 
     // GET: Admin/Persons
     public async Task<IActionResult> Index()
     {
-        return View(await _public.Person.GetAllAsync());
+        return View(await _bll.Person.GetAllAsync());
     }
 
     // GET: Admin/Persons/Details/5
@@ -32,7 +29,7 @@ public class PersonsController : Controller
     {
         if (id == null) return NotFound();
 
-        var person = await _public.Person.FirstOrDefaultAsync(id.Value);
+        var person = await _bll.Person.FirstOrDefaultAsync(id.Value);
         if (person == null) return NotFound();
 
         return View(person);
@@ -56,8 +53,8 @@ public class PersonsController : Controller
         if (ModelState.IsValid)
         {
             person.Id = Guid.NewGuid();
-            _public.Person.Add(person);
-            await _public.SaveChangesAsync();
+            _bll.Person.Add(person);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -69,7 +66,7 @@ public class PersonsController : Controller
     {
         if (id == null) return NotFound();
 
-        var person = await _public.Person.FirstOrDefaultAsync(id.Value);
+        var person = await _bll.Person.FirstOrDefaultAsync(id.Value);
         if (person == null) return NotFound();
         return View(person);
     }
@@ -89,8 +86,8 @@ public class PersonsController : Controller
         {
             try
             {
-                _public.Person.Update(person);
-                await _public.SaveChangesAsync();
+                _bll.Person.Update(person);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -110,7 +107,7 @@ public class PersonsController : Controller
     {
         if (id == null) return NotFound();
 
-        var person = await _public.Person.FirstOrDefaultAsync(id.Value);
+        var person = await _bll.Person.FirstOrDefaultAsync(id.Value);
         if (person == null) return NotFound();
 
         return View(person);
@@ -122,13 +119,13 @@ public class PersonsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _public.Person.RemoveAsync(id);
-        await _public.SaveChangesAsync();
+        await _bll.Person.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> PersonExists(Guid id)
     {
-        return await _public.Person.ExistsAsync(id);
+        return await _bll.Person.ExistsAsync(id);
     }
 }

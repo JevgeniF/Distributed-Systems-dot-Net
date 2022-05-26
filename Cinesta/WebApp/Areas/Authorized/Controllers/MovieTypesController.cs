@@ -1,7 +1,6 @@
-#pragma warning disable CS1591
 #nullable disable
-using App.Contracts.Public;
-using App.Public.DTO.v1;
+using App.BLL.DTO;
+using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,39 +11,38 @@ namespace WebApp.Areas.Authorized.Controllers;
 [Authorize(Roles = "admin,moderator")]
 public class MovieTypesController : Controller
 {
-    private readonly ILogger<MovieTypesController> _logger;
-    private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
-    public MovieTypesController(IAppPublic appPublic, ILogger<MovieTypesController> logger)
+    public MovieTypesController(IAppBll bll)
     {
-        _public = appPublic;
-        _logger = logger;
+        _bll = bll;
     }
 
-    // GET: Authorized/MovieTypes
+    // GET: Admin/MovieTypes
     public async Task<IActionResult> Index()
     {
-        return View(await _public.MovieType.GetAllAsync());
+        return View(await _bll.MovieType.GetAllAsync());
     }
 
-    // GET: Authorized/MovieTypes/Details/5
+    // GET: Admin/MovieTypes/Details/5
     public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var movieType = await _public.MovieType.FirstOrDefaultAsync(id.Value);
+        var movieType = await _bll.MovieType
+            .FirstOrDefaultAsync(id.Value);
         if (movieType == null) return NotFound();
 
         return View(movieType);
     }
 
-    // GET: Authorized/MovieTypes/Create
+    // GET: Admin/MovieTypes/Create
     public IActionResult Create()
     {
         return View();
     }
 
-    // POST: Authorized/MovieTypes/Create
+    // POST: Admin/MovieTypes/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
@@ -56,25 +54,25 @@ public class MovieTypesController : Controller
         if (ModelState.IsValid)
         {
             movieType.Id = Guid.NewGuid();
-            _public.MovieType.Add(movieType);
-            await _public.SaveChangesAsync();
+            _bll.MovieType.Add(movieType);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         return View(movieType);
     }
 
-    // GET: Authorized/MovieTypes/Edit/5
+    // GET: Admin/MovieTypes/Edit/5
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var movieType = await _public.MovieType.FirstOrDefaultAsync(id.Value);
+        var movieType = await _bll.MovieType.FirstOrDefaultAsync(id.Value);
         if (movieType == null) return NotFound();
         return View(movieType);
     }
 
-    // POST: Authorized/MovieTypes/Edit/5
+    // POST: Admin/MovieTypes/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
@@ -87,7 +85,7 @@ public class MovieTypesController : Controller
 
         if (ModelState.IsValid)
         {
-            var movieTypeFromDb = await _public.MovieType.FirstOrDefaultAsync(id);
+            var movieTypeFromDb = await _bll.MovieType.FirstOrDefaultAsync(id);
             if (movieTypeFromDb == null) return NotFound();
 
             try
@@ -95,8 +93,8 @@ public class MovieTypesController : Controller
                 movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
                 movieType.Naming = movieTypeFromDb.Naming;
 
-                _public.MovieType.Update(movieType);
-                await _public.SaveChangesAsync();
+                _bll.MovieType.Update(movieType);
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -111,30 +109,31 @@ public class MovieTypesController : Controller
         return View(movieType);
     }
 
-    // GET: Authorized/MovieTypes/Delete/5
+    // GET: Admin/MovieTypes/Delete/5
     public async Task<IActionResult> Delete(Guid? id)
     {
         if (id == null) return NotFound();
 
-        var movieType = await _public.MovieType.FirstOrDefaultAsync(id.Value);
+        var movieType = await _bll.MovieType
+            .FirstOrDefaultAsync(id.Value);
         if (movieType == null) return NotFound();
 
         return View(movieType);
     }
 
-    // POST: Authorized/MovieTypes/Delete/5
+    // POST: Admin/MovieTypes/Delete/5
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _public.MovieType.RemoveAsync(id);
-        await _public.SaveChangesAsync();
+        await _bll.MovieType.RemoveAsync(id);
+        await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private async Task<bool> MovieTypeExists(Guid id)
     {
-        return await _public.MovieType.ExistsAsync(id);
+        return await _bll.MovieType.ExistsAsync(id);
     }
 }

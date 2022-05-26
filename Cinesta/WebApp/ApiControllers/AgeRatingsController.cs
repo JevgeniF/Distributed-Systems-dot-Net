@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebApp.ApiControllers;
 
 /// <summary>
-/// Controller for getting, adding, editing or deletion of movies age ratings system.
+///     Controller for getting, adding, editing or deletion of movies age ratings system.
 /// </summary>
 [ApiController]
 [ApiVersion("1.0")]
@@ -20,7 +20,7 @@ public class AgeRatingsController : ControllerBase
     private readonly IAppPublic _public;
 
     /// <summary>
-    /// Movies age ratings controller's constructor.
+    ///     Movies age ratings controller's constructor.
     /// </summary>
     /// <param name="appPublic">Takes in public layer interface</param>
     public AgeRatingsController(IAppPublic appPublic)
@@ -30,7 +30,7 @@ public class AgeRatingsController : ControllerBase
 
     // GET: api/AgeRatings
     /// <summary>
-    /// Returns list of age ratings from API database.
+    ///     Returns list of age ratings from API database.
     /// </summary>
     /// <returns>List of age ratings</returns>
     [Produces("application/json")]
@@ -45,7 +45,7 @@ public class AgeRatingsController : ControllerBase
 
     // GET: api/AgeRatings/5
     /// <summary>
-    /// Returns one specific age rating queried by id or error 404 if not found.
+    ///     Returns one specific age rating queried by id or error 404 if not found.
     /// </summary>
     /// <param name="id">Age rating entity id in API database</param>
     /// <returns>Age rating entity which matches to the id</returns>
@@ -66,7 +66,7 @@ public class AgeRatingsController : ControllerBase
     // PUT: api/AgeRatings/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     /// <summary>
-    /// Edits one specific age rating entity in API database or returns error 403 in case of fail.
+    ///     Edits one specific age rating entity in API database or returns error 403 in case of fail.
     /// </summary>
     /// <param name="id">Age rating entity id in API database</param>
     /// <param name="ageRating">Updated age rating entity</param>
@@ -97,7 +97,7 @@ public class AgeRatingsController : ControllerBase
     // POST: api/AgeRatings
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     /// <summary>
-    /// Adds new age rating entity to API database.
+    ///     Adds new age rating entity to API database.
     /// </summary>
     /// <param name="ageRating">New age rating entity</param>
     /// <returns>Nothing</returns>
@@ -119,7 +119,7 @@ public class AgeRatingsController : ControllerBase
 
     // DELETE: api/AgeRatings/5
     /// <summary>
-    /// Deletes one specific age rating entity from API database, queried by id.
+    ///     Deletes one specific age rating entity from API database, queried by id.
     /// </summary>
     /// <param name="id">Id of age rating entity to delete</param>
     /// <returns>Nothing</returns>

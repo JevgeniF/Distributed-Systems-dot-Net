@@ -1,8 +1,4 @@
-﻿using App.Public.DTO.v1;
-using Base.Domain;
-using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Examples;
-using Subscription = App.DAL.DTO.Subscription;
+﻿using Swashbuckle.AspNetCore.Filters;
 
 namespace WebApp.SwaggerExamples;
 
@@ -22,7 +18,7 @@ public class GetUserSubscriptionExample : IExamplesProvider<object>
             Subscription = new
             {
                 SubscriptionId = "85344f7c-4af4-4210-a5ae-f23392530ea0",
-                Naming =  new
+                Naming = new
                 {
                     en = "VIP",
                     ee = "VIP",

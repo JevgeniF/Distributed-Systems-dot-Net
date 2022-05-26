@@ -1,9 +1,8 @@
 ﻿using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Examples;
 
 namespace WebApp.SwaggerExamples;
 
-public class GetListCastRoleExample: IExamplesProvider<IEnumerable<object>>
+public class GetListCastRoleExample : IExamplesProvider<IEnumerable<object>>
 {
     public IEnumerable<object> GetExamples()
     {

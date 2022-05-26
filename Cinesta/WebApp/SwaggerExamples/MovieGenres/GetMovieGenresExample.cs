@@ -1,7 +1,4 @@
-﻿using App.Public.DTO.v1;
-using Base.Domain;
-using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Examples;
+﻿using Swashbuckle.AspNetCore.Filters;
 
 namespace WebApp.SwaggerExamples;
 
@@ -22,7 +19,8 @@ public class GetMovieGenresExample : IExamplesProvider<object>
                     ru = "Крепкий орешек"
                 }
             },
-            Genre = new {
+            Genre = new
+            {
                 Id = "2aabbb3f-0dae-4846-940e-ce9be744f1a9",
                 Title = new
                 {

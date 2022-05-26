@@ -2,7 +2,7 @@
 
 namespace WebApp.SwaggerExamples;
 
-public class PostUserRatingExample: IExamplesProvider<object>
+public class PostUserRatingExample : IExamplesProvider<object>
 {
     public object GetExamples()
     {

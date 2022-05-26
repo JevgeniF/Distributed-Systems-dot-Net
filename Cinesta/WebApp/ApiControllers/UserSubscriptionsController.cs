@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Filters;
 using WebApp.SwaggerExamples;
-using Subscription = App.BLL.DTO.Subscription;
 
 namespace WebApp.ApiControllers;
 
@@ -33,7 +32,7 @@ public class UserSubscriptionsController : ControllerBase
     public async Task<object> GetUserSubscriptionByUserId()
     {
         var res = await _public.UserSubscription.IncludeGetByUserIdAsync(User.GetUserId());
-        if (res == null) return new {};
+        if (res == null) return new { };
         return new
         {
             res.Id,

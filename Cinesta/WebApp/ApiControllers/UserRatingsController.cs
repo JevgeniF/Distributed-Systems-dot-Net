@@ -130,7 +130,7 @@ public class UserRatingsController : ControllerBase
         userRating.Id = Guid.NewGuid();
         _public.UserRating.Add(userRating);
         await _public.SaveChangesAsync();
-        
+
         var res = new
         {
             userRating.Id,

@@ -2,7 +2,7 @@
 
 namespace WebApp.SwaggerExamples;
 
-public class PostPaymentDetailsExample: IExamplesProvider<object>
+public class PostPaymentDetailsExample : IExamplesProvider<object>
 {
     public object GetExamples()
     {

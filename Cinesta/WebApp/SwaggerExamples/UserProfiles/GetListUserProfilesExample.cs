@@ -1,10 +1,8 @@
-﻿using App.Domain.Identity;
-using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Examples;
+﻿using Swashbuckle.AspNetCore.Filters;
 
 namespace WebApp.SwaggerExamples;
 
-public class GetListUserProfilesExample: IExamplesProvider<IEnumerable<object>>
+public class GetListUserProfilesExample : IExamplesProvider<IEnumerable<object>>
 {
     public IEnumerable<object> GetExamples()
     {

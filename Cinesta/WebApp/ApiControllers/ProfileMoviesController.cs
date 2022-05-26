@@ -1,11 +1,8 @@
 #nullable disable
-using System.Diagnostics;
 using App.Contracts.Public;
-using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
 using WebApp.SwaggerExamples;
 
@@ -34,8 +31,8 @@ public class ProfileMoviesController : ControllerBase
     {
         var profile = await _public.UserProfile.FirstOrDefaultAsync(profileId);
 
-        if (profile == null) return Array.Empty<object>(); 
-            return (await _public.MovieDetails.IncludeGetByAgeAsync(profile.Age))
+        if (profile == null) return Array.Empty<object>();
+        return (await _public.MovieDetails.IncludeGetByAgeAsync(profile.Age))
             .Select(m => new
             {
                 m.Id,

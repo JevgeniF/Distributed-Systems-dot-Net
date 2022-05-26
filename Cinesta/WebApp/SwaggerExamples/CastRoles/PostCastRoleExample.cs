@@ -2,7 +2,7 @@
 
 namespace WebApp.SwaggerExamples;
 
-public class PostCastRoleExample: IExamplesProvider<object>
+public class PostCastRoleExample : IExamplesProvider<object>
 {
     public object GetExamples()
     {

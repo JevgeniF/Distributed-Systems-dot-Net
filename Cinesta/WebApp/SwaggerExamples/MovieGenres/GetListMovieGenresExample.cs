@@ -1,9 +1,8 @@
 ﻿using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Examples;
 
 namespace WebApp.SwaggerExamples;
 
-public class GetListMovieGenresExample: IExamplesProvider<IEnumerable<object>>
+public class GetListMovieGenresExample : IExamplesProvider<IEnumerable<object>>
 {
     public IEnumerable<object> GetExamples()
     {
@@ -22,7 +21,8 @@ public class GetListMovieGenresExample: IExamplesProvider<IEnumerable<object>>
                         ru = "Крепкий орешек"
                     }
                 },
-                Genre = new {
+                Genre = new
+                {
                     Id = "2aabbb3f-0dae-4846-940e-ce9be744f1a9",
                     Title = new
                     {

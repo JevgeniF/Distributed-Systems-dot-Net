@@ -4,10 +4,10 @@ namespace App.Public.DTO.v1.Views;
 
 public class CastInMovieView
 {
-    public Guid Id;
     public CastRole? CastRole;
-    public Person? Person;
+    public Guid Id;
     public Movie? MovieDetails;
+    public Person? Person;
 }
 
 public class Movie

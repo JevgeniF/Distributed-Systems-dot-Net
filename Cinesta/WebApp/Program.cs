@@ -7,7 +7,6 @@ using App.Contracts.Public;
 using App.DAL.EF;
 using App.Domain.Identity;
 using App.Public;
-using App.Public.DTO.v1;
 using Helpers.WebApp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;

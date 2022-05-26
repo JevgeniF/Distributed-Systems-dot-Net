@@ -2,7 +2,7 @@
 
 namespace WebApp.SwaggerExamples;
 
-public class PostProfileFavoriteMoviesExample: IExamplesProvider<object>
+public class PostProfileFavoriteMoviesExample : IExamplesProvider<object>
 {
     public object GetExamples()
     {

@@ -1,10 +1,8 @@
-﻿using App.Public.DTO.v1;
-using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Examples;
+﻿using Swashbuckle.AspNetCore.Filters;
 
 namespace WebApp.SwaggerExamples;
 
-public class GetListVideosExample: IExamplesProvider<IEnumerable<object>>
+public class GetListVideosExample : IExamplesProvider<IEnumerable<object>>
 {
     public IEnumerable<object> GetExamples()
     {

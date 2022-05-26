@@ -16,6 +16,6 @@ public class UserProfile : DomainEntityMetaId
 
     public AppUser? AppUser { get; set; }
 
-   // public ICollection<ProfileMovie>? ProfileMovies { get; set; }
-   // public ICollection<ProfileFavoriteMovie>? ProfileFavoriteMovies { get; set; }
+    // public ICollection<ProfileMovie>? ProfileMovies { get; set; }
+    // public ICollection<ProfileFavoriteMovie>? ProfileFavoriteMovies { get; set; }
 }

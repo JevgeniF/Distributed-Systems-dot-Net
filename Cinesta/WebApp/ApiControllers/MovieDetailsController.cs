@@ -31,7 +31,6 @@ public class MovieDetailsController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<object>> GetMovieDetails()
     {
-
         var res = await _public.MovieDetails.IncludeGetAllAsync();
         return res.Select(m => new
         {
@@ -52,7 +51,6 @@ public class MovieDetailsController : ControllerBase
                 Naming = m.MovieType!.Naming
             }
         });
-
     }
 
     // GET: api/MovieDetails/5
@@ -68,7 +66,8 @@ public class MovieDetailsController : ControllerBase
 
         if (movieDetails == null) return NotFound();
 
-        return new {
+        return new
+        {
             movieDetails.Id,
             movieDetails.PosterUri,
             movieDetails.Title,
@@ -135,7 +134,7 @@ public class MovieDetailsController : ControllerBase
         movieDetails.Id = Guid.NewGuid();
         _public.MovieDetails.Add(movieDetails);
         await _public.SaveChangesAsync();
-        
+
         var res = new
         {
             movieDetails.Id,

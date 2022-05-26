@@ -2,7 +2,7 @@
 
 namespace WebApp.SwaggerExamples;
 
-public class PostCastInMovieExample: IExamplesProvider<object>
+public class PostCastInMovieExample : IExamplesProvider<object>
 {
     public object GetExamples()
     {

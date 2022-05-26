@@ -1,7 +1,4 @@
-﻿using App.Public.DTO.v1;
-using Base.Domain;
-using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Examples;
+﻿using Swashbuckle.AspNetCore.Filters;
 
 namespace WebApp.SwaggerExamples;
 

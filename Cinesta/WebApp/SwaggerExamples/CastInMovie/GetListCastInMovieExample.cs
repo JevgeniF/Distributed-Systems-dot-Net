@@ -1,15 +1,15 @@
 ﻿using Swashbuckle.AspNetCore.Filters;
-using Swashbuckle.Examples;
 
 namespace WebApp.SwaggerExamples;
 
-public class GetListCastInMovieExample: IExamplesProvider<IEnumerable<object>>
+public class GetListCastInMovieExample : IExamplesProvider<IEnumerable<object>>
 {
     public IEnumerable<object> GetExamples()
     {
         var list = new List<object>
         {
-            new {
+            new
+            {
                 Id = "95f44037-90dd-4224-bf80-c65f44a01c9b",
                 CastRole = new
                 {

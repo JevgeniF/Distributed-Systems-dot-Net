@@ -2,7 +2,7 @@
 
 namespace WebApp.SwaggerExamples;
 
-public class PostMovieDBScoreExample: IExamplesProvider<object>
+public class PostMovieDBScoreExample : IExamplesProvider<object>
 {
     public object GetExamples()
     {

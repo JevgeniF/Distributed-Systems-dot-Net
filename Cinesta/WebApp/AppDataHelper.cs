@@ -144,7 +144,7 @@ public static class AppDataHelper
             };
             context.CastRoles.Add(castRoleActor);
             context.CastRoles.Add(castRoleDirector);
-            
+
             var genreAction = new Genre
             {
                 Naming = new LangStr("action", "en")
@@ -160,7 +160,7 @@ public static class AppDataHelper
             context.Genres.Add(genreAction);
             context.Genres.Add(genreHorror);
             context.Genres.Add(genreDrama);
-            
+
             var typeMovie = new MovieType
             {
                 Naming = new LangStr("movie", "en")

@@ -11,7 +11,7 @@ using WebApp.SwaggerExamples;
 namespace WebApp.ApiControllers;
 
 /// <summary>
-/// Controller for getting, adding, editing or deletion of cast.
+///     Controller for getting, adding, editing or deletion of cast.
 /// </summary>
 [ApiController]
 [ApiVersion("1.0")]
@@ -22,7 +22,7 @@ public class CastInMoviesController : ControllerBase
     private readonly IAppPublic _public;
 
     /// <summary>
-    /// Cast in movies controller's constructor.
+    ///     Cast in movies controller's constructor.
     /// </summary>
     /// <param name="appPublic">Takes in public layer interface</param>
     public CastInMoviesController(IAppPublic appPublic)
@@ -32,7 +32,7 @@ public class CastInMoviesController : ControllerBase
 
     // GET: api/CastInMovies
     /// <summary>
-    /// Get cast (actors, directors, etc) for all movies in database.
+    ///     Get cast (actors, directors, etc) for all movies in database.
     /// </summary>
     /// <returns>List of cast for movies</returns>
     /// <example>[{"id": "95f44037-90dd-4224-bf80-c65f44a01c9b"}]</example>
@@ -44,27 +44,30 @@ public class CastInMoviesController : ControllerBase
     public async Task<IEnumerable<object>> GetCastInMovies()
     {
         return (await _public.CastInMovie.IncludeGetAllAsync())
-            .Select(c => new 
+            .Select(c => new
             {
                 c.Id,
-                CastRole = new CastRole {
-                Id = c.CastRoleId,
-                Naming = c.CastRole!.Naming
+                CastRole = new CastRole
+                {
+                    Id = c.CastRoleId,
+                    Naming = c.CastRole!.Naming
                 },
-                Person = new Person {
-                Id = c.PersonId,
-                Name = c.Persons!.Name,
-                Surname = c.Persons.Surname
+                Person = new Person
+                {
+                    Id = c.PersonId,
+                    Name = c.Persons!.Name,
+                    Surname = c.Persons.Surname
                 },
-                MovieDetails = new {
-                Id = c.MovieDetailsId, c.MovieDetails!.Title
+                MovieDetails = new
+                {
+                    Id = c.MovieDetailsId, c.MovieDetails!.Title
                 }
             });
     }
 
     // GET: api/CastInMovies/5
     /// <summary>
-    /// Returns one specific cast from API database by id
+    ///     Returns one specific cast from API database by id
     /// </summary>
     /// <param name="id">Id of queryable cast</param>
     /// <returns>Cast on movie entity</returns>
@@ -82,16 +85,19 @@ public class CastInMoviesController : ControllerBase
         return new
         {
             castInMovie.Id,
-            CastRole = new CastRole {
+            CastRole = new CastRole
+            {
                 Id = castInMovie.CastRoleId,
                 Naming = castInMovie.CastRole!.Naming
             },
-            Person = new Person {
+            Person = new Person
+            {
                 Id = castInMovie.PersonId,
                 Name = castInMovie.Persons!.Name,
                 Surname = castInMovie.Persons.Surname
             },
-            MovieDetails = new {
+            MovieDetails = new
+            {
                 Id = castInMovie.MovieDetailsId,
                 castInMovie.MovieDetails!.Title
             }
@@ -101,7 +107,7 @@ public class CastInMoviesController : ControllerBase
     // PUT: api/CastInMovies/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     /// <summary>
-    /// Edit one specific cast in API database, queryable by id.
+    ///     Edit one specific cast in API database, queryable by id.
     /// </summary>
     /// <param name="id">Id of cast to edit</param>
     /// <param name="castInMovie">Updated cast data</param>
@@ -110,7 +116,7 @@ public class CastInMoviesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
-    [SwaggerRequestExample(typeof(CastInMovie),typeof(PostCastInMovieExample))]
+    [SwaggerRequestExample(typeof(CastInMovie), typeof(PostCastInMovieExample))]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutCastInMovie(Guid id, CastInMovie castInMovie)
@@ -135,7 +141,7 @@ public class CastInMoviesController : ControllerBase
     // POST: api/CastInMovies
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     /// <summary>
-    /// Add new cast to API database.
+    ///     Add new cast to API database.
     /// </summary>
     /// <param name="castInMovie">New cast in movie entity</param>
     /// <returns>Nothing</returns>
@@ -143,7 +149,7 @@ public class CastInMoviesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
-    [SwaggerRequestExample(typeof(CastInMovie),typeof(PostCastInMovieExample))]
+    [SwaggerRequestExample(typeof(CastInMovie), typeof(PostCastInMovieExample))]
     [SwaggerResponseExample(200, typeof(PostCastInMovieExample))]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -167,7 +173,7 @@ public class CastInMoviesController : ControllerBase
 
     // DELETE: api/CastInMovies/5
     /// <summary>
-    /// Delete one specific cast in movie entity from API database. 
+    ///     Delete one specific cast in movie entity from API database.
     /// </summary>
     /// <param name="id">Id of cast in movie entity for deletion</param>
     /// <returns>Nothing</returns>

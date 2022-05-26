@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Filters;
-using WebApp.SwaggerExamples;
 
 namespace WebApp.ApiControllers;
 
@@ -31,7 +29,6 @@ public class CastRolesController : ControllerBase
     public async Task<IEnumerable<CastRole>> GetCastRoles()
     {
         return await _public.CastRole.GetAllAsync();
-        
     }
 
     // GET: api/CastRoles/5

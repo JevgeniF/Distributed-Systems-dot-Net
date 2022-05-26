@@ -74,7 +74,6 @@ public class MovieGenresController : ControllerBase
                 Id = movieGenre.GenreId,
                 movieGenre.Genre!.Naming
             }
-                
         };
     }
 

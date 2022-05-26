@@ -40,7 +40,8 @@ public class VideosController : ControllerBase
                 v.FileUri,
                 v.Duration,
                 v.Description,
-                MovieDetails = new {
+                MovieDetails = new
+                {
                     v.MovieDetailsId,
                     v.MovieDetails!.Title
                 }

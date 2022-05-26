@@ -2,7 +2,7 @@
 
 namespace WebApp.SwaggerExamples;
 
-public class PostVideoExample: IExamplesProvider<object>
+public class PostVideoExample : IExamplesProvider<object>
 {
     public object GetExamples()
     {

@@ -115,7 +115,6 @@ public class UserProfilesController : ControllerBase
             userProfile.Name,
             userProfile.Age,
             userProfile.AppUserId
-            
         };
 
         return CreatedAtAction("GetUserProfile",

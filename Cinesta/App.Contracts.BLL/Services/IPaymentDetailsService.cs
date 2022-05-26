@@ -11,5 +11,5 @@ public interface IPaymentDetailsService : IEntityService<PaymentDetails>,
 
 public interface IPaymentDetailsServiceCustom<TEntity>
 {
-    Task<IEnumerable<TEntity>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true);
+    Task<TEntity?> IncludeGetByUserIdAsync(Guid userId, bool noTracking = true);
 }

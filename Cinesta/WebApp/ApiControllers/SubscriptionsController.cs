@@ -26,7 +26,7 @@ public class SubscriptionsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<Subscription>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<Subscription>> GetSubscriptions()
+    public async Task<IEnumerable<Subscription>> GetUserSubscription()
     {
         return await _public.Subscription.GetAllAsync();
     }

@@ -44,17 +44,23 @@ public class MovieDBScoresController : ControllerBase
     // GET: api/MovieDBScores/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(MovieDbScore), 200)]
+    [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(404)]
     [SwaggerResponseExample(200, typeof(GetMovieDBScoreExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<MovieDbScore>> GetMovieDbScore(Guid id)
+    public async Task<ActionResult<object>> GetMovieDbScore(Guid id)
     {
         var movieDbScore = await _public.MovieDbScore.IncludeFirstOrDefaultAsync(id);
 
         if (movieDbScore == null) return NotFound();
 
-        return movieDbScore;
+        return new
+        {
+            movieDbScore.Id,
+            movieDbScore.ImdbId,
+            movieDbScore.Score,
+            movieDbScore.MovieDetailsId
+        };
     }
 
     // PUT: api/MovieDBScores/5

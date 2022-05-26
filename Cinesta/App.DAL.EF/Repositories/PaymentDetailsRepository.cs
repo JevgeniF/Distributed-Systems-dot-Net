@@ -15,11 +15,11 @@ public class PaymentDetailsRepository : BaseEntityRepository<PaymentDetails, Dom
     {
     }
 
-    public async Task<IEnumerable<PaymentDetails>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true)
+    public async Task<PaymentDetails?> IncludeGetByUserIdAsync(Guid userId, bool noTracking = true)
     {
         var query = CreateQuery(noTracking);
-        query = query.Include(p => p.AppUser).Where(p => p.AppUserId == userId);
+        query = query.Include(p => p.AppUser);
 
-        return (await query.ToListAsync()).Select(p => Mapper.Map(p)!);
+        return Mapper.Map(await query.FirstOrDefaultAsync(p => p.AppUserId == userId));
     }
 }

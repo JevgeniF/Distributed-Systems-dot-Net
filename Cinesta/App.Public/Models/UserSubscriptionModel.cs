@@ -25,4 +25,9 @@ public class UserSubscriptionModel :
     {
         return Mapper.Map(await Service.IncludeFirstOrDefaultAsync(id, noTracking));
     }
+
+    public async Task<UserSubscription?> IncludeGetByUserIdAsync(Guid userId, bool noTracking = true)
+    {
+        return Mapper.Map(await Service.IncludeGetByUserIdAsync(userId, noTracking));
+    }
 }

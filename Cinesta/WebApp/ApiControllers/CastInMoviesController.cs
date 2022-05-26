@@ -70,16 +70,32 @@ public class CastInMoviesController : ControllerBase
     /// <returns>Cast on movie entity</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(CastInMovie), 200)]
+    [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(404)]
     [SwaggerResponseExample(200, typeof(GetCastInMovieExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<CastInMovie>> GetCastInMovie(Guid id)
+    public async Task<ActionResult<object>> GetCastInMovie(Guid id)
     {
         var castInMovie = await _public.CastInMovie.IncludeFirstOrDefaultAsync(id);
         if (castInMovie == null) return NotFound();
 
-        return castInMovie;
+        return new
+        {
+            castInMovie.Id,
+            CastRole = new CastRole {
+                Id = castInMovie.CastRoleId,
+                Naming = castInMovie.CastRole!.Naming
+            },
+            Person = new Person {
+                Id = castInMovie.PersonId,
+                Name = castInMovie.Persons!.Name,
+                Surname = castInMovie.Persons.Surname
+            },
+            MovieDetails = new {
+                Id = castInMovie.MovieDetailsId,
+                castInMovie.MovieDetails!.Title
+            }
+        };
     }
 
     // PUT: api/CastInMovies/5
@@ -128,7 +144,7 @@ public class CastInMoviesController : ControllerBase
     [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
     [SwaggerRequestExample(typeof(CastInMovie),typeof(PostCastInMovieExample))]
-    [SwaggerResponseExample(200, typeof(PostResponseCastInMovieExample))]
+    [SwaggerResponseExample(200, typeof(PostCastInMovieExample))]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<object>> PostCastInMovie(CastInMovie castInMovie)

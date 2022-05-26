@@ -23,4 +23,9 @@ public class UserSubscriptionService :
     {
         return Mapper.Map(await Repository.IncludeFirstOrDefaultAsync(id, noTracking));
     }
+
+    public async Task<UserSubscription?> IncludeGetByUserIdAsync(Guid userId, bool noTracking = true)
+    {
+        return Mapper.Map(await Repository.IncludeGetByUserIdAsync(userId, noTracking));
+    }
 }

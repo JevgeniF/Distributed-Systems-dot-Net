@@ -1,59 +1,65 @@
 @using Base.Resources
-@model IEnumerable<App.Public.DTO.v1.PaymentDetails>
+@using Microsoft.IdentityModel.Tokens
+@model App.Public.DTO.v1.PaymentDetails?
 
 @{
     ViewData["Title"] = "Index";
 }
 
+
 <h1>@Common.Index</h1>
 
 <p>
-    <a asp-action="Create">@Common.Create</a>
+    @if (Model == null)
+    {
+        <a asp-action="Create">@Common.Create</a>
+    }
 </p>
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.CardType)
+            @Html.DisplayNameFor(model => model!.CardType)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.CardNumber)
+            @Html.DisplayNameFor(model => model!.CardNumber)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ValidDate)
+            @Html.DisplayNameFor(model => model!.ValidDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SecurityCode)
+            @Html.DisplayNameFor(model => model!.SecurityCode)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.AppUser)
+            @Html.DisplayNameFor(model => model!.AppUser)
         </th>
         <th></th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @if (Model != null)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.CardType)
+                @Html.DisplayFor(model => model!.CardType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CardNumber)
+                @Html.DisplayFor(model => model!.CardNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ValidDate)
+                @Html.DisplayFor(model => model!.ValidDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SecurityCode)
+                @Html.DisplayFor(model => model!.SecurityCode)
             </td>
             <td>
-                @(item.AppUser!.Name + " " + item.AppUser!.Surname)
+                @(Model?.AppUser!.Name + " " + Model?.AppUser!.Surname)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">@Common.Delete</a>
+                <a asp-action="Edit" asp-route-id="@Model!.Id">@Common.Edit</a>
+                <a asp-action="Details" asp-route-id="@Model!.Id">@Common.Details</a>
+                <a asp-action="Delete" asp-route-id="@Model!.Id">@Common.Delete</a>
+            
             </td>
         </tr>
     }

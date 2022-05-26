@@ -5,6 +5,9 @@ using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Filters;
+using WebApp.SwaggerExamples;
+using Subscription = App.BLL.DTO.Subscription;
 
 namespace WebApp.ApiControllers;
 
@@ -24,44 +27,73 @@ public class UserSubscriptionsController : ControllerBase
     // GET: api/UserSubscriptions
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<UserSubscription>), 200)]
+    [ProducesResponseType(typeof(object), 200)]
+    [SwaggerResponseExample(200, typeof(GetUserSubscriptionExample))]
     [HttpGet]
-    public async Task<IEnumerable<UserSubscription>> GetUserSubscriptionsByUserId()
+    public async Task<object> GetUserSubscriptionByUserId()
     {
-        return await _public.UserSubscription.IncludeGetAllByUserIdAsync(User.GetUserId());
-    }
-
-    // GET: api/UserSubscriptions/5
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ProducesResponseType(typeof(UserSubscription), 200)]
-    [ProducesResponseType(404)]
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserSubscription>> GetUserSubscription(Guid id)
-    {
-        var userSubscription = await _public.UserSubscription.FirstOrDefaultAsync(id);
-
-        if (userSubscription == null) return NotFound();
-
-        return userSubscription;
+        var res = await _public.UserSubscription.IncludeGetByUserIdAsync(User.GetUserId());
+        if (res == null) return new {};
+        return new
+        {
+            res.Id,
+            AppUser = new
+            {
+                res.AppUserId,
+                res.AppUser!.Name,
+                res.AppUser.Surname
+            },
+            Subscription = new
+            {
+                res.SubscriptionId,
+                res.Subscription!.Naming,
+                res.Subscription.Description,
+                res.Subscription.ProfilesCount,
+                res.Subscription.Price
+            },
+            res.ExpirationDateTime
+        };
     }
 
     // POST: api/UserSubscriptions
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(UserSubscription), 201)]
+    [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(UserSubscription), typeof(PostUserSubscriptionExample))]
+    [SwaggerResponseExample(201, typeof(PostUserSubscriptionExample))]
     [HttpPost]
     public async Task<ActionResult<UserSubscription>> PostUserSubscription(UserSubscription userSubscription)
     {
         userSubscription.Id = Guid.NewGuid();
+        userSubscription.AppUserId = User.GetUserId();
         _public.UserSubscription.Add(userSubscription);
         await _public.SaveChangesAsync();
 
-        return CreatedAtAction("GetUserSubscription",
+        var res = new
+        {
+            userSubscription.Id,
+            AppUser = new
+            {
+                userSubscription.AppUserId,
+                userSubscription.AppUser!.Name,
+                userSubscription.AppUser.Surname
+            },
+            Subscription = new
+            {
+                userSubscription.SubscriptionId,
+                userSubscription.Subscription!.Naming,
+                userSubscription.Subscription.Description,
+                userSubscription.Subscription.ProfilesCount,
+                userSubscription.Subscription.Price
+            },
+            userSubscription.ExpirationDateTime
+        };
+
+        return CreatedAtAction("GetUserSubscriptionByUserId",
             new {id = userSubscription.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()},
-            userSubscription);
+            res);
     }
 
     // DELETE: api/UserSubscriptions/5
@@ -76,10 +108,5 @@ public class UserSubscriptionsController : ControllerBase
         await _public.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private async Task<bool> UserSubscriptionExists(Guid id)
-    {
-        return await _public.UserSubscription.ExistsAsync(id);
     }
 }

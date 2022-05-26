@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
+using WebApp.SwaggerExamples;
 
 namespace WebApp.ApiControllers;
 
@@ -24,26 +26,54 @@ public class VideosController : ControllerBase
     // GET: api/Videos
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<Video>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<object>), 200)]
+    [SwaggerResponseExample(200, typeof(GetListVideosExample))]
     [HttpGet]
-    public async Task<IEnumerable<Video>> GetVideos()
+    public async Task<IEnumerable<object>> GetVideos()
     {
-        return await _public.Video.GetAllAsync();
+        return (await _public.Video.IncludeGetAllAsync())
+            .Select(v => new
+            {
+                v.Id,
+                v.Season,
+                v.Title,
+                v.FileUri,
+                v.Duration,
+                v.Description,
+                MovieDetails = new {
+                    v.MovieDetailsId,
+                    v.MovieDetails!.Title
+                }
+            });
     }
 
     // GET: api/Videos/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(Video), 200)]
+    [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(404)]
+    [SwaggerResponseExample(200, typeof(GetVideoExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Video>> GetVideo(Guid id)
+    public async Task<ActionResult<object>> GetVideo(Guid id)
     {
         var video = await _public.Video.FirstOrDefaultAsync(id);
 
         if (video == null) return NotFound();
 
-        return video;
+        return new
+        {
+            video.Id,
+            video.Season,
+            video.Title,
+            video.FileUri,
+            video.Duration,
+            video.Description,
+            MovieDetails = new
+            {
+                video.MovieDetailsId,
+                video.MovieDetails!.Title
+            }
+        };
     }
 
     // PUT: api/Videos/5
@@ -52,6 +82,7 @@ public class VideosController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(Video), typeof(PostVideoExample))]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutVideo(Guid id, Video video)
@@ -82,18 +113,30 @@ public class VideosController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(Video), 201)]
+    [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(Video), typeof(PostVideoExample))]
+    [SwaggerResponseExample(200, typeof(PostVideoExample))]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<Video>> PostVideo(Video video)
+    public async Task<ActionResult<object>> PostVideo(Video video)
     {
         video.Id = Guid.NewGuid();
         _public.Video.Add(video);
         await _public.SaveChangesAsync();
+        var res = new
+        {
+            video.Id,
+            video.Season,
+            video.Title,
+            video.FileUri,
+            video.Duration,
+            video.Description,
+            video.MovieDetailsId
+        };
 
         return CreatedAtAction("GetVideo",
-            new {id = video.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, video);
+            new {id = video.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
     }
 
     // DELETE: api/Videos/5

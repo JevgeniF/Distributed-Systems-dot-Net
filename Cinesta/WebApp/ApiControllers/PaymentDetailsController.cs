@@ -1,12 +1,13 @@
 #nullable disable
 using App.Contracts.Public;
 using App.Public.DTO.v1;
-using App.Public.DTO.v1.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
+using WebApp.SwaggerExamples;
 
 namespace WebApp.ApiControllers;
 
@@ -26,41 +27,43 @@ public class PaymentDetailsController : ControllerBase
     // GET: api/PaymentDetails
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<PaymentDetails>), 200)]
-    [HttpGet()]
-    public async Task<IEnumerable<PaymentDetails>> GetUserPaymentDetails()
+    [ProducesResponseType(typeof(object), 200)]
+    [SwaggerResponseExample(200, typeof(GetPaymentDetailsExample))]
+    [HttpGet]
+    public async Task<object> GetUserPaymentDetails()
     {
-        return await _public.PaymentDetails.IncludeGetAllByUserIdAsync(User.GetUserId());
+        var res = await _public.PaymentDetails.IncludeGetByUserIdAsync(User.GetUserId());
+        if (res == null) return null;
+        return new
+        {
+            res.Id,
+            res.CardType,
+            res.CardNumber,
+            res.ValidDate,
+            res.SecurityCode,
+            AppUser = new
+            {
+                res.AppUserId,
+                res.AppUser!.Name,
+                res.AppUser.Surname
+            }
+        };
     }
-
-    // GET: api/PaymentDetails/5
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ProducesResponseType(typeof(PaymentDetails), 200)]
-    [ProducesResponseType(404)]
-    [HttpGet("{id}")]
-    public async Task<ActionResult<PaymentDetails>> GetPaymentDetails(Guid id)
-    {
-        var paymentDetails = await _public.PaymentDetails.FirstOrDefaultAsync(id);
-
-        if (paymentDetails == null) return NotFound();
-
-        return paymentDetails;
-    }
-
     // PUT: api/PaymentDetails/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(PaymentDetails), typeof(PostPaymentDetailsExample))]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutPaymentDetails(Guid id, PaymentDetails paymentDetails)
+    public async Task<IActionResult> PutUserPaymentDetails(Guid id, PaymentDetails paymentDetails)
     {
         if (id != paymentDetails.Id) return BadRequest();
 
         try
         {
+            paymentDetails.AppUserId = User.GetUserId();
             _public.PaymentDetails.Update(paymentDetails);
             await _public.SaveChangesAsync();
         }
@@ -78,18 +81,30 @@ public class PaymentDetailsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(PaymentDetails), 201)]
+    [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(PaymentDetails), typeof(PostPaymentDetailsExample))]
+    [SwaggerResponseExample(200, typeof(PostPaymentDetailsExample))]
     [HttpPost]
-    public async Task<ActionResult<PaymentDetails>> PostPaymentDetails(PaymentDetails paymentDetails)
+    public async Task<ActionResult<object>> PostUserPaymentDetails(PaymentDetails paymentDetails)
     {
         paymentDetails.Id = Guid.NewGuid();
         paymentDetails.AppUserId = User.GetUserId();
         _public.PaymentDetails.Add(paymentDetails);
         await _public.SaveChangesAsync();
 
-        return CreatedAtAction("GetPaymentDetails",
-            new {id = paymentDetails.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, paymentDetails);
+        var res = new
+        {
+            paymentDetails.Id,
+            paymentDetails.CardType,
+            paymentDetails.CardNumber,
+            paymentDetails.ValidDate,
+            paymentDetails.SecurityCode,
+            paymentDetails.AppUserId
+        };
+
+        return CreatedAtAction("GetUserPaymentDetails",
+            new {id = paymentDetails.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
     }
 
     // DELETE: api/PaymentDetails/5

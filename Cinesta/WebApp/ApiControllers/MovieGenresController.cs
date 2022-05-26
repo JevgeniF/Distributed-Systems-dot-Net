@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
+using WebApp.SwaggerExamples;
 
 namespace WebApp.ApiControllers;
 
@@ -24,26 +26,56 @@ public class MovieGenresController : ControllerBase
     // GET: api/MovieGenres
     [Produces("application/json")]
     [Consumes("application/json")]
+    [SwaggerResponseExample(200, typeof(GetListMovieGenresExample))]
     [ProducesResponseType(typeof(IEnumerable<MovieGenre>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<MovieGenre>> GetMovieGenres()
+    public async Task<IEnumerable<object>> GetMovieGenres()
     {
-        return await _public.MovieGenre.GetAllAsync();
+        return (await _public.MovieGenre.IncludeGetAllAsync())
+            .Select(m => new
+            {
+                m.Id,
+                MovieDetails = new
+                {
+                    Id = m.MovieDetailsId,
+                    m.MovieDetails!.Title
+                },
+                Genre = new
+                {
+                    Id = m.GenreId,
+                    m.Genre!.Naming
+                }
+            });
     }
 
     // GET: api/MovieGenres/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(MovieGenre), 200)]
+    [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(404)]
+    [SwaggerResponseExample(200, typeof(GetMovieGenresExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<MovieGenre>> GetMovieGenre(Guid id)
+    public async Task<ActionResult<object>> GetMovieGenre(Guid id)
     {
         var movieGenre = await _public.MovieGenre.FirstOrDefaultAsync(id);
 
         if (movieGenre == null) return NotFound();
 
-        return movieGenre;
+        return new
+        {
+            movieGenre.Id,
+            MovieDetails = new
+            {
+                Id = movieGenre.MovieDetailsId,
+                movieGenre.MovieDetails!.Title
+            },
+            Genre = new
+            {
+                Id = movieGenre.GenreId,
+                movieGenre.Genre!.Naming
+            }
+                
+        };
     }
 
     // PUT: api/MovieGenres/5
@@ -53,6 +85,7 @@ public class MovieGenresController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
     [HttpPut("{id}")]
+    [SwaggerRequestExample(typeof(MovieGenre), typeof(PostMovieGenresExample))]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutMovieGenre(Guid id, MovieGenre movieGenre)
     {
@@ -77,18 +110,26 @@ public class MovieGenresController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(MovieGenre), 201)]
+    [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
+    [SwaggerResponseExample(201, typeof(PostMovieGenresExample))]
+    [SwaggerRequestExample(typeof(MovieGenre), typeof(PostMovieGenresExample))]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<MovieGenre>> PostMovieGenre(MovieGenre movieGenre)
+    public async Task<ActionResult<object>> PostMovieGenre(MovieGenre movieGenre)
     {
         movieGenre.Id = Guid.NewGuid();
         _public.MovieGenre.Add(movieGenre);
         await _public.SaveChangesAsync();
+        var res = new
+        {
+            movieGenre.Id,
+            movieGenre.MovieDetailsId,
+            movieGenre.GenreId
+        };
 
         return CreatedAtAction("GetMovieGenre",
-            new {id = movieGenre.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieGenre);
+            new {id = movieGenre.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
     }
 
     // DELETE: api/MovieGenres/5

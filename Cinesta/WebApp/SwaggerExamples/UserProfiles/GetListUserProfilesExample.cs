@@ -1,0 +1,23 @@
+﻿using App.Domain.Identity;
+using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.Examples;
+
+namespace WebApp.SwaggerExamples;
+
+public class GetListUserProfilesExample: IExamplesProvider<IEnumerable<object>>
+{
+    public IEnumerable<object> GetExamples()
+    {
+        var list = new List<object>
+        {
+            new
+            {
+                Id = "c6f24ed8-f592-4f79-8f87-1229e7153b46",
+                Name = "Johny",
+                Age = 36,
+                AppUserId = "20f2b280-c2ee-446c-a261-f66c4f5cbe40"
+            }
+        };
+        return list;
+    }
+}

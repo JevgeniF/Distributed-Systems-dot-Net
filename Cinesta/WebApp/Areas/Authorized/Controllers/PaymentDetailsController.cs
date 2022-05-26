@@ -25,7 +25,7 @@ public class PaymentDetailsController : Controller
     // GET: Authorized/PaymentDetails
     public async Task<IActionResult> Index()
     {
-        return View(await _public.PaymentDetails.IncludeGetAllByUserIdAsync(User.GetUserId()));
+        return View(await _public.PaymentDetails.IncludeGetByUserIdAsync(User.GetUserId()));
     }
 
     // GET: Authorized/PaymentDetails/Details/5

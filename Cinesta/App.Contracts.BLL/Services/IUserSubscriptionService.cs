@@ -13,4 +13,5 @@ public interface IUserSubscriptionServiceCustom<TEntity>
 {
     Task<IEnumerable<TEntity>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true);
     Task<TEntity?> IncludeFirstOrDefaultAsync(Guid id, bool noTracking = true);
+    Task<TEntity?> IncludeGetByUserIdAsync(Guid userId, bool noTracking = true);
 }

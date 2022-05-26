@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
+using WebApp.SwaggerExamples;
 
 namespace WebApp.ApiControllers;
 
@@ -25,6 +27,7 @@ public class MovieDetailsController : ControllerBase
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<MovieDetails>), 200)]
+    [SwaggerResponseExample(200, typeof(GetListMovieDetailsExample))]
     [HttpGet]
     public async Task<IEnumerable<object>> GetMovieDetails()
     {
@@ -32,7 +35,7 @@ public class MovieDetailsController : ControllerBase
         var res = await _public.MovieDetails.IncludeGetAllAsync();
         return res.Select(m => new
         {
-            Id = m.Id,
+            m.Id,
             m.PosterUri,
             m.Title,
             m.Released,
@@ -55,16 +58,34 @@ public class MovieDetailsController : ControllerBase
     // GET: api/MovieDetails/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(MovieDetails), 200)]
+    [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(404)]
+    [SwaggerResponseExample(200, typeof(GetMovieDetailsExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<MovieDetails>> GetMovieDetails(Guid id)
+    public async Task<ActionResult<object>> GetMovieDetails(Guid id)
     {
         var movieDetails = await _public.MovieDetails.FirstOrDefaultAsync(id);
 
         if (movieDetails == null) return NotFound();
 
-        return movieDetails;
+        return new {
+            movieDetails.Id,
+            movieDetails.PosterUri,
+            movieDetails.Title,
+            movieDetails.Released,
+            movieDetails.Description,
+            AgeRating = new AgeRating
+            {
+                Id = movieDetails.AgeRatingId,
+                Naming = movieDetails.AgeRating!.Naming,
+                AllowedAge = movieDetails.AgeRating.AllowedAge
+            },
+            MovieType = new MovieType
+            {
+                Id = movieDetails.MovieTypeId,
+                Naming = movieDetails.MovieType!.Naming
+            }
+        };
     }
 
     // PUT: api/MovieDetails/5
@@ -73,6 +94,7 @@ public class MovieDetailsController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(MovieDetails), typeof(PostMovieDetailsExample))]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutMovieDetails(Guid id, MovieDetails movieDetails)
@@ -102,8 +124,10 @@ public class MovieDetailsController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(MovieDetails), 201)]
+    [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(MovieDetails), typeof(PostMovieDetailsExample))]
+    [SwaggerResponseExample(201, typeof(PostMovieDetailsExample))]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<MovieDetails>> PostMovieDetails(MovieDetails movieDetails)
@@ -111,9 +135,29 @@ public class MovieDetailsController : ControllerBase
         movieDetails.Id = Guid.NewGuid();
         _public.MovieDetails.Add(movieDetails);
         await _public.SaveChangesAsync();
+        
+        var res = new
+        {
+            movieDetails.Id,
+            movieDetails.PosterUri,
+            movieDetails.Title,
+            movieDetails.Released,
+            movieDetails.Description,
+            AgeRating = new AgeRating
+            {
+                Id = movieDetails.AgeRatingId,
+                Naming = movieDetails.AgeRating!.Naming,
+                AllowedAge = movieDetails.AgeRating.AllowedAge
+            },
+            MovieType = new MovieType
+            {
+                Id = movieDetails.MovieTypeId,
+                Naming = movieDetails.MovieType!.Naming
+            }
+        };
 
         return CreatedAtAction("GetMovieDetails",
-            new {id = movieDetails.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, movieDetails);
+            new {id = movieDetails.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
     }
 
     // DELETE: api/MovieDetails/5

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
+using WebApp.SwaggerExamples;
 
 namespace WebApp.ApiControllers;
 
@@ -25,26 +27,41 @@ public class UserProfilesController : ControllerBase
     // GET: api/UserProfiles
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<UserProfile>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<object>), 200)]
+    [SwaggerResponseExample(200, typeof(GetListUserProfilesExample))]
     [HttpGet]
-    public async Task<IEnumerable<UserProfile>> GetUserProfilesByUserId()
+    public async Task<IEnumerable<object>> GetUserProfilesByUserId()
     {
-        return await _public.UserProfile.IncludeGetAllByUserIdAsync(User.GetUserId());
+        return (await _public.UserProfile.IncludeGetAllByUserIdAsync(User.GetUserId()))
+            .Select(u => new
+            {
+                u.Id,
+                u.Name,
+                u.Age,
+                u.AppUserId
+            });
     }
 
     // GET: api/UserProfiles/5
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(UserProfile), 200)]
+    [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(404)]
+    [SwaggerResponseExample(200, typeof(GetUserProfileExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserProfile>> GetUserProfile(Guid id)
+    public async Task<ActionResult<object>> GetUserProfile(Guid id)
     {
         var userProfile = await _public.UserProfile.FirstOrDefaultAsync(id);
 
-        if (userProfile == null) return NotFound();
+        if (userProfile == null || userProfile.AppUserId != User.GetUserId()) return NotFound();
 
-        return userProfile;
+        return new
+        {
+            userProfile.Id,
+            userProfile.Name,
+            userProfile.Age,
+            userProfile.AppUserId
+        };
     }
 
     // PUT: api/UserProfiles/5
@@ -53,6 +70,7 @@ public class UserProfilesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(UserProfile), typeof(PostUserProfileExample))]
     [HttpPut("{id}")]
     public async Task<IActionResult> PutUserProfile(Guid id, UserProfile userProfile)
     {
@@ -60,6 +78,7 @@ public class UserProfilesController : ControllerBase
 
         try
         {
+            userProfile.AppUserId = User.GetUserId();
             _public.UserProfile.Update(userProfile);
             await _public.SaveChangesAsync();
         }
@@ -77,17 +96,30 @@ public class UserProfilesController : ControllerBase
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(UserProfile), 201)]
+    [ProducesResponseType(typeof(object), 201)]
     [ProducesResponseType(403)]
+    [SwaggerRequestExample(typeof(UserProfile), typeof(PostUserProfileExample))]
+    [SwaggerResponseExample(201, typeof(PostUserProfileExample))]
     [HttpPost]
-    public async Task<ActionResult<UserProfile>> PostUserProfile(UserProfile userProfile)
+    public async Task<ActionResult<object>> PostUserProfile(UserProfile userProfile)
     {
         userProfile.Id = Guid.NewGuid();
+        userProfile.AppUserId = User.GetUserId();
         _public.UserProfile.Add(userProfile);
         await _public.SaveChangesAsync();
 
+        var res = new
+        {
+            userProfile.Id,
+            userProfile.IconUri,
+            userProfile.Name,
+            userProfile.Age,
+            userProfile.AppUserId
+            
+        };
+
         return CreatedAtAction("GetUserProfile",
-            new {id = userProfile.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, userProfile);
+            new {id = userProfile.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
     }
 
     // DELETE: api/UserProfiles/5

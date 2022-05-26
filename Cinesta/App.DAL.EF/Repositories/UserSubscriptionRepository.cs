@@ -32,4 +32,13 @@ public class UserSubscriptionRepository : BaseEntityRepository<UserSubscription,
 
         return Mapper.Map(await query.FirstOrDefaultAsync(u => u.Id == id));
     }
+
+    public async Task<UserSubscription?> IncludeGetByUserIdAsync(Guid userId, bool noTracking = true)
+    {
+        var query = CreateQuery(noTracking);
+        query = query.Include(u => u.Subscription)
+            .Include(u => u.AppUser);
+
+        return Mapper.Map(await query.FirstOrDefaultAsync(u => u.AppUserId == userId));
+    }
 }

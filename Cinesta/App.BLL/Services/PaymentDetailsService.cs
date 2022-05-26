@@ -14,8 +14,8 @@ public class PaymentDetailsService :
     {
     }
 
-    public async Task<IEnumerable<PaymentDetails>> IncludeGetAllByUserIdAsync(Guid userId, bool noTracking = true)
+    public async Task<PaymentDetails?> IncludeGetByUserIdAsync(Guid userId, bool noTracking = true)
     {
-        return (await Repository.IncludeGetAllByUserIdAsync(userId, noTracking)).Select(p => Mapper.Map(p)!);
+        return Mapper.Map(await Repository.IncludeGetByUserIdAsync(userId, noTracking));
     }
 }

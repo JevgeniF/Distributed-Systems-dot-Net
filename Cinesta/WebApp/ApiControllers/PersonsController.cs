@@ -8,20 +8,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.ApiControllers;
 
+/// <summary>
+///     Controller for CRUD operations with  Person entities.
+///     Person entities meant for storage of any required person name and surname.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-[Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Roles = "admin,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PersonsController : ControllerBase
 {
     private readonly IAppPublic _public;
 
+    /// <summary>
+    ///     Constructor of PersonsController class
+    /// </summary>
+    /// <param name="appPublic">IAppPublic Interface of public layer</param>
     public PersonsController(IAppPublic appPublic)
     {
         _public = appPublic;
     }
 
     // GET: api/Persons
+    /// <summary>
+    ///     For admins and moderators only. Method returns list of all Person entities stored in API database.
+    /// </summary>
+    /// <returns>IEnumerable of Person entities.</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<Person>), 200)]
@@ -32,6 +44,11 @@ public class PersonsController : ControllerBase
     }
 
     // GET: api/Persons/5
+    /// <summary>
+    ///     For admins and moderators only. Method returns one exact Person entity found by it's id.
+    /// </summary>
+    /// <param name="id">Guid: Person entity Id</param>
+    /// <returns>Person class entity</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(Person), 200)]
@@ -48,6 +65,12 @@ public class PersonsController : ControllerBase
 
     // PUT: api/Persons/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     For admins and moderators only. Method edits Person entity found in API database by it's id.
+    /// </summary>
+    /// <param name="id">Guid: Person entity id.</param>
+    /// <param name="person">Updated Person entity to store under this id</param>
+    /// <returns>Code 201 in case of success or Code 403 in case of wrong request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(201)]
@@ -74,6 +97,11 @@ public class PersonsController : ControllerBase
 
     // POST: api/Persons
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     For admins and moderators only. Method adds new Person entity to API database
+    /// </summary>
+    /// <param name="person">Person class entity to add</param>
+    /// <returns>Added Person entity with it's id </returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(Person), 201)]
@@ -86,10 +114,15 @@ public class PersonsController : ControllerBase
         await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetPerson",
-            new {id = person.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, person);
+            new { id = person.Id, version = HttpContext.GetRequestedApiVersion()!.ToString() }, person);
     }
 
     // DELETE: api/Persons/5
+    /// <summary>
+    ///     For admins and moderators only. Deletes Person entity found by given id.
+    /// </summary>
+    /// <param name="id">Person entity id</param>
+    /// <returns>Code 204 in case of success or code 404 in case of bad request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(204)]

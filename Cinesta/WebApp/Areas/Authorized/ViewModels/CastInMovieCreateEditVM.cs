@@ -1,9 +1,10 @@
-﻿using App.BLL.DTO;
+﻿#pragma warning disable CS1591
+using App.BLL.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApp.Areas.Authorized.ViewModels;
 
-public class CastInMovieCreateEditVM
+public class CastInMovieCreateEditVm
 {
     public CastInMovie CastInMovie { get; set; } = default!;
     public SelectList? CastRoleSelectList { get; set; }

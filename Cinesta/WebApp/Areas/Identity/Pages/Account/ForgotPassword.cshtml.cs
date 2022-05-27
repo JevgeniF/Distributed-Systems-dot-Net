@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#pragma warning disable CS1591
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
@@ -49,7 +50,7 @@ public class ForgotPasswordModel : PageModel
             var callbackUrl = Url.Page(
                 "/Account/ResetPassword",
                 null,
-                new {area = "Identity", code},
+                new { area = "Identity", code },
                 Request.Scheme);
 
             await _emailSender.SendEmailAsync(

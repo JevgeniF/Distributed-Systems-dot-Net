@@ -1,3 +1,5 @@
+#pragma warning disable CS1591
+
 namespace WebApp.ViewModels;
 
 public class ErrorViewModel

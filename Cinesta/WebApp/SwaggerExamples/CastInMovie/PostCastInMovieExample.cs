@@ -1,6 +1,8 @@
-﻿using Swashbuckle.AspNetCore.Filters;
+﻿#pragma warning disable CS1591
 
-namespace WebApp.SwaggerExamples;
+using Swashbuckle.AspNetCore.Filters;
+
+namespace WebApp.SwaggerExamples.CastInMovie;
 
 public class PostCastInMovieExample : IExamplesProvider<object>
 {

@@ -5,24 +5,36 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Filters;
-using WebApp.SwaggerExamples;
+using WebApp.SwaggerExamples.ProfileFavoriteMovies;
 
 namespace WebApp.ApiControllers;
 
+/// <summary>
+///     Controller for CRUD operations with  ProfileFavoriteMovie entities.
+///     ProfileFavoriteMovie entities meant for between-connection of user profile and moves, chosen as favorites.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Roles = "admin,user,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class ProfileFavoriteMoviesController : ControllerBase
 {
     private readonly IAppPublic _public;
 
+    /// <summary>
+    ///     Constructor of ProfileFavoriteMoviesController class
+    /// </summary>
+    /// <param name="appPublic">IAppPublic Interface of public layer</param>
     public ProfileFavoriteMoviesController(IAppPublic appPublic)
     {
         _public = appPublic;
     }
 
     // GET: api/ProfileFavoriteMovies
+    /// <summary>
+    ///     Method returns list of all ProfileFavoriteMovie entities stored in API database.
+    /// </summary>
+    /// <returns>IEnumerable of generated from ProfileFavoriteMovie entity object</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
@@ -46,6 +58,11 @@ public class ProfileFavoriteMoviesController : ControllerBase
 
     // POST: api/ProfileFavoriteMovies
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     Method adds new ProfileFavoriteMovie entity to API database
+    /// </summary>
+    /// <param name="profileFavoriteMovie">ProfileFavoriteMovie class entity to add</param>
+    /// <returns>Generated from ProfileFavoriteMovie entity object </returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 201)]
@@ -68,11 +85,16 @@ public class ProfileFavoriteMoviesController : ControllerBase
         };
 
         return CreatedAtAction("GetProfileFavoriteMoviesByProfileId",
-            new {id = profileFavoriteMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()},
+            new { id = profileFavoriteMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString() },
             res);
     }
 
     // DELETE: api/ProfileFavoriteMovies/5
+    /// <summary>
+    ///     Deletes ProfileFavoriteMovie entity found by given id.
+    /// </summary>
+    /// <param name="id">ProfileFavoriteMovie entity id</param>
+    /// <returns>Code 204 in case of success or code 404 in case of bad request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(204)]
@@ -84,10 +106,5 @@ public class ProfileFavoriteMoviesController : ControllerBase
         await _public.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private async Task<bool> ProfileFavoriteMovieExists(Guid id)
-    {
-        return await _public.ProfileFavoriteMovie.ExistsAsync(id);
     }
 }

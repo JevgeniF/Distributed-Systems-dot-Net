@@ -37,7 +37,7 @@ public static class IdentityExtensions
         var idClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
         if (idClaim == null) throw new NullReferenceException("NameIdentifier claim not found");
 
-        var res = (TKeyType) TypeDescriptor.GetConverter(typeof(TKeyType)).ConvertFromInvariantString(idClaim.Value)!;
+        var res = (TKeyType)TypeDescriptor.GetConverter(typeof(TKeyType)).ConvertFromInvariantString(idClaim.Value)!;
         return res;
     }
 

@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
@@ -32,10 +33,10 @@ public class ProfileFavoriteMoviesController : Controller
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
         var profile = await _bll.UserProfile.FirstOrDefaultAsync(profileId);
-        var vm = new ProfileFavoriteMovieCreateEditVM
+        var vm = new ProfileFavoriteMovieCreateEditVm
         {
             MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.IncludeGetByAgeAsync(profile!.Age))
-                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+                .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
 
@@ -47,7 +48,7 @@ public class ProfileFavoriteMoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(ProfileFavoriteMovieCreateEditVM vm)
+    public async Task<IActionResult> Create(ProfileFavoriteMovieCreateEditVm vm)
     {
         var profileId = Guid.Parse(RouteData.Values["id"]!.ToString()!);
         var profile = await _bll.UserProfile.FirstOrDefaultAsync(profileId);
@@ -58,11 +59,11 @@ public class ProfileFavoriteMoviesController : Controller
             vm.ProfileFavoriteMovie.Id = Guid.NewGuid();
             _bll.ProfileFavoriteMovie.Add(vm.ProfileFavoriteMovie);
             await _bll.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), new {id = profileId});
+            return RedirectToAction(nameof(Index), new { id = profileId });
         }
 
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.IncludeGetByAgeAsync(profile!.Age))
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.ProfileFavoriteMovie.MovieDetailsId);
         return View(vm);
     }
@@ -90,6 +91,6 @@ public class ProfileFavoriteMoviesController : Controller
 
         await _bll.ProfileFavoriteMovie.RemoveAsync(id);
         await _bll.SaveChangesAsync();
-        return RedirectToAction(nameof(Index), new {id = ViewData["id"]});
+        return RedirectToAction(nameof(Index), new { id = ViewData["id"] });
     }
 }

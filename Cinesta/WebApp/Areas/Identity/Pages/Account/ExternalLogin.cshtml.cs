@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#pragma warning disable CS1591
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
@@ -76,7 +77,7 @@ public class ExternalLoginModel : PageModel
     public IActionResult OnPost(string provider, string returnUrl = null)
     {
         // Request a redirect to the external login provider.
-        var redirectUrl = Url.Page("./ExternalLogin", "Callback", new {returnUrl});
+        var redirectUrl = Url.Page("./ExternalLogin", "Callback", new { returnUrl });
         var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
         return new ChallengeResult(provider, properties);
     }
@@ -87,14 +88,14 @@ public class ExternalLoginModel : PageModel
         if (remoteError != null)
         {
             ErrorMessage = $"Error from external provider: {remoteError}";
-            return RedirectToPage("./Login", new {ReturnUrl = returnUrl});
+            return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
         }
 
         var info = await _signInManager.GetExternalLoginInfoAsync();
         if (info == null)
         {
             ErrorMessage = "Error loading external login information.";
-            return RedirectToPage("./Login", new {ReturnUrl = returnUrl});
+            return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
         }
 
         // Sign in the user with this external login provider if the user already has a login.
@@ -127,7 +128,7 @@ public class ExternalLoginModel : PageModel
         if (info == null)
         {
             ErrorMessage = "Error loading external login information during confirmation.";
-            return RedirectToPage("./Login", new {ReturnUrl = returnUrl});
+            return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
         }
 
         if (ModelState.IsValid)
@@ -151,7 +152,7 @@ public class ExternalLoginModel : PageModel
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         null,
-                        new {area = "Identity", userId, code},
+                        new { area = "Identity", userId, code },
                         Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
@@ -159,7 +160,7 @@ public class ExternalLoginModel : PageModel
 
                     // If account confirmation is required, we need to show the link if we don't have a real email sender
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        return RedirectToPage("./RegisterConfirmation", new {Input.Email});
+                        return RedirectToPage("./RegisterConfirmation", new { Input.Email });
 
                     await _signInManager.SignInAsync(user, false, info.LoginProvider);
                     return LocalRedirect(returnUrl);
@@ -192,7 +193,7 @@ public class ExternalLoginModel : PageModel
     {
         if (!_userManager.SupportsUserEmail)
             throw new NotSupportedException("The default UI requires a user store with email support.");
-        return (IUserEmailStore<AppUser>) _userStore;
+        return (IUserEmailStore<AppUser>)_userStore;
     }
 
     /// <summary>

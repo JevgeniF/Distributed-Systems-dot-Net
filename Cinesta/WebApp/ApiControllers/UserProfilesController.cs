@@ -7,24 +7,36 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
-using WebApp.SwaggerExamples;
+using WebApp.SwaggerExamples.UserProfiles;
 
 namespace WebApp.ApiControllers;
 
+/// <summary>
+///     Controller for CRUD operations with UserProfile entities.
+///     UserProfile entities meant for storage of different user profiles.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Roles = "admin,user,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserProfilesController : ControllerBase
 {
     private readonly IAppPublic _public;
 
+    /// <summary>
+    ///     Constructor of UserProfilesController class
+    /// </summary>
+    /// <param name="appPublic">IAppPublic Interface of public layer</param>
     public UserProfilesController(IAppPublic appPublic)
     {
         _public = appPublic;
     }
 
     // GET: api/UserProfiles
+    /// <summary>
+    ///     Method returns list of current user all UserProfile entities stored in API database.
+    /// </summary>
+    /// <returns>IEnumerable of generated from UserProfile entity object</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
@@ -43,6 +55,11 @@ public class UserProfilesController : ControllerBase
     }
 
     // GET: api/UserProfiles/5
+    /// <summary>
+    ///     Method returns one exact UserProfile entity found by it's id.
+    /// </summary>
+    /// <param name="id">Guid: UserProfile entity Id</param>
+    /// <returns>Generated from UserProfile entity object</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 200)]
@@ -66,6 +83,12 @@ public class UserProfilesController : ControllerBase
 
     // PUT: api/UserProfiles/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     Method edits UserProfile entity found in API database by it's id.
+    /// </summary>
+    /// <param name="id">Guid: UserProfile entity id.</param>
+    /// <param name="userProfile">Updated UserProfile entity to store under this id</param>
+    /// <returns>Code 201 in case of success or Code 403 in case of wrong request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(201)]
@@ -94,6 +117,11 @@ public class UserProfilesController : ControllerBase
 
     // POST: api/UserProfiles
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     Method adds new UserProfile entity to API database
+    /// </summary>
+    /// <param name="userProfile">UserProfile class entity to add</param>
+    /// <returns>Generated from UserProfile entity object </returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 201)]
@@ -118,10 +146,15 @@ public class UserProfilesController : ControllerBase
         };
 
         return CreatedAtAction("GetUserProfile",
-            new {id = userProfile.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
+            new { id = userProfile.Id, version = HttpContext.GetRequestedApiVersion()!.ToString() }, res);
     }
 
     // DELETE: api/UserProfiles/5
+    /// <summary>
+    ///     Deletes UserProfile entity found by given id.
+    /// </summary>
+    /// <param name="id">UserProfile entity id</param>
+    /// <returns>Code 204 in case of success or code 404 in case of bad request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(204)]

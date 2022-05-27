@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
@@ -40,16 +41,16 @@ public class CastInMoviesController : Controller
     // GET: CastInMovies/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new CastInMovieCreateEditVM
+        var vm = new CastInMovieCreateEditVm
         {
             CastRoleSelectList = new SelectList((await _bll.CastRole.GetAllAsync())
-                .Select(c => new {c.Id, c.Naming}),
+                .Select(c => new { c.Id, c.Naming }),
                 nameof(CastRole.Id), nameof(CastRole.Naming)),
             PersonSelectList = new SelectList((await _bll.Person.GetAllAsync())
-                .Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)}),
+                .Select(p => new { p.Id, FullName = string.Join(" ", p.Name, p.Surname) }),
                 nameof(Person.Id), "FullName"),
             MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-                .Select(m => new {m.Id, m.Title}),
+                .Select(m => new { m.Id, m.Title }),
                 nameof(MovieDetails.Id), nameof(MovieDetails.Title))
         };
 
@@ -61,7 +62,7 @@ public class CastInMoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CastInMovieCreateEditVM vm)
+    public async Task<IActionResult> Create(CastInMovieCreateEditVm vm)
     {
         if (ModelState.IsValid)
         {
@@ -71,14 +72,14 @@ public class CastInMoviesController : Controller
         }
 
         vm.CastRoleSelectList = new SelectList(
-            (await _bll.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
+            (await _bll.CastRole.GetAllAsync()).Select(c => new { c.Id, c.Naming }),
             nameof(CastRole.Id), nameof(CastRole.Naming), vm.CastInMovie.CastRoleId);
         vm.MovieDetailsSelectList = new SelectList(
-            (await _bll.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
+            (await _bll.MovieDetails.GetAllAsync()).Select(m => new { m.Id, m.Title }),
             nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
         vm.PersonSelectList = new SelectList(
             (await _bll.Person.GetAllAsync())
-            .Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)}), nameof(Person.Id),
+            .Select(p => new { p.Id, FullName = string.Join(" ", p.Name, p.Surname) }), nameof(Person.Id),
             "FullName", vm.CastInMovie.PersonId);
         return View(vm);
     }
@@ -90,19 +91,19 @@ public class CastInMoviesController : Controller
 
         var castInMovie = await _bll.CastInMovie.FirstOrDefaultAsync(id.Value);
         if (castInMovie == null) return NotFound();
-        var vm = new CastInMovieCreateEditVM
+        var vm = new CastInMovieCreateEditVm
         {
             CastInMovie = castInMovie
         };
         vm.CastRoleSelectList = new SelectList(
-            (await _bll.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
+            (await _bll.CastRole.GetAllAsync()).Select(c => new { c.Id, c.Naming }),
             nameof(CastRole.Id), nameof(CastRole.Naming), vm.CastInMovie.CastRoleId);
         vm.MovieDetailsSelectList = new SelectList(
-            (await _bll.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
+            (await _bll.MovieDetails.GetAllAsync()).Select(m => new { m.Id, m.Title }),
             nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
         vm.PersonSelectList = new SelectList(
             (await _bll.Person.GetAllAsync())
-            .Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)}), nameof(Person.Id),
+            .Select(p => new { p.Id, FullName = string.Join(" ", p.Name, p.Surname) }), nameof(Person.Id),
             "FullName", vm.CastInMovie.PersonId);
         return View(vm);
     }
@@ -133,19 +134,19 @@ public class CastInMoviesController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var vm = new CastInMovieCreateEditVM
+        var vm = new CastInMovieCreateEditVm
         {
             CastInMovie = castInMovie
         };
         vm.CastRoleSelectList = new SelectList(
-            (await _bll.CastRole.GetAllAsync()).Select(c => new {c.Id, c.Naming}),
+            (await _bll.CastRole.GetAllAsync()).Select(c => new { c.Id, c.Naming }),
             nameof(CastRole.Id), nameof(CastRole.Naming), vm.CastInMovie.CastRoleId);
         vm.MovieDetailsSelectList = new SelectList(
-            (await _bll.MovieDetails.GetAllAsync()).Select(m => new {m.Id, m.Title}),
+            (await _bll.MovieDetails.GetAllAsync()).Select(m => new { m.Id, m.Title }),
             nameof(MovieDetails.Id), nameof(MovieDetails.Title), vm.CastInMovie.MovieDetailsId);
         vm.PersonSelectList = new SelectList(
             (await _bll.Person.GetAllAsync())
-            .Select(p => new {p.Id, FullName = string.Join(" ", p.Name, p.Surname)}), nameof(Person.Id),
+            .Select(p => new { p.Id, FullName = string.Join(" ", p.Name, p.Surname) }), nameof(Person.Id),
             "FullName", vm.CastInMovie.PersonId);
         return View(vm);
     }

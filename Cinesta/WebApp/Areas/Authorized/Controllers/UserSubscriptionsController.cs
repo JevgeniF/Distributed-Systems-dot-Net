@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Base.Extensions;
@@ -41,10 +42,10 @@ public class UserSubscriptionsController : Controller
     // GET: Authorized/UserSubscriptions/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new UserSubscriptionCreateVM
+        var vm = new UserSubscriptionCreateVm
         {
             SubscriptionSelectList = new SelectList((await _bll.Subscription.GetAllAsync())
-                .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
+                .Select(s => new { s.Id, s.Naming }), nameof(Subscription.Id),
                 nameof(Subscription.Naming))
         };
         return View(vm);
@@ -55,7 +56,7 @@ public class UserSubscriptionsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(UserSubscriptionCreateVM vm)
+    public async Task<IActionResult> Create(UserSubscriptionCreateVm vm)
     {
         if (ModelState.IsValid)
         {
@@ -66,7 +67,7 @@ public class UserSubscriptionsController : Controller
         }
 
         vm.SubscriptionSelectList = new SelectList((await _bll.Subscription.GetAllAsync())
-            .Select(s => new {s.Id, s.Naming}), nameof(Subscription.Id),
+            .Select(s => new { s.Id, s.Naming }), nameof(Subscription.Id),
             nameof(Subscription.Naming), vm.UserSubscription.SubscriptionId);
         return View(vm);
     }
@@ -92,10 +93,5 @@ public class UserSubscriptionsController : Controller
         await _bll.UserSubscription.RemoveAsync(id);
         await _bll.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
-    }
-
-    private async Task<bool> UserSubscriptionExists(Guid id)
-    {
-        return await _bll.UserSubscription.ExistsAsync(id);
     }
 }

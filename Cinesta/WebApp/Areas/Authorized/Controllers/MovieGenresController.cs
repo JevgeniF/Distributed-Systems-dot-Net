@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
@@ -40,12 +41,12 @@ public class MovieGenresController : Controller
     // GET: Admin/MovieGenres/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new MovieGenreCreateEditVM
+        var vm = new MovieGenreCreateEditVm
         {
             GenreSelectList = new SelectList((await _bll.Genre.GetAllAsync())
-                .Select(g => new {g.Id, g.Naming}), nameof(Genre.Id), nameof(Genre.Naming)),
+                .Select(g => new { g.Id, g.Naming }), nameof(Genre.Id), nameof(Genre.Naming)),
             MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-                .Select(d => new {d.Id, d.Title}), nameof(MovieDetails.Id),
+                .Select(d => new { d.Id, d.Title }), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
         return View(vm);
@@ -56,7 +57,7 @@ public class MovieGenresController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(MovieGenreCreateEditVM vm)
+    public async Task<IActionResult> Create(MovieGenreCreateEditVm vm)
     {
         if (ModelState.IsValid)
         {
@@ -66,10 +67,10 @@ public class MovieGenresController : Controller
         }
 
         vm.GenreSelectList = new SelectList((await _bll.Genre.GetAllAsync())
-            .Select(g => new {g.Id, g.Naming}), nameof(Genre.Id), nameof(Genre.Naming),
+            .Select(g => new { g.Id, g.Naming }), nameof(Genre.Id), nameof(Genre.Naming),
             vm.MovieGenre.GenreId);
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(d => new {d.Id, d.Title}), nameof(MovieDetails.Id),
+            .Select(d => new { d.Id, d.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
         return View(vm);
     }
@@ -81,15 +82,15 @@ public class MovieGenresController : Controller
 
         var movieGenre = await _bll.MovieGenre.FirstOrDefaultAsync(id.Value);
         if (movieGenre == null) return NotFound();
-        var vm = new MovieGenreCreateEditVM
+        var vm = new MovieGenreCreateEditVm
         {
             MovieGenre = movieGenre
         };
         vm.GenreSelectList = new SelectList((await _bll.Genre.GetAllAsync())
-            .Select(g => new {g.Id, g.Naming}), nameof(Genre.Id), nameof(Genre.Naming),
+            .Select(g => new { g.Id, g.Naming }), nameof(Genre.Id), nameof(Genre.Naming),
             vm.MovieGenre.GenreId);
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(d => new {d.Id, d.Title}), nameof(MovieDetails.Id),
+            .Select(d => new { d.Id, d.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
         return View(vm);
     }
@@ -120,15 +121,15 @@ public class MovieGenresController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var vm = new MovieGenreCreateEditVM
+        var vm = new MovieGenreCreateEditVm
         {
             MovieGenre = movieGenre
         };
         vm.GenreSelectList = new SelectList((await _bll.Genre.GetAllAsync())
-            .Select(g => new {g.Id, g.Naming}), nameof(Genre.Id), nameof(Genre.Naming),
+            .Select(g => new { g.Id, g.Naming }), nameof(Genre.Id), nameof(Genre.Naming),
             vm.MovieGenre.GenreId);
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(d => new {d.Id, d.Title}), nameof(MovieDetails.Id),
+            .Select(d => new { d.Id, d.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.MovieGenre.MovieDetailsId);
         return View(vm);
     }

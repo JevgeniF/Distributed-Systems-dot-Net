@@ -3,7 +3,7 @@
 @inject IOptions<RequestLocalizationOptions> LocalizationOptions
 @{
     var cultureItems = LocalizationOptions.Value.SupportedUICultures!
-        .Select(c => new {Value = c.Name, Text = c.NativeName}).ToList();
+        .Select(c => new { Value = c.Name, Text = c.NativeName }).ToList();
 }
 
 <li class="nav-item dropdown">

@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Base.Extensions;

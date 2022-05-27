@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

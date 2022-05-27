@@ -1,9 +1,10 @@
-﻿using App.BLL.DTO;
+﻿#pragma warning disable CS1591
+using App.BLL.DTO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WebApp.Areas.Authorized.ViewModels;
 
-public class ProfileFavoriteMovieCreateEditVM
+public class ProfileFavoriteMovieCreateEditVm
 {
     public ProfileFavoriteMovie ProfileFavoriteMovie { get; set; } = default!;
 

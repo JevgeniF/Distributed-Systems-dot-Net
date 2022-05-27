@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#pragma warning disable CS1591
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
@@ -118,14 +119,14 @@ public class RegisterModel : PageModel
                 var callbackUrl = Url.Page(
                     "/Account/ConfirmEmail",
                     null,
-                    new {area = "Identity", userId, code, returnUrl},
+                    new { area = "Identity", userId, code, returnUrl },
                     Request.Scheme);
 
                 await _emailSender.SendEmailAsync(Input.Email, Base.Resources.Identity.confirmYourEmail,
                     $"{Base.Resources.Identity.confirmEmailText} <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>{Base.Resources.Identity.clickingHere}</a>.");
 
                 if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    return RedirectToPage("RegisterConfirmation", new {email = Input.Email, returnUrl});
+                    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
 
                 await _signInManager.SignInAsync(user, false);
                 return LocalRedirect(returnUrl);
@@ -154,7 +155,7 @@ public class RegisterModel : PageModel
     {
         if (!_userManager.SupportsUserEmail)
             throw new NotSupportedException(Base.Resources.Identity.uiRequiresUserStoreWithEmail);
-        return (IUserEmailStore<AppUser>) _userStore;
+        return (IUserEmailStore<AppUser>)_userStore;
     }
 
     /// <summary>

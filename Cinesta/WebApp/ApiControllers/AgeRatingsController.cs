@@ -113,7 +113,7 @@ public class AgeRatingsController : ControllerBase
         await _public.SaveChangesAsync();
 
         return CreatedAtAction("GetAgeRating",
-            new {id = ageRating.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()},
+            new { id = ageRating.Id, version = HttpContext.GetRequestedApiVersion()!.ToString() },
             ageRating);
     }
 

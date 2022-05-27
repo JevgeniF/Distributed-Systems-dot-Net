@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
-using WebApp.SwaggerExamples;
+using WebApp.SwaggerExamples.CastInMovie;
 
 namespace WebApp.ApiControllers;
 
@@ -168,7 +168,7 @@ public class CastInMoviesController : ControllerBase
         };
 
         return CreatedAtAction("GetCastInMovie",
-            new {id = castInMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
+            new { id = castInMovie.Id, version = HttpContext.GetRequestedApiVersion()!.ToString() }, res);
     }
 
     // DELETE: api/CastInMovies/5

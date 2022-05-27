@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#pragma warning disable CS1591
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
@@ -99,7 +100,7 @@ public class EmailModel : PageModel
             var callbackUrl = Url.Page(
                 "/Account/ConfirmEmailChange",
                 null,
-                new {area = "Identity", userId, email = Input.NewEmail, code},
+                new { area = "Identity", userId, email = Input.NewEmail, code },
                 Request.Scheme);
             await _emailSender.SendEmailAsync(
                 Input.NewEmail,
@@ -132,7 +133,7 @@ public class EmailModel : PageModel
         var callbackUrl = Url.Page(
             "/Account/ConfirmEmail",
             null,
-            new {area = "Identity", userId, code},
+            new { area = "Identity", userId, code },
             Request.Scheme);
         await _emailSender.SendEmailAsync(
             email,

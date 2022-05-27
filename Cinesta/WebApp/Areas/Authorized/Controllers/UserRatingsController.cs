@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Base.Extensions;
@@ -41,10 +42,10 @@ public class UserRatingsController : Controller
     // GET: Admin/UserRatings/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new UserRatingCreateEditVM
+        var vm = new UserRatingCreateEditVm
         {
             MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+                .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
         return View(vm);
@@ -55,7 +56,7 @@ public class UserRatingsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(UserRatingCreateEditVM vm)
+    public async Task<IActionResult> Create(UserRatingCreateEditVm vm)
     {
         if (ModelState.IsValid)
         {
@@ -67,7 +68,7 @@ public class UserRatingsController : Controller
         }
 
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
     }
@@ -80,12 +81,12 @@ public class UserRatingsController : Controller
         var userRating = await _bll.UserRating.FirstOrDefaultAsync(id.Value);
         if (userRating == null) return NotFound();
 
-        var vm = new UserRatingCreateEditVM
+        var vm = new UserRatingCreateEditVm
         {
             UserRating = userRating
         };
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
     }
@@ -124,12 +125,12 @@ public class UserRatingsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var vm = new UserRatingCreateEditVM
+        var vm = new UserRatingCreateEditVm
         {
             UserRating = userRating
         };
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.UserRating.MovieDetailsId);
         return View(vm);
     }

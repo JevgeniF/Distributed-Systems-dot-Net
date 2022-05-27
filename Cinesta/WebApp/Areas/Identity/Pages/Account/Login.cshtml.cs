@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#pragma warning disable CS1591
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
@@ -81,7 +82,7 @@ public class LoginModel : PageModel
             }
 
             if (result.RequiresTwoFactor)
-                return RedirectToPage("./LoginWith2fa", new {ReturnUrl = returnUrl, Input.RememberMe});
+                return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, Input.RememberMe });
             if (result.IsLockedOut)
             {
                 _logger.LogWarning("User account locked out.");

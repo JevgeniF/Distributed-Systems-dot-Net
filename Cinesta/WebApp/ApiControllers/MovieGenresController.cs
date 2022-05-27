@@ -6,24 +6,36 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
-using WebApp.SwaggerExamples;
+using WebApp.SwaggerExamples.MovieGenres;
 
 namespace WebApp.ApiControllers;
 
+/// <summary>
+///     Controller for CRUD operations with  MovieGenre entities.
+///     MovieGenre entities meant for between-connection of Movie entities with corresponding Genre entities.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Roles = "admin,user,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class MovieGenresController : ControllerBase
 {
     private readonly IAppPublic _public;
 
+    /// <summary>
+    ///     Constructor of MovieGenresController class
+    /// </summary>
+    /// <param name="appPublic">IAppPublic Interface of public layer</param>
     public MovieGenresController(IAppPublic appPublic)
     {
         _public = appPublic;
     }
 
     // GET: api/MovieGenres
+    /// <summary>
+    ///     Method returns list of all MovieGenre entities stored in API database.
+    /// </summary>
+    /// <returns>IEnumerable of generated from MovieGenre entity object</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [SwaggerResponseExample(200, typeof(GetListMovieGenresExample))]
@@ -49,6 +61,11 @@ public class MovieGenresController : ControllerBase
     }
 
     // GET: api/MovieGenres/5
+    /// <summary>
+    ///     Method returns one exact MovieGenre entity found by it's id.
+    /// </summary>
+    /// <param name="id">Guid: MovieGenre entity Id</param>
+    /// <returns>Generated from MovieGenre entity object</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 200)]
@@ -79,13 +96,19 @@ public class MovieGenresController : ControllerBase
 
     // PUT: api/MovieGenres/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     For admins and moderators only. Method edits MovieGenre entity found in API database by it's id.
+    /// </summary>
+    /// <param name="id">Guid: MovieGenre entity id.</param>
+    /// <param name="movieGenre">Updated MovieGenre entity to store under this id</param>
+    /// <returns>Code 201 in case of success or Code 403 in case of wrong request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
     [HttpPut("{id}")]
     [SwaggerRequestExample(typeof(MovieGenre), typeof(PostMovieGenresExample))]
-    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "admin,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutMovieGenre(Guid id, MovieGenre movieGenre)
     {
         if (id != movieGenre.Id) return BadRequest();
@@ -107,6 +130,11 @@ public class MovieGenresController : ControllerBase
 
     // POST: api/MovieGenres
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     For admins and moderators only. Method adds new MovieGenre entity to API database
+    /// </summary>
+    /// <param name="movieGenre">MovieGenre class entity to add</param>
+    /// <returns>Generated from MovieGenre entity object </returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 201)]
@@ -114,7 +142,7 @@ public class MovieGenresController : ControllerBase
     [SwaggerResponseExample(201, typeof(PostMovieGenresExample))]
     [SwaggerRequestExample(typeof(MovieGenre), typeof(PostMovieGenresExample))]
     [HttpPost]
-    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "admin,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult<object>> PostMovieGenre(MovieGenre movieGenre)
     {
         movieGenre.Id = Guid.NewGuid();
@@ -128,16 +156,21 @@ public class MovieGenresController : ControllerBase
         };
 
         return CreatedAtAction("GetMovieGenre",
-            new {id = movieGenre.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
+            new { id = movieGenre.Id, version = HttpContext.GetRequestedApiVersion()!.ToString() }, res);
     }
 
     // DELETE: api/MovieGenres/5
+    /// <summary>
+    ///     For admins and moderators only. Deletes MovieGenre entity found by given id.
+    /// </summary>
+    /// <param name="id">MovieGenre entity id</param>
+    /// <returns>Code 204 in case of success or code 404 in case of bad request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [HttpDelete("{id}")]
-    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "admin,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteMovieGenre(Guid id)
     {
         await _public.MovieGenre.RemoveAsync(id);

@@ -15,6 +15,9 @@ using AppUser = App.Domain.Identity.AppUser;
 
 namespace WebApp.ApiControllers.Identity;
 
+/// <summary>
+///     Controller for login, register and user role change operations.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/identity/[controller]/[action]")]
@@ -28,6 +31,15 @@ public class AccountController : ControllerBase
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
 
+    /// <summary>
+    ///     Constructor for AccountController class
+    /// </summary>
+    /// <param name="signInManager">SignInManager class instance </param>
+    /// <param name="userManager">UserManager class instance</param>
+    /// <param name="logger">Logger interface ILogger</param>
+    /// <param name="configuration">Configuration interface IConfiguration</param>
+    /// <param name="appPublic">Public layer interface IAppPublic</param>
+    /// <param name="context">AppDbContext class instance</param>
     public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,
         ILogger<AccountController> logger, IConfiguration configuration, IAppPublic appPublic, AppDbContext context)
     {
@@ -39,6 +51,11 @@ public class AccountController : ControllerBase
         _context = context;
     }
 
+    /// <summary>
+    ///     Method for user logIn
+    /// </summary>
+    /// <param name="loginData">User data (email, password) from request body</param>
+    /// <returns>JwtResponse entity, which contains JWT Token, RefreshToken and user email</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(JwtResponse), 200)]
@@ -111,6 +128,11 @@ public class AccountController : ControllerBase
         return Ok(res);
     }
 
+    /// <summary>
+    ///     Method for user registration. Registers user and post name nad surname to persons table.
+    /// </summary>
+    /// <param name="registrationData">User data from body: (email, password, name, surname)</param>
+    /// <returns>JwtResponse entity, which contains JWT Token, RefreshToken and user email</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(JwtResponse), 200)]
@@ -193,6 +215,11 @@ public class AccountController : ControllerBase
         return Ok(res);
     }
 
+    /// <summary>
+    ///     Method for new refresh token generation
+    /// </summary>
+    /// <param name="refreshTokenModel">RefreshTokenModel class instance. Contains JWT and refresh token</param>
+    /// <returns>JwtResponse entity, which contains new JWT Token, new RefreshToken and user email</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(JwtResponse), 200)]
@@ -270,6 +297,11 @@ public class AccountController : ControllerBase
         return Ok(res);
     }
 
+    /// <summary>
+    ///     For admin only. Method for changing of user role (newbie, user, admin, moderator)
+    /// </summary>
+    /// <param name="userAssignmentData">UserAssignment class instance, contains user email and new user role.</param>
+    /// <returns>response Ok in case of success or Bad request response</returns>
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult> ChangeRole([FromBody] UserAssignment userAssignmentData)
@@ -298,7 +330,7 @@ public class AccountController : ControllerBase
             var result = await _userManager.RemoveFromRolesAsync(appUser, roles);
             if (result.Succeeded)
             {
-                result = await _userManager.AddToRolesAsync(appUser, new[] {"user", userAssignmentData.NewRole});
+                result = await _userManager.AddToRolesAsync(appUser, new[] { "user", userAssignmentData.NewRole });
                 return Ok(result);
             }
         }
@@ -308,7 +340,7 @@ public class AccountController : ControllerBase
             var result = await _userManager.RemoveFromRolesAsync(appUser, roles);
             if (result.Succeeded)
             {
-                result = await _userManager.AddToRolesAsync(appUser, new[] {userAssignmentData.NewRole});
+                result = await _userManager.AddToRolesAsync(appUser, new[] { userAssignmentData.NewRole });
                 return Ok(result);
             }
         }

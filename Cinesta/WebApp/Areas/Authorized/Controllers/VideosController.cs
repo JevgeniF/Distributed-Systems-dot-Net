@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
@@ -40,10 +41,10 @@ public class VideosController : Controller
     // GET: Admin/Videos/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new VideoCreateEditVM
+        var vm = new VideoCreateEditVm
         {
             MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+                .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
         return View(vm);
@@ -54,7 +55,7 @@ public class VideosController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(VideoCreateEditVM vm)
+    public async Task<IActionResult> Create(VideoCreateEditVm vm)
     {
         if (ModelState.IsValid)
         {
@@ -64,7 +65,7 @@ public class VideosController : Controller
         }
 
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
         return View(vm);
     }
@@ -77,12 +78,12 @@ public class VideosController : Controller
         var video = await _bll.Video.FirstOrDefaultAsync(id.Value);
         if (video == null) return NotFound();
 
-        var vm = new VideoCreateEditVM
+        var vm = new VideoCreateEditVm
         {
             Video = video
         };
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
         return View(vm);
     }
@@ -122,9 +123,9 @@ public class VideosController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var vm = new VideoCreateEditVM();
+        var vm = new VideoCreateEditVm();
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.Video.MovieDetailsId);
         return View(vm);
     }

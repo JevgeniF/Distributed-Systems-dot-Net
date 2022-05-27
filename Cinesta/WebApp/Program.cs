@@ -18,7 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WebApp;
-using WebApp.SwaggerExamples;
+using WebApp.SwaggerExamples.CastInMovie;
 using AutoMapperConfig = App.DAL.EF.AutoMapperConfig;
 
 

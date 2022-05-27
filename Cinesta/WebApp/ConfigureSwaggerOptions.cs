@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿#pragma warning disable CS1591
+
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;

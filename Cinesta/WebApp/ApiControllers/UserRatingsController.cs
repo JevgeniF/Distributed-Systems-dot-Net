@@ -7,24 +7,36 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
-using WebApp.SwaggerExamples;
+using WebApp.SwaggerExamples.UserRatings;
 
 namespace WebApp.ApiControllers;
 
+/// <summary>
+///     Controller for CRUD operations with UserRating entities.
+///     UserRating entities meant for storage of user marks and comments.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-[Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(Roles = "admin,user,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class UserRatingsController : ControllerBase
 {
     private readonly IAppPublic _public;
 
+    /// <summary>
+    ///     Constructor of UserRatingsController class
+    /// </summary>
+    /// <param name="appPublic">IAppPublic Interface of public layer</param>
     public UserRatingsController(IAppPublic appPublic)
     {
         _public = appPublic;
     }
 
     // GET: api/UserRatings
+    /// <summary>
+    ///     Method returns list of all UserRating entities stored in API database.
+    /// </summary>
+    /// <returns>IEnumerable of generated from UserRating entity object</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
@@ -53,6 +65,11 @@ public class UserRatingsController : ControllerBase
     }
 
     // GET: api/UserRatings/5
+    /// <summary>
+    ///     Method returns one exact UserRating entity found by it's id.
+    /// </summary>
+    /// <param name="id">Guid: UserRating entity Id</param>
+    /// <returns>Generated from UserRating entity object</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 200)]
@@ -86,6 +103,12 @@ public class UserRatingsController : ControllerBase
 
     // PUT: api/UserRatings/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     For UserRating entity creator. Method edits UserRating entity found in API database by it's id.
+    /// </summary>
+    /// <param name="id">Guid: UserRating entity id.</param>
+    /// <param name="userRating">Updated UserRating entity to store under this id</param>
+    /// <returns>Code 201 in case of success or Code 403 in case of wrong request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(201)]
@@ -98,6 +121,7 @@ public class UserRatingsController : ControllerBase
 
         var userRatingsFromDb = await _public.UserRating.FirstOrDefaultAsync(id);
         if (userRatingsFromDb == null) return NotFound();
+        if (userRatingsFromDb.AppUserId != User.GetUserId()) return BadRequest();
 
         try
         {
@@ -118,6 +142,11 @@ public class UserRatingsController : ControllerBase
 
     // POST: api/UserRatings
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    /// <summary>
+    ///     Method adds new UserRating entity to API database
+    /// </summary>
+    /// <param name="userRating">UserRating class entity to add</param>
+    /// <returns>Generated from UserRating entity object </returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 201)]
@@ -140,10 +169,15 @@ public class UserRatingsController : ControllerBase
             userRating.Comment
         };
         return CreatedAtAction("GetUserRating",
-            new {id = userRating.Id, version = HttpContext.GetRequestedApiVersion()!.ToString()}, res);
+            new { id = userRating.Id, version = HttpContext.GetRequestedApiVersion()!.ToString() }, res);
     }
 
     // DELETE: api/UserRatings/5
+    /// <summary>
+    ///     For UserRating entity creator. Deletes UserRating entity found by given id.
+    /// </summary>
+    /// <param name="id">UserRating entity id</param>
+    /// <returns>Code 204 in case of success or code 404 in case of bad request</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(204)]
@@ -151,6 +185,9 @@ public class UserRatingsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserRating(Guid id)
     {
+        var userRatingsFromDb = await _public.UserRating.FirstOrDefaultAsync(id);
+        if (userRatingsFromDb == null) return NotFound();
+        if (userRatingsFromDb.AppUserId != User.GetUserId()) return BadRequest();
         await _public.UserRating.RemoveAsync(id);
         await _public.SaveChangesAsync();
 

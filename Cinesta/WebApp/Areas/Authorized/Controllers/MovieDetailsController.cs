@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
@@ -40,13 +41,13 @@ public class MovieDetailsController : Controller
     // GET: Admin/MovieDetails/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new MovieDetailsCreateEditVM
+        var vm = new MovieDetailsCreateEditVm
         {
             AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
-                .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
+                .Select(r => new { r.Id, r.Naming }), nameof(AgeRating.Id),
                 nameof(AgeRating.Naming)),
             MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
-                .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
+                .Select(t => new { t.Id, t.Naming }), nameof(MovieType.Id),
                 nameof(MovieType.Naming))
         };
         return View(vm);
@@ -57,7 +58,7 @@ public class MovieDetailsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(MovieDetailsCreateEditVM vm)
+    public async Task<IActionResult> Create(MovieDetailsCreateEditVm vm)
     {
         if (ModelState.IsValid)
         {
@@ -67,10 +68,10 @@ public class MovieDetailsController : Controller
         }
 
         vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
-            .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
+            .Select(r => new { r.Id, r.Naming }), nameof(AgeRating.Id),
             nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
         vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
-            .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
+            .Select(t => new { t.Id, t.Naming }), nameof(MovieType.Id),
             nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
     }
@@ -83,15 +84,15 @@ public class MovieDetailsController : Controller
         var movieDetails = await _bll.MovieDetails.FirstOrDefaultAsync(id.Value);
         if (movieDetails == null) return NotFound();
 
-        var vm = new MovieDetailsCreateEditVM
+        var vm = new MovieDetailsCreateEditVm
         {
             MovieDetails = movieDetails
         };
         vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
-            .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
+            .Select(r => new { r.Id, r.Naming }), nameof(AgeRating.Id),
             nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
         vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
-            .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
+            .Select(t => new { t.Id, t.Naming }), nameof(MovieType.Id),
             nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
     }
@@ -130,15 +131,15 @@ public class MovieDetailsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var vm = new MovieDetailsCreateEditVM
+        var vm = new MovieDetailsCreateEditVm
         {
             MovieDetails = movieDetails
         };
         vm.AgeRatingSelectList = new SelectList((await _bll.AgeRating.GetAllAsync())
-            .Select(r => new {r.Id, r.Naming}), nameof(AgeRating.Id),
+            .Select(r => new { r.Id, r.Naming }), nameof(AgeRating.Id),
             nameof(AgeRating.Naming), vm.MovieDetails.AgeRatingId);
         vm.MovieTypeSelectList = new SelectList((await _bll.MovieType.GetAllAsync())
-            .Select(t => new {t.Id, t.Naming}), nameof(MovieType.Id),
+            .Select(t => new { t.Id, t.Naming }), nameof(MovieType.Id),
             nameof(MovieType.Naming), vm.MovieDetails.MovieTypeId);
         return View(vm);
     }

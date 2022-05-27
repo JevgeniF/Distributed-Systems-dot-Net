@@ -1,4 +1,5 @@
 #nullable disable
+#pragma warning disable CS1591
 using App.BLL.DTO;
 using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
@@ -40,10 +41,10 @@ public class MovieDbScoresController : Controller
     // GET: MovieDbScores/Create
     public async Task<IActionResult> Create()
     {
-        var vm = new MovieDbScoreCreateEditVM
+        var vm = new MovieDbScoreCreateEditVm
         {
             MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-                .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+                .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
                 nameof(MovieDetails.Title))
         };
         return View(vm);
@@ -54,7 +55,7 @@ public class MovieDbScoresController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(MovieDbScoreCreateEditVM vm)
+    public async Task<IActionResult> Create(MovieDbScoreCreateEditVm vm)
     {
         if (ModelState.IsValid)
         {
@@ -64,7 +65,7 @@ public class MovieDbScoresController : Controller
         }
 
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
         return View(vm);
     }
@@ -77,12 +78,12 @@ public class MovieDbScoresController : Controller
         var movieDbScore = await _bll.MovieDbScore.FirstOrDefaultAsync(id.Value);
         if (movieDbScore == null) return NotFound();
 
-        var vm = new MovieDbScoreCreateEditVM
+        var vm = new MovieDbScoreCreateEditVm
         {
             MovieDbScore = movieDbScore
         };
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
         return View(vm);
     }
@@ -113,12 +114,12 @@ public class MovieDbScoresController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        var vm = new MovieDbScoreCreateEditVM
+        var vm = new MovieDbScoreCreateEditVm
         {
             MovieDbScore = movieDbScore
         };
         vm.MovieDetailsSelectList = new SelectList((await _bll.MovieDetails.GetAllAsync())
-            .Select(m => new {m.Id, m.Title}), nameof(MovieDetails.Id),
+            .Select(m => new { m.Id, m.Title }), nameof(MovieDetails.Id),
             nameof(MovieDetails.Title), vm.MovieDbScore.MovieDetailsId);
         return View(vm);
     }

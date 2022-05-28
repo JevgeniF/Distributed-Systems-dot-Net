@@ -5,9 +5,8 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - Cinesta</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/js/site.css" asp-append-version="true"/>
+    @await RenderSectionAsync("HeaderScripts", false)
 </head>
 <body>
 <header>
@@ -55,9 +54,115 @@
         &copy; 2022 - Cinesta | @Common.LanguageRegion: @Thread.CurrentThread.CurrentUICulture.DisplayName
     </div>
 </footer>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/jquery.validate.globalize.js" asp-append-version="true"></script>
+
 @await RenderSectionAsync("Scripts", false)
+
+@{    
+    var currentCultureCode = Thread.CurrentThread.CurrentCulture.Name.Split('-')[0];
+
+    // map .net datetime format strings to flatpick/momentjs format
+
+    // https://flatpickr.js.org/formatting/
+    // d - day of month,2 digits
+    // j - day of month, no leading zero
+    // m - month, 2 digits
+    // n - mont, no leading zero
+    // y - 2 digit year, Y - 4 digit year
+
+    // https://docs.microsoft.com/en-us/dotnet/api/system.globalization.datetimeformatinfo?view=netcore-3.1
+    // dd.MM.yyyy or dd/MM/yyyy
+
+    var datePattern = Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortDatePattern;
+    datePattern = datePattern
+        .Replace("dd", "d")
+        .Replace("MM", "m")
+        .Replace("yyyy", "Y");
+
+    // LongTimePattern and ShortTimePattern HH:mm for 23:59,  h:mm tt for 11:59 PM
+    var timePattern = Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortTimePattern;
+    var clock24H = timePattern.Contains("tt") == false;
+    timePattern = timePattern
+        .Replace("HH", "H")
+        .Replace("mm", "i")
+        .Replace("ss", "S")
+        .Replace("tt", "K");
+    var dateTimePattern = timePattern + " " + datePattern;
+}
+
+<script>
+    // https://github.com/globalizejs/globalize#installation
+    $.when(
+        $.get("/js/cldr-core/supplemental/likelySubtags.json", null, null, "json"),
+        $.get("/js/cldr-core/supplemental/numberingSystems.json", null, null, "json"),
+        $.get("/js/cldr-core/supplemental/timeData.json", null, null, "json"),
+        $.get("/js/cldr-core/supplemental/weekData.json", null, null, "json"),
+
+        $.get("/js/cldr-numbers-modern/main/@currentCultureCode/numbers.json", null, null, "json"),
+        $.get("/js/cldr-numbers-modern/main/@currentCultureCode/currencies.json", null, null, "json"),
+
+        $.get("/js/cldr-dates-modern/main/@currentCultureCode/ca-generic.json", null, null, "json"),
+        $.get("/js/cldr-dates-modern/main/@currentCultureCode/ca-gregorian.json", null, null, "json"),
+        $.get("/js/cldr-dates-modern/main/@currentCultureCode/dateFields.json", null, null, "json"),
+        $.get("/js/cldr-dates-modern/main/@currentCultureCode/timeZoneNames.json", null, null, "json")
+    ).then(function () {
+        return [].slice.apply(arguments, [0]).map(function (result) {
+            Globalize.load(result[0]);
+        });
+    }).then(function () {
+        // Initialise Globalize to the current culture
+        Globalize.locale('@currentCultureCode');
+    });
+
+    $(function () {
+        $('[type="datetime-local"]').each(function (index, value) {
+            $(value).attr('type', 'text');
+            $(value).val(value.defaultValue);
+            $(value).flatpickr({
+                locale: "@currentCultureCode",
+                enableTime: true,
+                altFormat: "@dateTimePattern",
+                altInput: true,
+                // dateFormat: "Z", // iso format (causes -3h during summer)
+                // use direct conversion, let backend deal with utc/whatever conversions
+                dateFormat: "Y-m-d H:i:s",
+                disableMobile: true,
+                time_24hr: @(clock24H.ToString().ToLower()),
+            });
+        });
+
+        $('[type="time"]').each(function (index, value) {
+            $(value).attr('type', 'text');
+            $(value).val(value.defaultValue);
+            $(value).flatpickr({
+                locale: "@currentCultureCode",
+                enableTime: true,
+                noCalendar: true,
+
+                altFormat: "@timePattern",
+                altInput: true,
+                dateFormat: "H:i", // 24h HH:mm
+                disableMobile: true,
+
+                time_24hr: @(clock24H.ToString().ToLower()),
+            });
+        });
+
+        $('[type="date"]').each(function (index, value) {
+            $(value).attr('type', 'text');
+            $(value).val(value.defaultValue);
+            $(value).flatpickr({
+                locale: "@currentCultureCode",
+                altFormat: "@datePattern",
+                altInput: true,
+                disableMobile: true,
+                dateFormat: "Y-m-d", // YYYY-MM-DD
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

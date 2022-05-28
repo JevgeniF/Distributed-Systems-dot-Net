@@ -108,4 +108,55 @@
     <data name="Movies" xml:space="preserve">
         <value>Фильмы</value>
     </data>
+    <data name="ErrorMessage_MaxLength" xml:space="preserve">
+        <value>Ячейка {0} не может быть длиннее чем '{1}'.</value>
+    </data>
+    <data name="ErrorMessage_MinLength" xml:space="preserve">
+        <value>Ячейка {0} не может быть короче чем '{1}'.</value>
+    </data>
+    <data name="ErrorMessage_Range" xml:space="preserve">
+        <value>Ячейка {0} должна быть в диапазоне от {1} до {2}.</value>
+    </data>
+    <data name="ErrorMessage_Required" xml:space="preserve">
+        <value>Ячейка {0} обязательна.</value>
+    </data>
+    <data name="ErrorMessage_StringLengthMax" xml:space="preserve">
+        <value>Ячейка {0} должна быть выражением с максимальной длиной {1}.</value>
+    </data>
+    <data name="ErrorMessage_StringLengthMinMax" xml:space="preserve">
+        <value>Ячейка {0} должна быть выражением с минимальной длиной {2} и максимальной длиной {1}.</value>
+    </data>
+    <data name="ErrorMessage_ValueIsInvalid" xml:space="preserve">
+        <value>Значение '{0}' не подходит.</value>
+    </data>
+    <data name="ErrorMessage_AttemptedValueIsInvalid" xml:space="preserve">
+        <value>Значение '{0}' не подходит в поле {1}.</value>
+    </data>
+    <data name="ErrorMessage_MissingBindRequiredValue" xml:space="preserve">
+        <value>Ячейка '{0}' не получила значения.</value>
+    </data>
+    <data name="ErrorMessage_MissingKeyOrValue" xml:space="preserve">
+        <value>Значение обязательно.</value>
+    </data>
+    <data name="ErrorMessage_MissingRequestBodyRequiredValue" xml:space="preserve">
+        <value>Пустой запрос.</value>
+    </data>
+    <data name="ErrorMessage_NonPropertyAttemptedValueIsInvalid" xml:space="preserve">
+        <value>Значение '{0}' не верно.</value>
+    </data>
+    <data name="ErrorMessage_NonPropertyUnknownValueIsInvalid" xml:space="preserve">
+        <value>Значение не верно.</value>
+    </data>
+    <data name="ErrorMessage_NonPropertyValueMustBeANumber" xml:space="preserve">
+        <value>Ячейка должна быть цифрой.</value>
+    </data>
+    <data name="ErrorMessage_UnknownValueIsInvalid" xml:space="preserve">
+        <value>Значение не подходит к ячейке '{0}'</value>
+    </data>
+    <data name="ErrorMessage_ValueMustBeANumber" xml:space="preserve">
+        <value>Ячейка '{0}' должна быть цифрой.</value>
+    </data>
+    <data name="ErrorMessage_ValueMustNotBeNull" xml:space="preserve">
+        <value>Значение '{0}' не верно.</value>
+    </data>
 </root>

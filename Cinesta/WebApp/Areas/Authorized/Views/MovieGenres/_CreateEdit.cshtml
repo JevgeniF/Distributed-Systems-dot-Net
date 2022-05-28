@@ -4,7 +4,7 @@
 
 <div class="form-group">
     <label asp-for="MovieGenre.MovieDetailsId" class="control-label">@MovieGenre.MovieDetails</label>
-    <select asp-for="MovieGenre.MovieDetailsId" class="form-control" asp-items="Model!.MovieDetailsSelectList">
+    <select asp-for="MovieGenre.MovieDetailsId" class="form-control" asp-items="Model.MovieDetailsSelectList">
         <option value="wrongData">--- @Common.SelectMovie ----</option>
     </select>
 </div>

@@ -13,7 +13,7 @@
         <form asp-action="Create">
             <div class="form-group">
                 <label asp-for="UserSubscription.SubscriptionId" class="control-label">Subscription</label>
-                <select asp-for="UserSubscription.SubscriptionId" class="form-control" asp-items="Model!.SubscriptionSelectList">
+                <select asp-for="UserSubscription.SubscriptionId" class="form-control" asp-items="Model.SubscriptionSelectList">
                     <option value="wrongData">--- Select Subscription ----</option>
                 </select>
             </div>

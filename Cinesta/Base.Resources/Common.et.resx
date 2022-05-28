@@ -108,4 +108,55 @@
     <data name="Movies" xml:space="preserve">
         <value>Filmid</value>
     </data>
+    <data name="ErrorMessage_MaxLength" xml:space="preserve">
+        <value>Väli {0} ei saa olla pikem kui '{1}'.</value>
+    </data>
+    <data name="ErrorMessage_MinLength" xml:space="preserve">
+        <value>Väli {0} ei saa olla lühem kui '{1}'.</value>
+    </data>
+    <data name="ErrorMessage_Range" xml:space="preserve">
+        <value>Väli {0} peab olema vahemikus {1} kuni {2}.</value>
+    </data>
+    <data name="ErrorMessage_Required" xml:space="preserve">
+        <value>Väli {0} on kohustuslik.</value>
+    </data>
+    <data name="ErrorMessage_StringLengthMax" xml:space="preserve">
+        <value>Väli {0} peab olema sõne maksimum pikkusega {1}.</value>
+    </data>
+    <data name="ErrorMessage_StringLengthMinMax" xml:space="preserve">
+        <value>Väli {0} peab olema sõne miinimum pikkusega {2} ja maksimum pikkusega {1}.</value>
+    </data>
+    <data name="ErrorMessage_ValueIsInvalid" xml:space="preserve">
+        <value>Väärtus '{0}' ei ole sobilik.</value>
+    </data>
+    <data name="ErrorMessage_AttemptedValueIsInvalid" xml:space="preserve">
+        <value>Väärtus '{0}' ei ole sobilik väljale {1}.</value>
+    </data>
+    <data name="ErrorMessage_MissingBindRequiredValue" xml:space="preserve">
+        <value>Väli '{0}' ei saanud väärtust.</value>
+    </data>
+    <data name="ErrorMessage_MissingKeyOrValue" xml:space="preserve">
+        <value>Väärtus on vajalik.</value>
+    </data>
+    <data name="ErrorMessage_MissingRequestBodyRequiredValue" xml:space="preserve">
+        <value>Päringul puudub sisu.</value>
+    </data>
+    <data name="ErrorMessage_NonPropertyAttemptedValueIsInvalid" xml:space="preserve">
+        <value>Väärtus '{0}' ei ole korrektne.</value>
+    </data>
+    <data name="ErrorMessage_NonPropertyUnknownValueIsInvalid" xml:space="preserve">
+        <value>Väärtus ei ole korrektne.</value>
+    </data>
+    <data name="ErrorMessage_NonPropertyValueMustBeANumber" xml:space="preserve">
+        <value>Väli peab olema number.</value>
+    </data>
+    <data name="ErrorMessage_UnknownValueIsInvalid" xml:space="preserve">
+        <value>Väärtus ei sobi väljale '{0}'</value>
+    </data>
+    <data name="ErrorMessage_ValueMustBeANumber" xml:space="preserve">
+        <value>Väli '{0}' peab olema number.</value>
+    </data>
+    <data name="ErrorMessage_ValueMustNotBeNull" xml:space="preserve">
+        <value>Väärtus '{0}' ei ole valiidne.</value>
+    </data>
 </root>

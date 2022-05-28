@@ -16,7 +16,7 @@
             @Html.DisplayNameFor(model => model.CastRole)
         </dt>
         <dd class="col-sm-10">
-            @Model!.CastRole!.Naming
+            @Model.CastRole!.Naming
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Persons)
@@ -35,7 +35,7 @@
 <div>
     @if (User.IsInRole("admin") || User.IsInRole("moderator"))
     {
-        <a asp-action="Edit" asp-route-id="@Model?.Id">@Common.Edit</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id">@Common.Edit</a>
     }
     <a asp-action="Index">@Common.BackToList</a>
 </div>

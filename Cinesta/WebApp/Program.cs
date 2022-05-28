@@ -33,7 +33,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Lang setup
 builder.Services.AddControllersWithViews(
-    options => { options.ModelBinderProviders.Insert(0, new CustomLanguageStringBinderProvider()); }
+    options =>
+    {
+        options.ModelBinderProviders.Insert(0, new CustomLanguageStringBinderProvider());
+        options.ModelBinderProviders.Insert(1, new CustomFloatingPointBinderProvider());
+    }
 );
 
 var supportedCultures = builder.Configuration

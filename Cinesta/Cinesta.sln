@@ -6,9 +6,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 		Directory.Build.props = Directory.Build.props
-		.dockerignore = .dockerignore
 		docker-compose.yml = docker-compose.yml
 		.gitignore = .gitignore
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectProposal", "ProjectProposal", "{CA444BE9-518A-4232-9697-124D94909853}"
@@ -74,7 +74,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Public", "App.Public\Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Contracts.Public", "App.Contracts.Public\App.Contracts.Public.csproj", "{11920592-5EFD-4115-BF89-839706F73609}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Contracts.Public", "Base.Contracts\Base.Contracts.Public\Base.Contracts.Public.csproj", "{B48BC040-D53F-4696-90A5-3D3113EA9A67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Contracts.Public", "Base.Contracts.Public\Base.Contracts.Public.csproj", "{B48BC040-D53F-4696-90A5-3D3113EA9A67}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Public", "Base.Public\Base.Public.csproj", "{E29E8C86-5E90-4EA7-ABBF-4D032BA7C744}"
 EndProject

@@ -54,7 +54,6 @@ public class BaseEntityRepository<TDalEntity, TDomainEntity, TKey, TDbContext> :
     {
         var entity = FirstOrDefault(id);
         if (entity == null)
-            // TODO: implement custom exception for entity not found
             throw new NullReferenceException($"Entity {typeof(TDalEntity).Name} was not found");
         return Remove(entity);
     }
@@ -93,15 +92,12 @@ public class BaseEntityRepository<TDalEntity, TDomainEntity, TKey, TDbContext> :
     {
         var entity = await FirstOrDefaultAsync(id);
         if (entity == null)
-            // TODO: implement custom exception for entity not found
             throw new NullReferenceException($"Entity {typeof(TDalEntity).Name} was not found");
         return Remove(entity);
     }
 
     protected virtual IQueryable<TDomainEntity> CreateQuery(bool noTracking = true)
     {
-        // TODO: entity ownership control
-
         var query = RepoDbSet.AsQueryable();
         if (noTracking) query = query.AsNoTracking();
 

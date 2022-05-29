@@ -4,7 +4,6 @@ using App.Contracts.BLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// TODO: Decide if this controller required in API.
 namespace WebApp.Areas.Authorized.Controllers;
 
 [Area("Authorized")]

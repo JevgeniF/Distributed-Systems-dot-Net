@@ -27,8 +27,7 @@
     $.validator.methods.date = function (value, element) {
         // is it optional
         if (this.optional(element) === true) return true;
-
-        //TODO: this is an hack
+        
         if ($(element).attr("type") === "datetime") return true;
 
         // remove spaces just in case

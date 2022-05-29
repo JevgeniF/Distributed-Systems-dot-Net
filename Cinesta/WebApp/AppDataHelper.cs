@@ -20,12 +20,6 @@ public static class AppDataHelper
 
         if (context == null) throw new ApplicationException("Services error. No DB context");
 
-        //TODO - check  database state
-        //can't connect - wrong address
-        //can't connect - wrong user/pass
-        //can connect - no database
-        //can connect - is database
-
         if (config.GetValue<bool>("DataInitialization:DropDatabase")) context.Database.EnsureDeleted();
 
         if (config.GetValue<bool>("DataInitialization:MigrateDatabase")) context.Database.Migrate();
@@ -43,7 +37,6 @@ public static class AppDataHelper
             {
                 ("admin", "System administrator"),
                 ("moderator", "Data moderator"),
-                ("newbie", "New service user"),
                 ("user", "Service user")
             };
 
@@ -63,9 +56,7 @@ public static class AppDataHelper
 
             var users = new (string username, string name, string surname, string password, string roles)[]
             {
-                ("admin@cinesta.ee", "Jevgeni", "Fenko", "chtulhu", "user,admin"),
-                ("user@gmail.com", "Oskar", "Luts", "qwerty", "user"),
-                ("newuser@gmail.com", "Lev", "Tolstoi", "123456", "newbie")
+                ("admin@cinesta.ee", "Jevgeni", "Fenko", "chtulhu", "user,admin")
             };
 
             foreach (var userInfo in users)

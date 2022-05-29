@@ -166,7 +166,7 @@ public class AccountController : ControllerBase
         if (!result.Succeeded) return BadRequest(result);
         await _userManager.AddClaimAsync(appUser, new Claim("aspnet.name", appUser.Name));
         await _userManager.AddClaimAsync(appUser, new Claim("aspnet.surname", appUser.Surname));
-        await _userManager.AddToRoleAsync(appUser, "newbie");
+        await _userManager.AddToRoleAsync(appUser, "user");
 
         var person = await _public.Person.GetByNames(appUser.Name, appUser.Surname);
         if (person == null)
@@ -243,9 +243,6 @@ public class AccountController : ControllerBase
         if (userEmail == null) return BadRequest("No email");
         // get user and tokens
         var appUser = await _userManager.FindByEmailAsync(userEmail);
-        if (appUser == null) return NotFound($"User with email {userEmail} not found");
-
-        // TODO: validate token signature
 
         // compare refresh tokens
         await _context.Entry(appUser).Collection(u => u.RefreshTokens!)
@@ -335,17 +332,34 @@ public class AccountController : ControllerBase
             }
         }
 
-        if (userAssignmentData.NewRole == "newbie")
-        {
-            var result = await _userManager.RemoveFromRolesAsync(appUser, roles);
-            if (result.Succeeded)
-            {
-                result = await _userManager.AddToRolesAsync(appUser, new[] { userAssignmentData.NewRole });
-                return Ok(result);
-            }
-        }
-
         _logger.LogWarning("Assignment problem. Unable to change role to {}", userAssignmentData.NewRole);
         return BadRequest("Unable to change roles");
+    }
+
+    /// <summary>
+    /// For Admin only. Method returns users Id's names and lists of their roles.
+    /// </summary>
+    /// <returns>List of objects generated from Users </returns>
+    [HttpGet]
+    [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<List<object>> UsersList()
+    {
+        
+        var query = _userManager.Users.AsNoTracking();
+        var appUsers = await query.ToListAsync();
+        var usersWithRoles = new List<object>();
+
+        foreach (var appUser in appUsers)
+        {
+            var roles = await _userManager.GetRolesAsync(appUser);
+            usersWithRoles.Add(new
+            {
+                appUser.Id,
+                appUser.Name,
+                appUser.Surname,
+                Roles = roles
+            });
+        }
+        return usersWithRoles;
     }
 }

@@ -35,7 +35,6 @@ public class CastInMoviesController : ControllerBase
     ///     Get cast (actors, directors, etc) for all movies in database.
     /// </summary>
     /// <returns>List of cast for movies</returns>
-    /// <example>[{"id": "95f44037-90dd-4224-bf80-c65f44a01c9b"}]</example>
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(object), 200)]

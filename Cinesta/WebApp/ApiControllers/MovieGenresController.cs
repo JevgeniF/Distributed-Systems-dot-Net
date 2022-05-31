@@ -1,6 +1,8 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using Base.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,14 +23,16 @@ namespace WebApp.ApiControllers;
 public class MovieGenresController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of MovieGenresController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public MovieGenresController(IAppPublic appPublic)
+    public MovieGenresController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/MovieGenres
@@ -41,21 +45,21 @@ public class MovieGenresController : ControllerBase
     [SwaggerResponseExample(200, typeof(GetListMovieGenresExample))]
     [ProducesResponseType(typeof(IEnumerable<MovieGenre>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<object>> GetMovieGenres()
+    public async Task<IEnumerable<object>> GetMovieGenres(string culture)
     {
-        return (await _public.MovieGenre.IncludeGetAllAsync())
+        return (await _bll.MovieGenre.IncludeGetAllAsync())
             .Select(m => new
             {
-                m.Id,
+                Id = m.Id,
                 MovieDetails = new
                 {
                     Id = m.MovieDetailsId,
-                    m.MovieDetails!.Title
+                    Title = m.MovieDetails!.Title.Translate(culture)
                 },
                 Genre = new
                 {
                     Id = m.GenreId,
-                    m.Genre!.Naming
+                    Naming = m.Genre!.Naming.Translate(culture)
                 }
             });
     }
@@ -72,9 +76,9 @@ public class MovieGenresController : ControllerBase
     [ProducesResponseType(404)]
     [SwaggerResponseExample(200, typeof(GetMovieGenresExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<object>> GetMovieGenre(Guid id)
+    public async Task<ActionResult<object>> GetMovieGenre(Guid id, string culture)
     {
-        var movieGenre = await _public.MovieGenre.FirstOrDefaultAsync(id);
+        var movieGenre = await _bll.MovieGenre.FirstOrDefaultAsync(id);
 
         if (movieGenre == null) return NotFound();
 
@@ -84,12 +88,12 @@ public class MovieGenresController : ControllerBase
             MovieDetails = new
             {
                 Id = movieGenre.MovieDetailsId,
-                movieGenre.MovieDetails!.Title
+                Title = movieGenre.MovieDetails!.Title.Translate(culture)
             },
             Genre = new
             {
                 Id = movieGenre.GenreId,
-                movieGenre.Genre!.Naming
+                Naming = movieGenre.Genre!.Naming.Translate(culture)
             }
         };
     }

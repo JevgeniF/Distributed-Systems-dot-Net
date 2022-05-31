@@ -26,7 +26,6 @@ public class AppBll : BaseBll<IAppUOW>, IAppBll
     private IProfileMovieService? _profileMovie;
     private ISubscriptionService? _subscription;
     private IUserProfileService? _userProfile;
-    private IUserRatingService? _userRating;
     private IUserSubscriptionService? _userSubscription;
     private IVideoService? _video;
     protected IAppUOW UOW;
@@ -65,10 +64,7 @@ public class AppBll : BaseBll<IAppUOW>, IAppBll
         _movieType ??= new MovieTypeService(UOW.MovieType, new MovieTypeMapper(_mapper));
 
     public IVideoService Video => _video ??= new VideoService(UOW.Video, new VideoMapper(_mapper));
-
-    public virtual IUserRatingService UserRating =>
-        _userRating ??= new UserRatingService(UOW.UserRating, new UserRatingMapper(_mapper));
-
+    
     public virtual IMovieGenreService MovieGenre =>
         _movieGenre ??= new MovieGenreService(UOW.MovieGenre, new MovieGenreMapper(_mapper));
 

@@ -26,6 +26,11 @@ public class LangStr : Dictionary<string, string>
     {
         this[GetCultureName(Thread.CurrentThread.CurrentUICulture.Name)] = value;
     }
+    
+    public void SetApiTranslation(string value, string culture)
+    {
+        this[GetCultureName(culture)] = value;
+    }
 
     public string? Translate(string? culture = null)
     {

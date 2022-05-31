@@ -1,6 +1,8 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using App.Public.DTO.v1.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,14 +23,16 @@ namespace WebApp.ApiControllers;
 public class UserSubscriptionsController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of UserSubscriptionsController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public UserSubscriptionsController(IAppPublic appPublic)
+    public UserSubscriptionsController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/UserSubscriptions
@@ -38,31 +42,34 @@ public class UserSubscriptionsController : ControllerBase
     /// <returns>Generated from UserSubscription entity object</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(object), 200)]
+    [ProducesResponseType(typeof(UserSubscription), 200)]
     [SwaggerResponseExample(200, typeof(GetUserSubscriptionExample))]
     [HttpGet]
-    public async Task<object> GetUserSubscriptionByUserId()
+    public async Task<UserSubscription> GetUserSubscriptionByUserId(string culture)
     {
-        var res = await _public.UserSubscription.IncludeGetByUserIdAsync(User.GetUserId());
+        var res = await _bll.UserSubscription.IncludeGetByUserIdAsync(User.GetUserId());
         if (res == null) return null;
-        return new
+        return new App.Public.DTO.v1.UserSubscription
         {
-            res.Id,
-            AppUser = new
+            Id = res.Id,
+            AppUserId = res.AppUserId,
+            AppUser = new AppUser
             {
-                res.AppUserId,
-                res.AppUser!.Name,
-                res.AppUser.Surname
+                Id = res.Id,
+                Name = res.AppUser!.Name,
+                Surname = res.AppUser.Surname,
+                PersonId = res.AppUser.PersonId,
             },
-            Subscription = new
+            SubscriptionId = res.SubscriptionId,
+            Subscription = new Subscription
             {
-                res.SubscriptionId,
-                res.Subscription!.Naming,
-                res.Subscription.Description,
-                res.Subscription.ProfilesCount,
-                res.Subscription.Price
+                Id = res.Subscription!.Id,
+                Naming = res.Subscription.Naming.Translate(culture)!,
+                Description = res.Subscription.Description.Translate(culture)!,
+                ProfilesCount = res.Subscription.ProfilesCount,
+                Price = res.Subscription.ProfilesCount
             },
-            res.ExpirationDateTime
+            ExpirationDateTime = res.ExpirationDateTime
         };
     }
 
@@ -71,7 +78,7 @@ public class UserSubscriptionsController : ControllerBase
     /// <summary>
     ///     Method adds new UserSubscription entity for current user to API database. Only one subscription allowed.
     /// </summary>
-    /// <param name="userSubscription">UserSubscription class entity to add</param>
+    /// <param name="subscription">Subscription class entity id to link with user</param>
     /// <returns>Generated from UserSubscription entity object </returns>
     [Produces("application/json")]
     [Consumes("application/json")]
@@ -80,37 +87,22 @@ public class UserSubscriptionsController : ControllerBase
     [SwaggerRequestExample(typeof(UserSubscription), typeof(PostUserSubscriptionExample))]
     [SwaggerResponseExample(201, typeof(PostUserSubscriptionExample))]
     [HttpPost]
-    public async Task<ActionResult<UserSubscription>> PostUserSubscription(UserSubscription userSubscription)
+    public async Task<ActionResult<UserSubscription>> PostUserSubscription(Subscription subscription, string culture)
     {
-        if (await GetUserSubscriptionByUserId() != null) return BadRequest();
-        userSubscription.Id = Guid.NewGuid();
-        userSubscription.AppUserId = User.GetUserId();
+        if (await GetUserSubscriptionByUserId(culture) != null) return BadRequest();
+        var userSubscription = new UserSubscription
+        {
+            SubscriptionId = subscription.Id,
+            Id = Guid.NewGuid(),
+            AppUserId = User.GetUserId(),
+            ExpirationDateTime = DateTime.UtcNow.AddMonths(1)
+        };
         _public.UserSubscription.Add(userSubscription);
         await _public.SaveChangesAsync();
 
-        var res = new
-        {
-            userSubscription.Id,
-            AppUser = new
-            {
-                userSubscription.AppUserId,
-                userSubscription.AppUser!.Name,
-                userSubscription.AppUser.Surname
-            },
-            Subscription = new
-            {
-                userSubscription.SubscriptionId,
-                userSubscription.Subscription!.Naming,
-                userSubscription.Subscription.Description,
-                userSubscription.Subscription.ProfilesCount,
-                userSubscription.Subscription.Price
-            },
-            userSubscription.ExpirationDateTime
-        };
-
         return CreatedAtAction("GetUserSubscriptionByUserId",
             new { id = userSubscription.Id, version = HttpContext.GetRequestedApiVersion()!.ToString() },
-            res);
+            userSubscription);
     }
 
     // DELETE: api/UserSubscriptions/5

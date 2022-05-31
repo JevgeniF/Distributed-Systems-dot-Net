@@ -30,7 +30,5 @@ public class MovieDetails : DomainEntityId
 
     public ICollection<Video>? Videos { get; set; }
 
-    public ICollection<UserRating>? UserRatings { get; set; }
-
     public ICollection<CastInMovie>? CastInMovie { get; set; }
 }

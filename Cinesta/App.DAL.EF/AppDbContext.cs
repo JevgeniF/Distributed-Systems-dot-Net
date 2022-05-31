@@ -29,7 +29,6 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     public DbSet<MovieDbScore> MovieDbScores { get; set; } = default!;
     public DbSet<MovieDetails> MovieDetails { get; set; } = default!;
     public DbSet<MovieGenre> MovieGenres { get; set; } = default!;
-    public DbSet<UserRating> UserRatings { get; set; } = default!;
 
     public DbSet<Video> Videos { get; set; } = default!;
 

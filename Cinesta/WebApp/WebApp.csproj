@@ -147,6 +147,12 @@
         <_ContentIncludedByDefault Remove="Areas\Authorized\Views\Subscriptions\Index.cshtml" />
         <_ContentIncludedByDefault Remove="Areas\Authorized\Views\Subscriptions\_CreateEdit.cshtml" />
         <_ContentIncludedByDefault Remove="wwwroot\css\site.css" />
+        <_ContentIncludedByDefault Remove="Areas\Authorized\Views\UserRatings\Create.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Authorized\Views\UserRatings\Delete.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Authorized\Views\UserRatings\Details.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Authorized\Views\UserRatings\Edit.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Authorized\Views\UserRatings\Index.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Authorized\Views\UserRatings\_CreateEdit.cshtml" />
     </ItemGroup>
 
     <ItemGroup>

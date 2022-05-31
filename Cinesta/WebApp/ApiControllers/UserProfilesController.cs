@@ -5,7 +5,6 @@ using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
 using WebApp.SwaggerExamples.UserProfiles;
 
@@ -48,6 +47,7 @@ public class UserProfilesController : ControllerBase
             .Select(u => new
             {
                 u.Id,
+                u.IconUri,
                 u.Name,
                 u.Age,
                 u.AppUserId
@@ -75,44 +75,11 @@ public class UserProfilesController : ControllerBase
         return new
         {
             userProfile.Id,
+            userProfile.IconUri,
             userProfile.Name,
             userProfile.Age,
             userProfile.AppUserId
         };
-    }
-
-    // PUT: api/UserProfiles/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    /// <summary>
-    ///     Method edits UserProfile entity found in API database by it's id.
-    /// </summary>
-    /// <param name="id">Guid: UserProfile entity id.</param>
-    /// <param name="userProfile">Updated UserProfile entity to store under this id</param>
-    /// <returns>Code 201 in case of success or Code 403 in case of wrong request</returns>
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(403)]
-    [SwaggerRequestExample(typeof(UserProfile), typeof(PostUserProfileExample))]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutUserProfile(Guid id, UserProfile userProfile)
-    {
-        if (id != userProfile.Id) return BadRequest();
-
-        try
-        {
-            userProfile.AppUserId = User.GetUserId();
-            _public.UserProfile.Update(userProfile);
-            await _public.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await UserProfileExists(id))
-                return NotFound();
-            throw;
-        }
-
-        return NoContent();
     }
 
     // POST: api/UserProfiles
@@ -166,10 +133,5 @@ public class UserProfilesController : ControllerBase
         await _public.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private Task<bool> UserProfileExists(Guid id)
-    {
-        return _public.UserProfile.ExistsAsync(id);
     }
 }

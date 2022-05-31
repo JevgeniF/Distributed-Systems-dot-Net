@@ -1,6 +1,8 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using Base.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,14 +21,16 @@ namespace WebApp.ApiControllers;
 public class CastRolesController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of CastRoleController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public CastRolesController(IAppPublic appPublic)
+    public CastRolesController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/CastRoles
@@ -39,9 +43,14 @@ public class CastRolesController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<CastRole>), 200)]
     [Authorize(Roles = "admin,moderator,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
-    public async Task<IEnumerable<CastRole>> GetCastRoles()
+    public async Task<IEnumerable<CastRole>> GetCastRoles(string culture)
     {
-        return await _public.CastRole.GetAllAsync();
+        var res = await _bll.CastRole.GetAllAsync();
+        return res.Select(c => new App.Public.DTO.v1.CastRole
+        {
+            Id = c.Id,
+            Naming = c.Naming.Translate(culture)!
+        });
     }
 
     // GET: api/CastRoles/5
@@ -56,13 +65,17 @@ public class CastRolesController : ControllerBase
     [ProducesResponseType(404)]
     [Authorize(Roles = "admin,moderator,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<CastRole>> GetCastRole(Guid id)
+    public async Task<ActionResult<CastRole>> GetCastRole(Guid id, string culture)
     {
-        var castRole = await _public.CastRole.FirstOrDefaultAsync(id);
+        var castRole = await _bll.CastRole.FirstOrDefaultAsync(id);
 
         if (castRole == null) return NotFound();
 
-        return castRole;
+        return new CastRole
+        {
+            Id = castRole.Id,
+            Naming = castRole.Naming.Translate(culture)!
+        };
     }
 
     // PUT: api/CastRoles/5
@@ -78,18 +91,18 @@ public class CastRolesController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutCastRole(Guid id, CastRole castRole)
+    public async Task<IActionResult> PutCastRole(Guid id, CastRole castRole, string culture)
     {
         if (id != castRole.Id) return BadRequest();
 
-        var castRoleFromDb = await _public.CastRole.FirstOrDefaultAsync(id);
+        var castRoleFromDb = await _bll.CastRole.FirstOrDefaultAsync(id);
         if (castRoleFromDb == null) return NotFound();
 
         try
         {
             castRoleFromDb.Naming.SetTranslation(castRole.Naming);
-            _public.CastRole.Update(castRoleFromDb);
-            await _public.SaveChangesAsync();
+            _bll.CastRole.Update(castRoleFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -113,9 +126,10 @@ public class CastRolesController : ControllerBase
     [ProducesResponseType(typeof(CastRole), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
-    public async Task<ActionResult<CastRole>> PostCastRole(CastRole castRole)
+    public async Task<ActionResult<CastRole>> PostCastRole(CastRole castRole, string culture)
     {
         castRole.Id = Guid.NewGuid();
+        castRole.Naming = new LangStr(castRole.Naming, culture);
         _public.CastRole.Add(castRole);
         await _public.SaveChangesAsync();
 

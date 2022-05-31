@@ -26,7 +26,6 @@ public class AppPublic : BasePublic<IAppBll>, IAppPublic
     private IProfileMovieModel? _profileMovie;
     private ISubscriptionModel? _subscription;
     private IUserProfileModel? _userProfile;
-    private IUserRatingModel? _userRating;
     private IUserSubscriptionModel? _userSubscription;
     private IVideoModel? _video;
     protected IAppBll Bll;
@@ -64,10 +63,7 @@ public class AppPublic : BasePublic<IAppBll>, IAppPublic
         _movieType ??= new MovieTypeModel(Bll.MovieType, new MovieTypeMapper(_mapper));
 
     public virtual IVideoModel Video => _video ??= new VideoModel(Bll.Video, new VideoMapper(_mapper));
-
-    public virtual IUserRatingModel UserRating =>
-        _userRating ??= new UserRatingModel(Bll.UserRating, new UserRatingMapper(_mapper));
-
+    
     public virtual IMovieGenreModel MovieGenre =>
         _movieGenre ??= new MovieGenreModel(Bll.MovieGenre, new MovieGenreMapper(_mapper));
 

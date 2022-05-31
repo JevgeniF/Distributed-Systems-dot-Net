@@ -687,49 +687,6 @@ namespace App.DAL.EF.Migrations
                     b.ToTable("UserProfiles");
                 });
 
-            modelBuilder.Entity("App.Domain.UserRating", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AppUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<LangStr>("Comment")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("jsonb");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<Guid>("MovieDetailsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("Rating")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("MovieDetailsId");
-
-                    b.ToTable("UserRatings");
-                });
-
             modelBuilder.Entity("App.Domain.UserSubscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1074,25 +1031,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("App.Domain.UserRating", b =>
-                {
-                    b.HasOne("App.Domain.Identity.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("App.Domain.MovieDetails", "MovieDetails")
-                        .WithMany("UserRatings")
-                        .HasForeignKey("MovieDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("MovieDetails");
-                });
-
             modelBuilder.Entity("App.Domain.UserSubscription", b =>
                 {
                     b.HasOne("App.Domain.Identity.AppUser", "AppUser")
@@ -1182,8 +1120,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("MovieDbScores");
 
                     b.Navigation("MovieGenres");
-
-                    b.Navigation("UserRatings");
 
                     b.Navigation("Videos");
                 });

@@ -1,6 +1,8 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using Base.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,14 +21,16 @@ namespace WebApp.ApiControllers;
 public class MovieTypesController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of MovieTypesController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public MovieTypesController(IAppPublic appPublic)
+    public MovieTypesController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/MovieTypes
@@ -38,9 +42,14 @@ public class MovieTypesController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(IEnumerable<MovieType>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<MovieType>> GetMovieTypes()
+    public async Task<IEnumerable<MovieType>> GetMovieTypes(string culture)
     {
-        return await _public.MovieType.GetAllAsync();
+        var res = await _bll.MovieType.GetAllAsync();
+        return res.Select(m => new MovieType
+        {
+            Id = m.Id,
+            Naming = m.Naming.Translate(culture)!
+        });
     }
 
     // GET: api/MovieTypes/5
@@ -54,13 +63,17 @@ public class MovieTypesController : ControllerBase
     [ProducesResponseType(typeof(MovieType), 200)]
     [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<MovieType>> GetMovieType(Guid id)
+    public async Task<ActionResult<MovieType>> GetMovieType(Guid id, string culture)
     {
-        var movieType = await _public.MovieType.FirstOrDefaultAsync(id);
+        var movieType = await _bll.MovieType.FirstOrDefaultAsync(id);
 
         if (movieType == null) return NotFound();
 
-        return movieType;
+        return new MovieType
+        {
+            Id = movieType.Id,
+            Naming = movieType.Naming.Translate(culture)!
+        };
     }
 
     // PUT: api/MovieTypes/5
@@ -81,14 +94,14 @@ public class MovieTypesController : ControllerBase
     {
         if (id != movieType.Id) return BadRequest();
 
-        var movieTypeFromDb = await _public.MovieType.FirstOrDefaultAsync(id);
+        var movieTypeFromDb = await _bll.MovieType.FirstOrDefaultAsync(id);
         if (movieTypeFromDb == null) return NotFound();
 
         try
         {
             movieTypeFromDb.Naming.SetTranslation(movieType.Naming);
-            _public.MovieType.Update(movieTypeFromDb);
-            await _public.SaveChangesAsync();
+            _bll.MovieType.Update(movieTypeFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -113,9 +126,10 @@ public class MovieTypesController : ControllerBase
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<MovieType>> PostMovieType(MovieType movieType)
+    public async Task<ActionResult<MovieType>> PostMovieType(MovieType movieType, string culture)
     {
         movieType.Id = Guid.NewGuid();
+        movieType.Naming = new LangStr(movieType.Naming, culture);
         _public.MovieType.Add(movieType);
         await _public.SaveChangesAsync();
 

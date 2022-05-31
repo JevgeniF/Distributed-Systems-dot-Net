@@ -1,4 +1,5 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,6 +22,7 @@ namespace WebApp.ApiControllers;
 public class VideosController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of VideosController class
@@ -41,21 +43,21 @@ public class VideosController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     [SwaggerResponseExample(200, typeof(GetListVideosExample))]
     [HttpGet]
-    public async Task<IEnumerable<object>> GetVideos()
+    public async Task<IEnumerable<object>> GetVideos(string culture)
     {
-        return (await _public.Video.IncludeGetAllAsync())
+        return (await _bll.Video.IncludeGetAllAsync())
             .Select(v => new
             {
                 v.Id,
                 v.Season,
-                v.Title,
+                Title = v.Title.Translate(culture),
                 v.FileUri,
                 v.Duration,
-                v.Description,
+                Description = v.Description.Translate(culture),
                 MovieDetails = new
                 {
                     v.MovieDetailsId,
-                    v.MovieDetails!.Title
+                    Title = v.MovieDetails!.Title.Translate(culture)
                 }
             });
     }
@@ -72,9 +74,9 @@ public class VideosController : ControllerBase
     [ProducesResponseType(404)]
     [SwaggerResponseExample(200, typeof(GetVideoExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<object>> GetVideo(Guid id)
+    public async Task<ActionResult<object>> GetVideo(Guid id, string culture)
     {
-        var video = await _public.Video.FirstOrDefaultAsync(id);
+        var video = await _bll.Video.FirstOrDefaultAsync(id);
 
         if (video == null) return NotFound();
 
@@ -82,14 +84,14 @@ public class VideosController : ControllerBase
         {
             video.Id,
             video.Season,
-            video.Title,
+            Title = video.Title.Translate(culture),
             video.FileUri,
             video.Duration,
-            video.Description,
+            Description = video.Description.Translate(culture),
             MovieDetails = new
             {
                 video.MovieDetailsId,
-                video.MovieDetails!.Title
+                Title = video.MovieDetails!.Title.Translate(culture)
             }
         };
     }
@@ -113,15 +115,15 @@ public class VideosController : ControllerBase
     {
         if (id != video.Id) return BadRequest();
 
-        var videoFromDb = await _public.Video.FirstOrDefaultAsync(id);
+        var videoFromDb = await _bll.Video.FirstOrDefaultAsync(id);
         if (videoFromDb == null) return NotFound();
 
         try
         {
             videoFromDb.Title.SetTranslation(video.Title);
             videoFromDb.Description.SetTranslation(video.Description);
-            _public.Video.Update(videoFromDb);
-            await _public.SaveChangesAsync();
+            _bll.Video.Update(videoFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -156,11 +158,6 @@ public class VideosController : ControllerBase
         var res = new
         {
             video.Id,
-            video.Season,
-            video.Title,
-            video.FileUri,
-            video.Duration,
-            video.Description,
             video.MovieDetailsId
         };
 

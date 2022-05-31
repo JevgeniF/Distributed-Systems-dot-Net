@@ -11,7 +11,6 @@ public interface IAppUOW : IUnitOfWork
     IGenreRepository Genre { get; }
     IMovieTypeRepository MovieType { get; }
     IVideoRepository Video { get; }
-    IUserRatingRepository UserRating { get; }
     IMovieGenreRepository MovieGenre { get; }
     IMovieDetailsRepository MovieDetails { get; }
     IMovieDbScoreRepository MovieDbScore { get; }

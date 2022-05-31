@@ -1,6 +1,9 @@
 #nullable disable
+using System.Security;
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using Base.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,14 +22,16 @@ namespace WebApp.ApiControllers;
 public class SubscriptionsController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of SubscriptionsController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public SubscriptionsController(IAppPublic appPublic)
+    public SubscriptionsController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/Subscriptions
@@ -36,11 +41,19 @@ public class SubscriptionsController : ControllerBase
     /// <returns>IEnumerable of Subscription entities.</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(IEnumerable<Subscription>), 200)]
+    [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     [HttpGet]
-    public async Task<IEnumerable<Subscription>> GetUserSubscription()
+    public async Task<IEnumerable<object>> GetUserSubscription(string culture)
     {
-        return await _public.Subscription.GetAllAsync();
+        var subscriptions = await _bll.Subscription.GetAllAsync();
+        return subscriptions.Select(s => new App.Public.DTO.v1.Subscription {
+            Id = s.Id,
+            Naming = s.Naming.Translate(culture)!,
+            Description = s.Description.Translate(culture)!,
+            ProfilesCount = s.ProfilesCount,
+            Price = s.Price
+            
+        });
     }
 
     // GET: api/Subscriptions/5
@@ -51,16 +64,24 @@ public class SubscriptionsController : ControllerBase
     /// <returns>Subscription class entity</returns>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(Subscription), 200)]
+    [ProducesResponseType(typeof(object), 200)]
     [ProducesResponseType(404)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Subscription>> GetSubscription(Guid id)
+    public async Task<ActionResult<object>> GetSubscription(Guid id, string culture)
     {
-        var subscription = await _public.Subscription.FirstOrDefaultAsync(id);
+        var subscription = await _bll.Subscription.FirstOrDefaultAsync(id);
 
         if (subscription == null) return NotFound();
 
-        return subscription;
+        return new App.Public.DTO.v1.Subscription
+        {
+            Id = subscription.Id,
+            Naming = subscription.Naming.Translate(culture)!,
+            Description = subscription.Description.Translate(culture)!,
+            ProfilesCount = subscription.ProfilesCount,
+            Price = subscription.Price
+
+        };
     }
 
     // PUT: api/Subscriptions/5
@@ -77,19 +98,19 @@ public class SubscriptionsController : ControllerBase
     [ProducesResponseType(403)]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> PutSubscription(Guid id, Subscription subscription)
+    public async Task<IActionResult> PutSubscription(Guid id, Subscription subscription, string culture)
     {
         if (id != subscription.Id) return BadRequest();
 
-        var subscriptionFromDb = await _public.Subscription.FirstOrDefaultAsync(id);
+        var subscriptionFromDb = await _bll.Subscription.FirstOrDefaultAsync(id);
         if (subscriptionFromDb == null) return NotFound();
 
         try
         {
             subscriptionFromDb.Naming.SetTranslation(subscription.Naming);
             subscriptionFromDb.Description.SetTranslation(subscription.Description);
-            _public.Subscription.Update(subscriptionFromDb);
-            await _public.SaveChangesAsync();
+            _bll.Subscription.Update(subscriptionFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -113,9 +134,11 @@ public class SubscriptionsController : ControllerBase
     [ProducesResponseType(403)]
     [HttpPost]
     [Authorize(Roles = "admin,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<Subscription>> PostSubscription(Subscription subscription)
+    public async Task<ActionResult<Subscription>> PostSubscription(Subscription subscription, string culture)
     {
         subscription.Id = Guid.NewGuid();
+        subscription.Naming = new LangStr(subscription.Naming, culture);
+        subscription.Description = new LangStr(subscription.Description, culture);
         _public.Subscription.Add(subscription);
         await _public.SaveChangesAsync();
 
@@ -135,7 +158,7 @@ public class SubscriptionsController : ControllerBase
     [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin,moderator", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> DeleteSubscription(Guid id)
+    public async Task<IActionResult> DeleteSubscription(Guid id, string culture)
     {
         await _public.Subscription.RemoveAsync(id);
         await _public.SaveChangesAsync();

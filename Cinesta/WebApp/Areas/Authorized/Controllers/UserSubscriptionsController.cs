@@ -61,6 +61,7 @@ public class UserSubscriptionsController : Controller
         if (ModelState.IsValid)
         {
             vm.UserSubscription.AppUserId = User.GetUserId();
+            vm.UserSubscription.ExpirationDateTime = DateTime.UtcNow.AddMonths(1);
             _bll.UserSubscription.Add(vm.UserSubscription);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

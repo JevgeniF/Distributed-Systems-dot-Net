@@ -24,7 +24,6 @@ public class AppUOW : BaseUOW<AppDbContext>, IAppUOW
     private IProfileMovieRepository? _profileMovie;
     private ISubscriptionRepository? _subscription;
     private IUserProfileRepository? _userProfile;
-    private IUserRatingRepository? _userRating;
     private IUserSubscriptionRepository? _userSubscription;
     private IVideoRepository? _video;
 
@@ -51,10 +50,7 @@ public class AppUOW : BaseUOW<AppDbContext>, IAppUOW
         _movieType ??= new MovieTypeRepository(UOWDbContext, new MovieTypeMapper(_mapper));
 
     public IVideoRepository Video => _video ??= new VideoRepository(UOWDbContext, new VideoMapper(_mapper));
-
-    public virtual IUserRatingRepository UserRating =>
-        _userRating ??= new UserRatingRepository(UOWDbContext, new UserRatingMapper(_mapper));
-
+    
     public virtual IMovieGenreRepository MovieGenre =>
         _movieGenre ??= new MovieGenreRepository(UOWDbContext, new MovieGenreMapper(_mapper));
 

@@ -1,6 +1,8 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using Base.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,14 +21,16 @@ namespace WebApp.ApiControllers;
 public class GenresController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of GenresController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public GenresController(IAppPublic appPublic)
+    public GenresController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/Genres
@@ -39,9 +43,14 @@ public class GenresController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Genre>), 200)]
     [Authorize(Roles = "admin,moderator,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet]
-    public async Task<IEnumerable<Genre>> GetGenres()
+    public async Task<IEnumerable<Genre>> GetGenres(string culture)
     {
-        return await _public.Genre.GetAllAsync();
+        var res = await _bll.Genre.GetAllAsync();
+        return res.Select(g => new App.Public.DTO.v1.Genre
+        {
+            Id = g.Id,
+            Naming = g.Naming.Translate(culture)!
+        });
     }
 
     // GET: api/Genres/5
@@ -56,13 +65,17 @@ public class GenresController : ControllerBase
     [ProducesResponseType(404)]
     [Authorize(Roles = "admin,moderator,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Genre>> GetGenre(Guid id)
+    public async Task<ActionResult<Genre>> GetGenre(Guid id, string culture)
     {
-        var genre = await _public.Genre.FirstOrDefaultAsync(id);
+        var genre = await _bll.Genre.FirstOrDefaultAsync(id);
 
         if (genre == null) return NotFound();
 
-        return genre;
+        return new Genre
+        {
+            Id = genre.Id,
+            Naming = genre.Naming.Translate(culture)!
+        };
     }
 
     // PUT: api/Genres/5
@@ -78,18 +91,18 @@ public class GenresController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(403)]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutGenre(Guid id, Genre genre)
+    public async Task<IActionResult> PutGenre(Guid id, Genre genre, string culture)
     {
         if (id != genre.Id) return BadRequest();
 
-        var genreFromDb = await _public.Genre.FirstOrDefaultAsync(id);
+        var genreFromDb = await _bll.Genre.FirstOrDefaultAsync(id);
         if (genreFromDb == null) return NotFound();
 
         try
         {
             genreFromDb.Naming.SetTranslation(genre.Naming);
-            _public.Genre.Update(genreFromDb);
-            await _public.SaveChangesAsync();
+            _bll.Genre.Update(genreFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -113,9 +126,10 @@ public class GenresController : ControllerBase
     [ProducesResponseType(typeof(Genre), 201)]
     [ProducesResponseType(403)]
     [HttpPost]
-    public async Task<ActionResult<Genre>> PostGenre(Genre genre)
+    public async Task<ActionResult<Genre>> PostGenre(Genre genre, string culture)
     {
         genre.Id = Guid.NewGuid();
+        genre.Naming = new LangStr(genre.Naming, culture);
         _public.Genre.Add(genre);
         await _public.SaveChangesAsync();
 

@@ -1,4 +1,5 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,14 +20,16 @@ namespace WebApp.ApiControllers;
 public class ProfileMoviesController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of ProfileMoviesController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public ProfileMoviesController(IAppPublic appPublic)
+    public ProfileMoviesController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/ProfileMovies/profileId
@@ -39,12 +42,12 @@ public class ProfileMoviesController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<object>), 200)]
     [SwaggerResponseExample(200, typeof(GetProfileMoviesExample))]
     [HttpGet("{profileId}")]
-    public async Task<IEnumerable<object>> GetAllowedProfileMovies(Guid profileId)
+    public async Task<IEnumerable<object>> GetAllowedProfileMovies(Guid profileId, string culture)
     {
         var profile = await _public.UserProfile.FirstOrDefaultAsync(profileId);
 
         if (profile == null) return Array.Empty<object>();
-        return (await _public.MovieDetails.IncludeGetByAgeAsync(profile.Age))
+        return (await _bll.MovieDetails.IncludeGetByAgeAsync(profile.Age))
             .Select(m => new
             {
                 m.Id,
@@ -53,7 +56,7 @@ public class ProfileMoviesController : ControllerBase
                 {
                     m.Id,
                     m.PosterUri,
-                    m.Title
+                    Title = m.Title.Translate(culture)
                 }
             });
     }

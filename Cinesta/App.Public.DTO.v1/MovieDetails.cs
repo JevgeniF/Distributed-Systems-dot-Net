@@ -12,7 +12,7 @@ public class MovieDetails : DomainEntityId
 
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Title))]
-    public LangStr Title { get; set; } = new();
+    public string Title { get; set; } = default!;
 
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Released))]
     [DataType(DataType.Date)]
@@ -21,7 +21,7 @@ public class MovieDetails : DomainEntityId
     [MaxLength(500)]
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.MovieDetails), Name = nameof(Description))]
-    public LangStr Description { get; set; } = new();
+    public string Description { get; set; } = default!;
 
     public Guid AgeRatingId { get; set; }
 
@@ -38,8 +38,6 @@ public class MovieDetails : DomainEntityId
     public ICollection<MovieGenre>? MovieGenres { get; set; }
 
     public ICollection<Video>? Videos { get; set; }
-
-    public ICollection<UserRating>? UserRatings { get; set; }
 
     public ICollection<CastInMovie>? CastInMovie { get; set; }
 }

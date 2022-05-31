@@ -22,7 +22,6 @@ public class AutoMapperConfig : Profile
         CreateMap<ProfileMovie, Domain.ProfileMovie>().ReverseMap();
         CreateMap<Subscription, Domain.Subscription>().ReverseMap();
         CreateMap<UserProfile, Domain.UserProfile>().ReverseMap();
-        CreateMap<UserRating, Domain.UserRating>().ReverseMap();
         CreateMap<UserSubscription, Domain.UserSubscription>().ReverseMap();
         CreateMap<Video, Domain.Video>().ReverseMap();
         CreateMap<AppUser, Domain.Identity.AppUser>().ReverseMap();

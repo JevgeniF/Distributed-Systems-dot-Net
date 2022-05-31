@@ -486,37 +486,6 @@ namespace App.DAL.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserRatings",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Rating = table.Column<double>(type: "double precision", nullable: false),
-                    Comment = table.Column<LangStr>(type: "jsonb", maxLength: 500, nullable: false),
-                    AppUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    MovieDetailsId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRatings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserRatings_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserRatings_MovieDetails_MovieDetailsId",
-                        column: x => x.MovieDetailsId,
-                        principalTable: "MovieDetails",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserSubscriptions",
                 columns: table => new
                 {
@@ -720,16 +689,6 @@ namespace App.DAL.EF.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRatings_AppUserId",
-                table: "UserRatings",
-                column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserRatings_MovieDetailsId",
-                table: "UserRatings",
-                column: "MovieDetailsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserSubscriptions_AppUserId",
                 table: "UserSubscriptions",
                 column: "AppUserId");
@@ -782,9 +741,6 @@ namespace App.DAL.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
-
-            migrationBuilder.DropTable(
-                name: "UserRatings");
 
             migrationBuilder.DropTable(
                 name: "UserSubscriptions");

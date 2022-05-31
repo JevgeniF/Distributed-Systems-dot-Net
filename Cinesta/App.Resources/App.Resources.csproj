@@ -31,10 +31,6 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>MovieGenre.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="App.Domain\Movie\UserRating.resx">
-            <Generator>PublicResXFileCodeGenerator</Generator>
-            <LastGenOutput>UserRating.Designer.cs</LastGenOutput>
-        </EmbeddedResource>
         <EmbeddedResource Update="App.Domain\Movie\Video.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>Video.Designer.cs</LastGenOutput>
@@ -107,11 +103,6 @@
             <DesignTime>True</DesignTime>
             <AutoGen>True</AutoGen>
             <DependentUpon>MovieGenre.resx</DependentUpon>
-        </Compile>
-        <Compile Update="App.Domain\Movie\UserRating.Designer.cs">
-            <DesignTime>True</DesignTime>
-            <AutoGen>True</AutoGen>
-            <DependentUpon>UserRating.resx</DependentUpon>
         </Compile>
         <Compile Update="App.Domain\Movie\Video.Designer.cs">
             <DesignTime>True</DesignTime>

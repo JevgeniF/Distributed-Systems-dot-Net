@@ -12,7 +12,7 @@ public class Video : DomainEntityId
     [MaxLength(100)]
     [Column(TypeName = "jsonb")]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Title))]
-    public LangStr Title { get; set; } = new();
+    public string Title { get; set; } = default!;
 
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(FileUri))]
     [MaxLength(150)]
@@ -25,7 +25,7 @@ public class Video : DomainEntityId
     [Column(TypeName = "jsonb")]
     [MaxLength(250)]
     [Display(ResourceType = typeof(Resources.App.Domain.Movie.Video), Name = nameof(Description))]
-    public LangStr Description { get; set; } = new();
+    public string Description { get; set; } = default!;
 
     public Guid? MovieDetailsId { get; set; }
 

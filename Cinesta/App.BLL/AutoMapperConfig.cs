@@ -22,7 +22,6 @@ public class AutoMapperConfig : Profile
         CreateMap<ProfileMovie, DAL.DTO.ProfileMovie>().ReverseMap();
         CreateMap<Subscription, DAL.DTO.Subscription>().ReverseMap();
         CreateMap<UserProfile, DAL.DTO.UserProfile>().ReverseMap();
-        CreateMap<UserRating, DAL.DTO.UserRating>().ReverseMap();
         CreateMap<UserSubscription, DAL.DTO.UserSubscription>().ReverseMap();
         CreateMap<Video, DAL.DTO.Video>().ReverseMap();
         CreateMap<AppUser, DAL.DTO.Identity.AppUser>().ReverseMap();

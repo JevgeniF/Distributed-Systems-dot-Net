@@ -85,8 +85,14 @@ public class SubscriptionsController : Controller
 
         if (ModelState.IsValid)
         {
+            var subscriptionFromDb = await _bll.Subscription.FirstOrDefaultAsync(id);
+            if (subscriptionFromDb == null) return NotFound();
             try
             {
+                subscriptionFromDb.Naming.SetTranslation(subscription.Naming);
+                subscription.Naming = subscriptionFromDb.Naming;
+                subscriptionFromDb.Description.SetTranslation(subscription.Description);
+                subscription.Description = subscriptionFromDb.Description;
                 _bll.Subscription.Update(subscription);
                 await _bll.SaveChangesAsync();
             }

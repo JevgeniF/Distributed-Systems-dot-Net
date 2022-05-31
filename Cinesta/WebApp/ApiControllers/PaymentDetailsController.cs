@@ -61,41 +61,7 @@ public class PaymentDetailsController : ControllerBase
             }
         };
     }
-
-    // PUT: api/PaymentDetails/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    /// <summary>
-    ///     Method edits PaymentDetails entity found in API database by it's id.
-    /// </summary>
-    /// <param name="id">Guid: PaymentDetails entity id.</param>
-    /// <param name="paymentDetails">Updated PaymentDetails entity to store under this id</param>
-    /// <returns>Code 201 in case of success or Code 403 in case of wrong request</returns>
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(403)]
-    [SwaggerRequestExample(typeof(PaymentDetails), typeof(PostPaymentDetailsExample))]
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutUserPaymentDetails(Guid id, PaymentDetails paymentDetails)
-    {
-        if (id != paymentDetails.Id) return BadRequest();
-
-        try
-        {
-            paymentDetails.AppUserId = User.GetUserId();
-            _public.PaymentDetails.Update(paymentDetails);
-            await _public.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await PaymentDetailsExists(id))
-                return NotFound();
-            throw;
-        }
-
-        return NoContent();
-    }
-
+    
     // POST: api/PaymentDetails
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     /// <summary>

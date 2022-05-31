@@ -12,7 +12,6 @@ public interface IAppPublic : IPublic
     IGenreModel Genre { get; }
     IMovieTypeModel MovieType { get; }
     IVideoModel Video { get; }
-    IUserRatingModel UserRating { get; }
     IMovieGenreModel MovieGenre { get; }
     IMovieDetailsModel MovieDetails { get; }
     IMovieDbScoreModel MovieDbScore { get; }

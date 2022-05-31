@@ -118,11 +118,16 @@ public class AccountController : ControllerBase
             DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpireInMinutes"))
         );
 
-        var res = new JwtResponse
+        var roles = await _userManager.GetRolesAsync(appUser);
+        var res = new
         {
+            appUser.Id,
+            appUser.Name,
+            appUser.Surname,
+            appUser.Email,
+            Roles = roles,
             Token = jwt,
-            RefreshToken = refreshToken.Token,
-            Email = appUser.Email
+            RefreshToken = refreshToken.Token
         };
 
         return Ok(res);
@@ -206,11 +211,16 @@ public class AccountController : ControllerBase
             _configuration["JWT:Issuer"],
             DateTime.Now.AddMinutes(_configuration.GetValue<int>("JWT:ExpireInMinutes"))
         );
-        var res = new JwtResponse
+        var roles = await _userManager.GetRolesAsync(appUser);
+        var res = new
         {
+            appUser.Id,
+            appUser.Name,
+            appUser.Surname,
+            appUser.Email,
+            Roles = roles,
             Token = jwt,
-            RefreshToken = refreshToken.Token,
-            Email = appUser.Email
+            RefreshToken = refreshToken.Token
         };
         return Ok(res);
     }
@@ -285,11 +295,16 @@ public class AccountController : ControllerBase
             await _context.SaveChangesAsync();
         }
 
-        var res = new JwtResponse
+        var roles = await _userManager.GetRolesAsync(appUser);
+        var res = new
         {
+            appUser.Id,
+            appUser.Name,
+            appUser.Surname,
+            appUser.Email,
+            Roles = roles,
             Token = newJwt,
-            RefreshToken = refreshToken.Token,
-            Email = appUser.Email
+            RefreshToken = refreshToken.Token
         };
         return Ok(res);
     }

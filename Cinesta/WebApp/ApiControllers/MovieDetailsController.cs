@@ -1,4 +1,6 @@
 #nullable disable
+using System.Globalization;
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,14 +23,16 @@ namespace WebApp.ApiControllers;
 public class MovieDetailsController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Constructor of MovieDetailsController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public MovieDetailsController(IAppPublic appPublic)
+    public MovieDetailsController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/MovieDetails
@@ -41,16 +45,16 @@ public class MovieDetailsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<MovieDetails>), 200)]
     [SwaggerResponseExample(200, typeof(GetListMovieDetailsExample))]
     [HttpGet]
-    public async Task<IEnumerable<object>> GetMovieDetails()
+    public async Task<IEnumerable<object>> GetMovieDetails(string culture)
     {
-        var res = await _public.MovieDetails.IncludeGetAllAsync();
+        var res = await _bll.MovieDetails.IncludeGetAllAsync();
         return res.Select(m => new
         {
             m.Id,
             m.PosterUri,
-            m.Title,
+            Title = m.Title.Translate(culture),
             m.Released,
-            m.Description,
+            Description = m.Description.Translate(culture),
             AgeRating = new AgeRating
             {
                 Id = m.AgeRatingId,
@@ -60,7 +64,7 @@ public class MovieDetailsController : ControllerBase
             MovieType = new MovieType
             {
                 Id = m.MovieTypeId,
-                Naming = m.MovieType!.Naming
+                Naming = m.MovieType!.Naming.Translate(culture)!
             }
         });
     }
@@ -77,9 +81,9 @@ public class MovieDetailsController : ControllerBase
     [ProducesResponseType(404)]
     [SwaggerResponseExample(200, typeof(GetMovieDetailsExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<object>> GetMovieDetails(Guid id)
+    public async Task<ActionResult<object>> GetMovieDetails(Guid id, string culture)
     {
-        var movieDetails = await _public.MovieDetails.FirstOrDefaultAsync(id);
+        var movieDetails = await _bll.MovieDetails.FirstOrDefaultAsync(id);
 
         if (movieDetails == null) return NotFound();
 
@@ -87,9 +91,9 @@ public class MovieDetailsController : ControllerBase
         {
             movieDetails.Id,
             movieDetails.PosterUri,
-            movieDetails.Title,
+            Title = movieDetails.Title.Translate(culture),
             movieDetails.Released,
-            movieDetails.Description,
+            Description = movieDetails.Description.Translate(culture),
             AgeRating = new AgeRating
             {
                 Id = movieDetails.AgeRatingId,
@@ -99,7 +103,7 @@ public class MovieDetailsController : ControllerBase
             MovieType = new MovieType
             {
                 Id = movieDetails.MovieTypeId,
-                Naming = movieDetails.MovieType!.Naming
+                Naming = movieDetails.MovieType!.Naming.Translate(culture)!
             }
         };
     }
@@ -123,15 +127,15 @@ public class MovieDetailsController : ControllerBase
     {
         if (id != movieDetails.Id) return BadRequest();
 
-        var movieDetailsFromDb = await _public.MovieDetails.FirstOrDefaultAsync(id);
+        var movieDetailsFromDb = await _bll.MovieDetails.FirstOrDefaultAsync(id);
         if (movieDetailsFromDb == null) return NotFound();
 
         try
         {
             movieDetailsFromDb.Title.SetTranslation(movieDetails.Title);
             movieDetailsFromDb.Description.SetTranslation(movieDetails.Description);
-            _public.MovieDetails.Update(movieDetailsFromDb);
-            await _public.SaveChangesAsync();
+            _bll.MovieDetails.Update(movieDetailsFromDb);
+            await _bll.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -166,21 +170,8 @@ public class MovieDetailsController : ControllerBase
         var res = new
         {
             movieDetails.Id,
-            movieDetails.PosterUri,
-            movieDetails.Title,
-            movieDetails.Released,
-            movieDetails.Description,
-            AgeRating = new AgeRating
-            {
-                Id = movieDetails.AgeRatingId,
-                Naming = movieDetails.AgeRating!.Naming,
-                AllowedAge = movieDetails.AgeRating.AllowedAge
-            },
-            MovieType = new MovieType
-            {
-                Id = movieDetails.MovieTypeId,
-                Naming = movieDetails.MovieType!.Naming
-            }
+            movieDetails.AgeRatingId,
+            movieDetails.MovieTypeId
         };
 
         return CreatedAtAction("GetMovieDetails",

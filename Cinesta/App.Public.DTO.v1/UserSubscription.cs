@@ -18,5 +18,5 @@ public class UserSubscription : DomainEntityId
 
     [Display(ResourceType = typeof(Resources.App.Domain.User.UserSubscription), Name = nameof(ExpirationDateTime))]
     [DataType(DataType.Date)]
-    public DateTime ExpirationDateTime { get; set; } = DateTime.UtcNow.AddMonths(1);
+    public DateTime ExpirationDateTime { get; set; }
 }

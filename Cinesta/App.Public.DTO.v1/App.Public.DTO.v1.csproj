@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\App.BLL.DTO\App.BLL.DTO.csproj"/>
-        <ProjectReference Include="..\App.Resources\App.Resources.csproj"/>
-        <ProjectReference Include="..\Base.Domain\Base.Domain.csproj"/>
-        <ProjectReference Include="..\Base.Resources\Base.Resources.csproj"/>
+        <ProjectReference Include="..\App.BLL.DTO\App.BLL.DTO.csproj" />
+        <ProjectReference Include="..\App.Resources\App.Resources.csproj" />
+        <ProjectReference Include="..\Base.Domain\Base.Domain.csproj" />
+        <ProjectReference Include="..\Base.Resources\Base.Resources.csproj" />
     </ItemGroup>
 
 </Project>

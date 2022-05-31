@@ -12,7 +12,6 @@ public interface IAppBll : IBll
     IGenreService Genre { get; }
     IMovieTypeService MovieType { get; }
     IVideoService Video { get; }
-    IUserRatingService UserRating { get; }
     IMovieGenreService MovieGenre { get; }
     IMovieDetailsService MovieDetails { get; }
     IMovieDbScoreService MovieDbScore { get; }

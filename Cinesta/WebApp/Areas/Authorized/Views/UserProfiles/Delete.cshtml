@@ -1,0 +1,40 @@
+@using App.Resources.App.Domain.Profile
+@using Base.Resources
+@model App.BLL.DTO.UserProfile
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>@Common.Delete</h1>
+
+<div>
+    <h4>@UserProfile.UserProfileString</h4>
+    <hr/>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IconUri)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IconUri)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Age)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Age)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id"/>
+        <input type="submit" value="@Common.Delete" class="btn btn-danger"/> |
+        <a asp-action="Index">@Common.BackToList</a>
+    </form>
+</div>

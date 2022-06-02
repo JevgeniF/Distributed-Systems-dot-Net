@@ -1,0 +1,23 @@
+@model App.BLL.DTO.UserSubscription
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>UserSubscription</h4>
+    <hr/>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Subscription)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Subscription!.Naming
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

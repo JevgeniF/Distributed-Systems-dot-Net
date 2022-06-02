@@ -1,0 +1,52 @@
+﻿@using App.Resources.App.Domain.Cast
+@using App.Resources.App.Domain.Common
+@using App.Resources.App.Domain.Movie
+@using App.Resources.App.Domain.MovieStandardDetails
+@using App.Resources.App.Domain.Profile
+@using Base.Resources
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        @Common.Menu
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        @if (User.IsInRole("admin") || User.IsInRole("moderator") || User.IsInRole("user"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="MovieDetails" asp-action="Index">@MovieDetails.MovieDetailsString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="Videos" asp-action="Index">@Video.VideoString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="CastInMovies" asp-action="Index">@CastInMovie.CastInMovieString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="MovieGenres" asp-action="Index">@MovieGenre.MovieGenreString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="MovieDBScores" asp-action="Index">@MovieDbScore.MovieDbScoreString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="UserProfiles" asp-action="Index">@UserProfile.UserProfileString</a>
+            </li>
+        }
+        @if (User.IsInRole("admin") || User.IsInRole("moderator"))
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="Persons" asp-action="Index">@Person.PesronString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="CastRoles" asp-action="Index">@CastRole.CastRoleString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="AgeRatings" asp-action="Index">@AgeRating.AgeRatingString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="Genres" asp-action="Index">@Genre.GenreString</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Authorized" asp-controller="MovieTypes" asp-action="Index">@MovieType.MovieTypeString</a>
+            </li>
+        }
+    </ul>
+</li>

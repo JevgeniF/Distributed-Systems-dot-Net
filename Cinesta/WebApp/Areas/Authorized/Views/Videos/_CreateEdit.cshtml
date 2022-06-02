@@ -1,0 +1,35 @@
+﻿@using App.Resources.App.Domain.Movie
+@using Base.Resources
+@model WebApp.Areas.Authorized.ViewModels.VideoCreateEditVm
+
+<div class="form-group">
+    <label asp-for="Video.Season" class="control-label"></label>
+    <input asp-for="Video.Season" class="form-control"/>
+    <span asp-validation-for="Video.Season" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Video.Title" class="control-label"></label>
+    <input asp-for="Video.Title" class="form-control"/>
+    <span asp-validation-for="Video.Title" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Video.FileUri" class="control-label"></label>
+    <input asp-for="Video.FileUri" class="form-control"/>
+    <span asp-validation-for="Video.FileUri" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Video.Duration" class="control-label"></label>
+    <input asp-for="Video.Duration" class="form-control"/>
+    <span asp-validation-for="Video.Duration" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Video.Description" class="control-label"></label>
+    <input asp-for="Video.Description" class="form-control"/>
+    <span asp-validation-for="Video.Description" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Video.MovieDetailsId" class="control-label">@Video.MovieDetails</label>
+    <select asp-for="Video.MovieDetailsId" class="form-control" asp-items="Model.MovieDetailsSelectList">
+        <option value="wrongData">--- @Common.SelectMovie ----</option>
+    </select>
+</div>

@@ -1,0 +1,37 @@
+@model WebApp.Areas.Authorized.ViewModels.MovieDbScoreCreateEditVm
+
+@{
+    ViewData["Title"] = "Create";
+}
+@if (User.IsInRole("admin") || User.IsInRole("moderator"))
+{
+    <h1>@Base.Resources.Common.Create</h1>
+
+    <h4>@App.Resources.App.Domain.Movie.MovieDbScore.MovieDbScoreString</h4>
+    <hr/>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <partial name="_CreateEdit" model="Model"/>
+
+                <div class="form-group">
+                    <input type="submit" value="@Base.Resources.Common.Create" class="btn btn-primary"/>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <h4 class="alert-danger">@Base.Resources.Common.Unauthorized</h4>
+    <p class="alert-danger">@Base.Resources.Common.NoRights</p>
+}
+<div>
+    <a asp-action="Index">@Base.Resources.Common.BackToList</a>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -1,0 +1,61 @@
+@using Base.Resources
+@model IEnumerable<App.BLL.DTO.UserProfile>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@Common.Index</h1>
+
+<p>
+    <a asp-action="Create">@Common.Create</a>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.IconUri)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Age)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AppUser)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IconUri)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Age)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AppUser!.Name + " " + item.AppUser.Surname)
+            </td>
+            <td>
+                @Html.ActionLink(Common.FavoriteMovies, "Index", "ProfileFavoriteMovies", new {id = item.Id}, null)
+            </td>
+            <td>
+                @Html.ActionLink(Common.Movies, "Index", "ProfileMovies", new {id = item.Id}, null)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">@Common.Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">@Common.Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">@Common.Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

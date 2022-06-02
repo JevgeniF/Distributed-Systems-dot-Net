@@ -1,0 +1,42 @@
+@using Base.Resources
+@model IEnumerable<App.BLL.DTO.ProfileFavoriteMovie>
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["id"] = ViewContext.RouteData.Values["id"];
+}
+
+<h1>@Common.Index</h1>
+
+<p>
+    <a asp-action="Create" asp-route-id="@ViewData["id"]">@Common.Create</a>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UserProfile)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MovieDetails)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserProfile!.Name)
+            </td>
+            <td>
+                @item.MovieDetails!.Title
+            </td>
+            <td>
+                <a asp-action="Delete" asp-route-id="@item.Id">@Common.Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,28 @@
+@using Base.Resources
+@model IEnumerable<App.BLL.DTO.MovieDetails>
+
+@{
+    ViewData["Title"] = "Index";
+    ViewData["id"] = ViewContext.RouteData.Values["id"];
+}
+
+<h1>@Common.Index</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Title
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

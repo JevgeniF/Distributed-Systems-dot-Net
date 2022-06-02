@@ -27,4 +27,11 @@ public class MovieDbScoreRepository : BaseEntityRepository<MovieDbScore, Domain.
         query.Include(m => m.MovieDetails);
         return Mapper.Map(await query.FirstOrDefaultAsync(m => m.Id == id));
     }
+    
+    public async Task<MovieDbScore?> GetMovieDbScoresForMovie(Guid movieId, bool noTracking = true)
+    {
+        var query = CreateQuery(noTracking);
+        query.Include(m => m.MovieDetails);
+        return Mapper.Map(await query.FirstOrDefaultAsync(m => m.MovieDetailsId == movieId));
+    }
 }

@@ -52,6 +52,30 @@ public class MovieDBScoresController : ControllerBase
                 m.MovieDetailsId
             });
     }
+    
+    // GET: api/MovieDBScores
+    /// <summary>
+    ///     Method returns MovieDBScore entity stored in API database.
+    /// </summary>
+    /// <returns>IEnumerable of generated from MovieDBScore entity object</returns>
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(object), 200)]
+    [SwaggerResponseExample(200, typeof(GetListMovieDBScoreExample))]
+    [HttpGet ("movie={movieId}")]
+    public async Task<object> GetMovieDbScoresForMovie(Guid movieId)
+    {
+        var movieDbScore = await _public.MovieDbScore.GetMovieDbScoresForMovie(movieId);
+        if (movieDbScore == null) return NotFound();
+
+        return new
+        {
+            movieDbScore.Id,
+            movieDbScore.ImdbId,
+            movieDbScore.Score,
+            movieDbScore.MovieDetailsId
+        };
+    }
 
     // GET: api/MovieDBScores/5
     /// <summary>

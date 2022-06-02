@@ -28,9 +28,10 @@ public class VideosController : ControllerBase
     ///     Constructor of VideosController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public VideosController(IAppPublic appPublic)
+    public VideosController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/Videos
@@ -56,7 +57,7 @@ public class VideosController : ControllerBase
                 Description = v.Description.Translate(culture),
                 MovieDetails = new
                 {
-                    v.MovieDetailsId,
+                    Id = v.MovieDetailsId,
                     Title = v.MovieDetails!.Title.Translate(culture)
                 }
             });
@@ -90,7 +91,7 @@ public class VideosController : ControllerBase
             Description = video.Description.Translate(culture),
             MovieDetails = new
             {
-                video.MovieDetailsId,
+                Id = video.MovieDetailsId,
                 Title = video.MovieDetails!.Title.Translate(culture)
             }
         };

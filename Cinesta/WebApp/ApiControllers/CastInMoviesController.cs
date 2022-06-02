@@ -1,6 +1,8 @@
 #nullable disable
+using App.Contracts.BLL;
 using App.Contracts.Public;
 using App.Public.DTO.v1;
+using Base.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,19 +17,21 @@ namespace WebApp.ApiControllers;
 /// </summary>
 [ApiController]
 [ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]/")]
 [Authorize(Roles = "admin,user", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class CastInMoviesController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly IAppBll _bll;
 
     /// <summary>
     ///     Cast in movies controller's constructor.
     /// </summary>
     /// <param name="appPublic">Takes in public layer interface</param>
-    public CastInMoviesController(IAppPublic appPublic)
+    public CastInMoviesController(IAppPublic appPublic, IAppBll bll)
     {
         _public = appPublic;
+        _bll = bll;
     }
 
     // GET: api/CastInMovies
@@ -40,16 +44,16 @@ public class CastInMoviesController : ControllerBase
     [ProducesResponseType(typeof(object), 200)]
     [SwaggerResponseExample(200, typeof(GetListCastInMovieExample))]
     [HttpGet]
-    public async Task<IEnumerable<object>> GetCastInMovies()
+    public async Task<IEnumerable<object>> GetCast(string culture)
     {
-        return (await _public.CastInMovie.IncludeGetAllAsync())
+        return (await _bll.CastInMovie.IncludeGetAllAsync())
             .Select(c => new
             {
                 c.Id,
                 CastRole = new CastRole
                 {
                     Id = c.CastRoleId,
-                    Naming = c.CastRole!.Naming
+                    Naming = c.CastRole!.Naming.Translate(culture)!
                 },
                 Person = new Person
                 {
@@ -59,7 +63,43 @@ public class CastInMoviesController : ControllerBase
                 },
                 MovieDetails = new
                 {
-                    Id = c.MovieDetailsId, c.MovieDetails!.Title
+                    Id = c.MovieDetailsId,
+                    Title = c.MovieDetails!.Title.Translate(culture)
+                }
+            });
+    }
+    
+    // GET: api/CastInMovies/movie/5
+    /// <summary>
+    ///     Get cast (actors, directors, etc) for all movies in database.
+    /// </summary>
+    /// <returns>List of cast for movies</returns>
+    [Produces("application/json")]
+    [Consumes("application/json")]
+    [ProducesResponseType(typeof(object), 200)]
+    [SwaggerResponseExample(200, typeof(GetCastInMovieExample))]
+    [HttpGet ("movie={movieId}")]
+    public async Task<IEnumerable<object>> GetCastInMovie(Guid movieId , string culture)
+    {
+        return (await _bll.CastInMovie.GetByMovie(movieId))
+            .Select(c => new
+            {
+                c.Id,
+                CastRole = new CastRole
+                {
+                    Id = c.CastRoleId,
+                    Naming = c.CastRole!.Naming.Translate(culture)!
+                },
+                Person = new Person
+                {
+                    Id = c.PersonId,
+                    Name = c.Persons!.Name,
+                    Surname = c.Persons.Surname
+                },
+                MovieDetails = new
+                {
+                    Id = c.MovieDetailsId,
+                    Title = c.MovieDetails!.Title.Translate(culture)
                 }
             });
     }
@@ -76,9 +116,9 @@ public class CastInMoviesController : ControllerBase
     [ProducesResponseType(404)]
     [SwaggerResponseExample(200, typeof(GetCastInMovieExample))]
     [HttpGet("{id}")]
-    public async Task<ActionResult<object>> GetCastInMovie(Guid id)
+    public async Task<ActionResult<object>> GetCast(Guid id, string culture)
     {
-        var castInMovie = await _public.CastInMovie.IncludeFirstOrDefaultAsync(id);
+        var castInMovie = await _bll.CastInMovie.IncludeFirstOrDefaultAsync(id);
         if (castInMovie == null) return NotFound();
 
         return new
@@ -87,7 +127,7 @@ public class CastInMoviesController : ControllerBase
             CastRole = new CastRole
             {
                 Id = castInMovie.CastRoleId,
-                Naming = castInMovie.CastRole!.Naming
+                Naming = castInMovie.CastRole!.Naming.Translate(culture)!
             },
             Person = new Person
             {
@@ -98,7 +138,7 @@ public class CastInMoviesController : ControllerBase
             MovieDetails = new
             {
                 Id = castInMovie.MovieDetailsId,
-                castInMovie.MovieDetails!.Title
+                Title = castInMovie.MovieDetails!.Title.Translate(culture)
             }
         };
     }
@@ -118,12 +158,14 @@ public class CastInMoviesController : ControllerBase
     [SwaggerRequestExample(typeof(CastInMovie), typeof(PostCastInMovieExample))]
     [HttpPut("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> PutCastInMovie(Guid id, CastInMovie castInMovie)
+    public async Task<IActionResult> PutCast(Guid id, CastInMovie castInMovie, string culture)
     {
         if (id != castInMovie.Id) return BadRequest();
 
         try
         {
+            castInMovie.CastRole!.Naming = new LangStr(castInMovie.CastRole.Naming, culture);
+            castInMovie.MovieDetails!.Title = new LangStr(castInMovie.MovieDetails.Title, culture);
             _public.CastInMovie.Update(castInMovie);
             await _public.SaveChangesAsync();
         }
@@ -152,9 +194,11 @@ public class CastInMoviesController : ControllerBase
     [SwaggerResponseExample(200, typeof(PostCastInMovieExample))]
     [HttpPost]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<ActionResult<object>> PostCastInMovie(CastInMovie castInMovie)
+    public async Task<ActionResult<object>> PostCast(CastInMovie castInMovie, string culture)
     {
         castInMovie.Id = Guid.NewGuid();
+        castInMovie.CastRole!.Naming = new LangStr(castInMovie.CastRole.Naming, culture);
+        castInMovie.MovieDetails!.Title = new LangStr(castInMovie.MovieDetails.Title, culture);
         _public.CastInMovie.Add(castInMovie);
         await _public.SaveChangesAsync();
 
@@ -182,7 +226,7 @@ public class CastInMoviesController : ControllerBase
     [ProducesResponseType(404)]
     [HttpDelete("{id}")]
     [Authorize(Roles = "admin", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> DeleteCastInMovie(Guid id)
+    public async Task<IActionResult> DeleteCast(Guid id)
     {
         await _public.CastInMovie.RemoveAsync(id);
         await _public.SaveChangesAsync();

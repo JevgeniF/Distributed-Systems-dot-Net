@@ -23,4 +23,9 @@ public class CastInMovieModel : BaseEntityModel<CastInMovie, BLL.DTO.CastInMovie
     {
         return Mapper.Map(await Service.IncludeFirstOrDefaultAsync(id, noTracking));
     }
+
+    public async Task<IEnumerable<CastInMovie>> GetByMovie(Guid movieId, bool noTracking = true)
+    {
+        return (await Service.GetByMovie(movieId, noTracking)).Select(c => Mapper.Map(c)!);
+    }
 }

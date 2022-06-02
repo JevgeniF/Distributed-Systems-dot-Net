@@ -23,4 +23,9 @@ public class MovieDbScoreService : BaseEntityService<MovieDbScore, DAL.DTO.Movie
     {
         return Mapper.Map(await Repository.IncludeFirstOrDefaultAsync(id));
     }
+
+    public async Task<MovieDbScore?> GetMovieDbScoresForMovie(Guid movieId, bool noTracking = true)
+    {
+        return Mapper.Map(await Repository.GetMovieDbScoresForMovie(movieId));
+    }
 }

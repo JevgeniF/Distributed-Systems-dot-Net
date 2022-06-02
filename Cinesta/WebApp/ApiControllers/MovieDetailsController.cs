@@ -83,7 +83,7 @@ public class MovieDetailsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<object>> GetMovieDetails(Guid id, string culture)
     {
-        var movieDetails = await _bll.MovieDetails.FirstOrDefaultAsync(id);
+        var movieDetails = await _bll.MovieDetails.IncludeFirstOrDefaultAsync(id);
 
         if (movieDetails == null) return NotFound();
 

@@ -1,9 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using App.Contracts.Public;
+using App.Contracts.DAL;
+using App.DAL.DTO;
+using App.DAL.DTO.Identity;
 using App.DAL.EF;
 using App.Domain.Identity;
-using App.Public.DTO.v1.Identity;
 using Base.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -24,8 +25,8 @@ public class AccountController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly AppDbContext _context;
+    private readonly IAppUOW _uow;
     private readonly ILogger<AccountController> _logger;
-    private readonly IAppPublic _public;
     private readonly Random _rnd = new();
     private readonly SignInManager<AppUser> _signInManager;
     private readonly UserManager<AppUser> _userManager;
@@ -40,14 +41,14 @@ public class AccountController : ControllerBase
     /// <param name="appPublic">Public layer interface IAppPublic</param>
     /// <param name="context">AppDbContext class instance</param>
     public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,
-        ILogger<AccountController> logger, IConfiguration configuration, IAppPublic appPublic, AppDbContext context)
+        ILogger<AccountController> logger, IConfiguration configuration, AppDbContext context, IAppUOW uow)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
         _configuration = configuration;
-        _public = appPublic;
         _context = context;
+        _uow = uow;
     }
 
     /// <summary>
@@ -172,6 +173,21 @@ public class AccountController : ControllerBase
         await _userManager.AddClaimAsync(appUser, new Claim("aspnet.surname", appUser.Surname));
         await _userManager.AddToRoleAsync(appUser, "user");
 
+        var person = await _uow.Person.GetByNames(appUser.Name, appUser.Surname);
+        if (person == null)
+        {
+            person = new Person
+            {
+                Id = Guid.NewGuid(),
+                FirstName = appUser.Name,
+                LastName = appUser.Surname
+            };
+            person = _uow.Person.Add(person);
+            await _uow.SaveChangesAsync();
+        }
+
+        appUser.PersonId = person.Id;
+        
         await _userManager.UpdateAsync(appUser);
 
         //get full user

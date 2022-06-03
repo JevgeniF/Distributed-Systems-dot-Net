@@ -18,21 +18,20 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     public DbSet<AppRefreshToken> RefreshTokens { get; set; } = default!;
 
     //other
-    public DbSet<Subscription> Subscriptions { get; set; } = default!;
-
-
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
-
-        if (Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
-            builder.Entity<Subscription>().Property(a => a.Naming)
-                .HasConversion(n => SerializeLangStr(n),
-                    n => DeserializeLangStr(n));
-        builder.Entity<Subscription>().Property(a => a.Description)
-            .HasConversion(n => SerializeLangStr(n),
-                n => DeserializeLangStr(n));
-    }
+    public DbSet<Amenity> Amenities { get; set; } = default!;
+    public DbSet<ApartAmenity> ApartAmenities { get; set; } = default!;
+    public DbSet<Apartment> Apartments { get; set; } = default!;
+    public DbSet<ApartPicture> ApartPictures { get; set; } = default!;
+    public DbSet<ApartRent> ApartRents { get; set; } = default!;
+    public DbSet<Billing> Billings { get; set; } = default!;
+    public DbSet<FixedService> FixedServices { get; set; } = default!;
+    public DbSet<House> Houses { get; set; } = default!;
+    public DbSet<Person> Persons { get; set; } = default!;
+    public DbSet<Picture> Pictures { get; set; } = default!;
+    public DbSet<RentFixedService> RentFixedServices { get; set; } = default!;
+    public DbSet<MonthlyService> MonthlyServices {get; set; } = default!;
+    public DbSet<RentMonthlyService> RentMonthlyServices { get; set; } = default!;
+    public DbSet<ApartInHouse> ApartInHouse { get; set; } = default!;
 
 
     private static string SerializeLangStr(LangStr langStr)

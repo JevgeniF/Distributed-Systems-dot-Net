@@ -223,9 +223,231 @@ public class IntTestsHelpers
         return data;
     }
     
+    public static StringContent MovieGenreData(Guid? id, Guid? movieDetailsId, MovieDetails? movieDetails, Guid? genreId, Genre? genre)
+    {
+        var movieGenre = new MovieGenre
+        {
+            MovieDetailsId = movieDetailsId,
+            GenreId = genreId
+        };
+
+        if (id != null)
+        {
+            movieGenre.Id = (Guid) id;
+        }
+
+        if (movieDetails != null)
+        {
+            movieGenre.MovieDetails = movieDetails;
+        }
+        
+        if (genre != null)
+        {
+            movieGenre.Genre = genre;
+        }
+        
+        var jsonStr = JsonSerializer.Serialize(movieGenre);
+        var data = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+        return data;
+    }
+    
+    public static StringContent CastInMovieData(Guid? id, Guid castRoleId, CastRole? castRole, Guid personId,
+        Person? person, Guid movieDetailsId, MovieDetails? movieDetails)
+    {
+        var castInMovie = new CastInMovie
+        {
+            CastRoleId = castRoleId,
+            PersonId = personId,
+            MovieDetailsId = movieDetailsId
+        };
+
+        if (id != null)
+        {
+            castInMovie.Id = (Guid) id;
+        }
+
+        if (castRole != null)
+        {
+            castInMovie.CastRole = castRole;
+        }
+        
+        if (person != null)
+        {
+            castInMovie.Persons = person;
+        }
+        
+        if (movieDetails != null)
+        {
+            castInMovie.MovieDetails = movieDetails;
+        }
+        
+        var jsonStr = JsonSerializer.Serialize(castInMovie);
+        var data = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+        return data;
+    }
+    
+    public static StringContent MovieDbScoreData(Guid? id, string imdbId, double score,
+        Guid movieDetailsId, MovieDetails? movieDetails)
+    {
+        var movieDbScore = new MovieDbScore()
+        {
+            ImdbId = imdbId,
+            Score = score,
+            MovieDetailsId = movieDetailsId
+        };
+
+        if (id != null)
+        {
+            movieDbScore.Id = (Guid) id;
+        }
+
+        if (movieDetails != null)
+        {
+            movieDbScore.MovieDetails = movieDetails;
+        }
+        
+        var jsonStr = JsonSerializer.Serialize(movieDbScore);
+        var data = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+        return data;
+    }
+    
+    public static StringContent PaymentDetailsData(Guid? id, string cardType, string cardNumber,
+        string securityCode, Guid? appUserId, AppUser? appUser)
+    {
+        var paymentDetails = new PaymentDetails()
+        {
+            CardType = cardType,
+            CardNumber = cardNumber,
+            ValidDate = DateTime.Now,
+            SecurityCode = securityCode
+        };
+
+        if (id != null)
+        {
+            paymentDetails.Id = (Guid) id;
+        }
+        
+        if (appUserId != null)
+        {
+            paymentDetails.AppUserId = (Guid) appUserId;
+        }
+
+        if (appUser != null)
+        {
+            paymentDetails.AppUser = appUser;
+        }
+        
+        var jsonStr = JsonSerializer.Serialize(paymentDetails);
+        var data = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+        return data;
+    }
+    public static StringContent UserProfileData(Guid? id, string iconUri, string name,
+        int age, Guid? appUserId, AppUser? appUser)
+    {
+        var userProfile = new UserProfile()
+        {
+            IconUri= iconUri,
+            Name = name,
+            Age = age,
+        };
+
+        if (id != null)
+        {
+            userProfile.Id = (Guid) id;
+        }
+        
+        if (appUserId != null)
+        {
+            userProfile.AppUserId = (Guid) appUserId;
+        }
+
+        if (appUser != null)
+        {
+            userProfile.AppUser = appUser;
+        }
+        
+        var jsonStr = JsonSerializer.Serialize(userProfile);
+        var data = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+        return data;
+    }
+    
+    public static StringContent UserSubscriptionData(Guid? id, Guid? appUserId, AppUser? appUser,
+        Guid? subscriptionId, Subscription? subscription)
+    {
+        var userSubscription = new UserSubscription()
+        {
+        };
+
+        if (id != null)
+        {
+            userSubscription.Id = (Guid) id;
+        }
+        
+        if (appUserId != null)
+        {
+            userSubscription.AppUserId = (Guid) appUserId;
+        }
+
+        if (appUser != null)
+        {
+            userSubscription.AppUser = appUser;
+        }
+        
+        if (subscriptionId != null)
+        {
+            userSubscription.SubscriptionId = (Guid) subscriptionId;
+        }
+
+        if (subscription != null)
+        {
+            userSubscription.Subscription = subscription;
+        }
+        
+        var jsonStr = JsonSerializer.Serialize(userSubscription);
+        var data = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+        return data;
+    }
+    
+    public static StringContent ProfileFavoriteMovieData(Guid? id, Guid? userProfileId, UserProfile? userProfile,
+        Guid? movieDetailsId, MovieDetails? movieDetails)
+    {
+        var profileFavoriteMovie = new ProfileFavoriteMovie()
+        {
+        };
+
+        if (id != null)
+        {
+            profileFavoriteMovie.Id = (Guid) id;
+        }
+        
+        if (userProfileId != null)
+        {
+            profileFavoriteMovie.UserProfileId = (Guid) userProfileId;
+        }
+
+        if (userProfile != null)
+        {
+            profileFavoriteMovie.UserProfile = userProfile;
+        }
+        
+        if (movieDetailsId != null)
+        {
+            profileFavoriteMovie.MovieDetailsId = (Guid) movieDetailsId;
+        }
+
+        if (movieDetails != null)
+        {
+            profileFavoriteMovie.MovieDetails = movieDetails;
+        }
+        
+        var jsonStr = JsonSerializer.Serialize(profileFavoriteMovie);
+        var data = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+        return data;
+    }
+    
     public static TEntity ResultData<TEntity>(string apiContent)
     {
-        var resultData = System.Text.Json.JsonSerializer.Deserialize<TEntity>(apiContent,
+        var resultData = JsonSerializer.Deserialize<TEntity>(apiContent,
             new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         return resultData!;
     }

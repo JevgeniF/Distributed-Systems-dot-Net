@@ -18,14 +18,16 @@ namespace WebApp.ApiControllers;
 public class AgeRatingsController : ControllerBase
 {
     private readonly IAppPublic _public;
+    private readonly ILogger<AgeRatingsController> _logger;
 
     /// <summary>
     ///     Movies age ratings controller's constructor.
     /// </summary>
     /// <param name="appPublic">Takes in public layer interface</param>
-    public AgeRatingsController(IAppPublic appPublic)
+    public AgeRatingsController(IAppPublic appPublic, ILogger<AgeRatingsController> logger)
     {
         _public = appPublic;
+        _logger = logger;
     }
 
     // GET: api/AgeRatings

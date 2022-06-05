@@ -13,10 +13,12 @@ namespace WebApp.Areas.Authorized.Controllers;
 public class AgeRatingsController : Controller
 {
     private readonly IAppBll _bll;
+    private readonly ILogger<AgeRatingsController> _logger;
 
-    public AgeRatingsController(IAppBll bll)
+    public AgeRatingsController(IAppBll bll, ILogger<AgeRatingsController> logger)
     {
         _bll = bll;
+        _logger = logger;
     }
 
     // GET: Admin/AgeRatings

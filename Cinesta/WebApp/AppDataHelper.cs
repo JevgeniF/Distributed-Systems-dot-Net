@@ -19,6 +19,8 @@ public static class AppDataHelper
         using var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
 
         if (context == null) throw new ApplicationException("Services error. No DB context");
+        
+        if (context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory") return;
 
         if (config.GetValue<bool>("DataInitialization:DropDatabase")) context.Database.EnsureDeleted();
 
@@ -56,7 +58,7 @@ public static class AppDataHelper
 
             var users = new (string username, string name, string surname, string password, string roles)[]
             {
-                ("admin@cinesta.ee", "Jevgeni", "Fenko", "chtulhu", "user,admin")
+                ("admin@cinesta.ee", "Admin", "Cinesta", "admincin", "user,admin")
             };
 
             foreach (var userInfo in users)

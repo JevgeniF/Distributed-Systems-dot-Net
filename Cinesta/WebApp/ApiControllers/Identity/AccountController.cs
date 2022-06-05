@@ -143,7 +143,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(typeof(JwtResponse), 200)]
     [ProducesResponseType(403)]
     [HttpPost]
-    public async Task<ActionResult<JwtResponse>> Register(Register registrationData)
+    public async Task<ActionResult<JwtResponse>> Register([FromBody] Register registrationData)
     {
         //verify user
         var appUser = await _userManager.FindByEmailAsync(registrationData.Email);
@@ -169,8 +169,8 @@ public class AccountController : ControllerBase
         //create user
         var result = await _userManager.CreateAsync(appUser, registrationData.Password);
         if (!result.Succeeded) return BadRequest(result);
-        await _userManager.AddClaimAsync(appUser, new Claim("aspnet.name", appUser.Name));
-        await _userManager.AddClaimAsync(appUser, new Claim("aspnet.surname", appUser.Surname));
+        //await _userManager.AddClaimAsync(appUser, new Claim("aspnet.name", appUser.Name));
+        //await _userManager.AddClaimAsync(appUser, new Claim("aspnet.surname", appUser.Surname));
         await _userManager.AddToRoleAsync(appUser, "user");
 
         var person = await _public.Person.GetByNames(appUser.Name, appUser.Surname);

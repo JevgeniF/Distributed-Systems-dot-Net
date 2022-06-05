@@ -49,7 +49,7 @@ public class ProfileFavoriteMoviesController : ControllerBase
                 p.UserProfileId,
                 MovieDetails = new
                 {
-                    p.MovieDetailsId,
+                    Id = p.MovieDetailsId,
                     p.MovieDetails!.PosterUri,
                     p.MovieDetails.Title
                 }

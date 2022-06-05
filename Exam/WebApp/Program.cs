@@ -1,12 +1,8 @@
 using System.Globalization;
 using System.Text;
-using App.BLL;
-using App.Contracts.BLL;
 using App.Contracts.DAL;
-using App.Contracts.Public;
 using App.DAL.EF;
 using App.Domain.Identity;
-using App.Public;
 using Helpers.WebApp;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -124,11 +120,9 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 // Mapping setup
 builder.Services.AddScoped<IAppUOW, AppUOW>();
-builder.Services.AddScoped<IAppBll, AppBll>();
-builder.Services.AddScoped<IAppPublic, AppPublic>();
 
-builder.Services.AddAutoMapper(typeof(AutoMapperConfig), typeof(App.BLL.AutoMapperConfig),
-    typeof(App.Public.AutoMapperConfig));
+
+builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

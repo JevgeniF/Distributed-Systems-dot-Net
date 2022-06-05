@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using App.Contracts.DAL;
+using App.DAL.DTO;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -96,6 +97,21 @@ public class RegisterModel : PageModel
                 result = await _userManager.AddClaimAsync(user, new Claim("aspnet.surname", user.Surname));
                 result = await _userManager.AddToRoleAsync(user, "user");
 
+                var person = await _uow.Person.GetByNames(user.Name, user.Surname);
+                if (person == null)
+                {
+                    person = new Person
+                    {
+                        Id = Guid.NewGuid(),
+                        FirstName = user.Name,
+                        LastName = user.Surname
+                    };
+                    person = _uow.Person.Add(person);
+                    await _uow.SaveChangesAsync();
+                }
+
+                user.PersonId = person.Id;
+                
                 result = await _userManager.UpdateAsync(user);
 
                 var userId = await _userManager.GetUserIdAsync(user);

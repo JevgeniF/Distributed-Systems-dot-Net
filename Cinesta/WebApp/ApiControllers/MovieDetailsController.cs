@@ -24,15 +24,17 @@ public class MovieDetailsController : ControllerBase
 {
     private readonly IAppPublic _public;
     private readonly IAppBll _bll;
+    private readonly ILogger<MovieDetailsController> _logger;
 
     /// <summary>
     ///     Constructor of MovieDetailsController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public MovieDetailsController(IAppPublic appPublic, IAppBll bll)
+    public MovieDetailsController(IAppPublic appPublic, IAppBll bll, ILogger<MovieDetailsController> logger)
     {
         _public = appPublic;
         _bll = bll;
+        _logger = logger;
     }
 
     // GET: api/MovieDetails

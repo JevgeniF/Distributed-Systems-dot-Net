@@ -22,15 +22,17 @@ public class MovieTypesController : ControllerBase
 {
     private readonly IAppPublic _public;
     private readonly IAppBll _bll;
+    private readonly ILogger<MovieTypesController> _logger;
 
     /// <summary>
     ///     Constructor of MovieTypesController class
     /// </summary>
     /// <param name="appPublic">IAppPublic Interface of public layer</param>
-    public MovieTypesController(IAppPublic appPublic, IAppBll bll)
+    public MovieTypesController(IAppPublic appPublic, IAppBll bll, ILogger<MovieTypesController> logger)
     {
         _public = appPublic;
         _bll = bll;
+        _logger = logger;
     }
 
     // GET: api/MovieTypes

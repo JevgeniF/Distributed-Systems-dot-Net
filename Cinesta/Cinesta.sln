@@ -13,15 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectProposal", "ProjectProposal", "{CA444BE9-518A-4232-9697-124D94909853}"
 	ProjectSection(SolutionItems) = preProject
-		ProjectProposalDocumentation\Add Profiles Model.png = ProjectProposalDocumentation\Add Profiles Model.png
-		ProjectProposalDocumentation\Cinesta project.docx = ProjectProposalDocumentation\Cinesta project.docx
-		ProjectProposalDocumentation\Cinesta project.pdf = ProjectProposalDocumentation\Cinesta project.pdf
-		ProjectProposalDocumentation\ERD.png = ProjectProposalDocumentation\ERD.png
-		ProjectProposalDocumentation\LogIn Model.png = ProjectProposalDocumentation\LogIn Model.png
-		ProjectProposalDocumentation\Movies Library Model.png = ProjectProposalDocumentation\Movies Library Model.png
-		ProjectProposalDocumentation\Plans Selector Model.png = ProjectProposalDocumentation\Plans Selector Model.png
-		ProjectProposalDocumentation\Registration Model.png = ProjectProposalDocumentation\Registration Model.png
-		ProjectProposalDocumentation\Web_App Map.png = ProjectProposalDocumentation\Web_App Map.png
+		Cinesta project.pdf = Cinesta project.pdf
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{96B4460F-E01E-448F-AC2F-4870C3E55569}"
@@ -77,6 +69,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Contracts.Public", "Base.Contracts.Public\Base.Contracts.Public.csproj", "{B48BC040-D53F-4696-90A5-3D3113EA9A67}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Public", "Base.Public\Base.Public.csproj", "{E29E8C86-5E90-4EA7-ABBF-4D032BA7C744}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{22D9AD20-803A-417A-BBD6-8CABB457CCC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{F1FC0F3D-1BE9-426A-BC4A-EE0280AF1989}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntTests", "IntTests\IntTests.csproj", "{B767CD59-3313-4C92-B04E-CD14DF9FA5A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -184,6 +182,14 @@ Global
 		{E29E8C86-5E90-4EA7-ABBF-4D032BA7C744}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E29E8C86-5E90-4EA7-ABBF-4D032BA7C744}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E29E8C86-5E90-4EA7-ABBF-4D032BA7C744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1FC0F3D-1BE9-426A-BC4A-EE0280AF1989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1FC0F3D-1BE9-426A-BC4A-EE0280AF1989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1FC0F3D-1BE9-426A-BC4A-EE0280AF1989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1FC0F3D-1BE9-426A-BC4A-EE0280AF1989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B767CD59-3313-4C92-B04E-CD14DF9FA5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B767CD59-3313-4C92-B04E-CD14DF9FA5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B767CD59-3313-4C92-B04E-CD14DF9FA5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B767CD59-3313-4C92-B04E-CD14DF9FA5A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E24D719A-ECEF-4730-9E66-A0C8696CDE86} = {4C2BEA5B-E2D8-48D3-AE04-E6F3C3767F39}
@@ -211,5 +217,7 @@ Global
 		{11920592-5EFD-4115-BF89-839706F73609} = {A52A2DCF-045D-41B1-A161-AC0F9340A113}
 		{B48BC040-D53F-4696-90A5-3D3113EA9A67} = {4C2BEA5B-E2D8-48D3-AE04-E6F3C3767F39}
 		{E29E8C86-5E90-4EA7-ABBF-4D032BA7C744} = {96B4460F-E01E-448F-AC2F-4870C3E55569}
+		{F1FC0F3D-1BE9-426A-BC4A-EE0280AF1989} = {22D9AD20-803A-417A-BBD6-8CABB457CCC3}
+		{B767CD59-3313-4C92-B04E-CD14DF9FA5A5} = {22D9AD20-803A-417A-BBD6-8CABB457CCC3}
 	EndGlobalSection
 EndGlobal

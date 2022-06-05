@@ -4,6 +4,7 @@ using App.Domain.Identity;
 using Base.Domain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace App.DAL.EF;
 
@@ -55,19 +56,35 @@ public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
         base.OnModelCreating(builder);
 
         if (Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
-            builder.Entity<AgeRating>().Property(a => a.Naming)
+        {
+            builder.Entity<CastRole>().Property(a => a.Naming)
                 .HasConversion(n => SerializeLangStr(n),
                     n => DeserializeLangStr(n));
-
-        /*foreach (var mType in builder.Model.GetEntityTypes())
-        {
-            foreach (var property in mType.GetProperties())
-            {
-                if (property.ClrType == typeof(LangStr))
-                {
-                }
-            }
-        }*/
+            builder.Entity<Genre>().Property(a => a.Naming)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+            builder.Entity<MovieDetails>().Property(a => a.Title)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+            builder.Entity<MovieDetails>().Property(a => a.Description)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+            builder.Entity<MovieType>().Property(a => a.Naming)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+            builder.Entity<Subscription>().Property(a => a.Naming)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+            builder.Entity<Subscription>().Property(a => a.Description)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+            builder.Entity<Video>().Property(a => a.Title)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+            builder.Entity<Video>().Property(a => a.Description)
+                .HasConversion(n => SerializeLangStr(n),
+                    n => DeserializeLangStr(n));
+        }
     }
 
 

@@ -21,7 +21,4 @@ public class UserProfile : DomainEntityId
 
     [Display(ResourceType = typeof(Resources.App.Domain.Profile.UserProfile), Name = nameof(AppUser))]
     public AppUser? AppUser { get; set; }
-
-    //public ICollection<ProfileMovie>? ProfileMovies { get; set; }
-    //public ICollection<ProfileFavoriteMovie>? ProfileFavoriteMovies { get; set; }
 }

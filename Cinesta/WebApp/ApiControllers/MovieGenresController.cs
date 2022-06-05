@@ -78,7 +78,7 @@ public class MovieGenresController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<object>> GetMovieGenre(Guid id, string culture)
     {
-        var movieGenre = await _bll.MovieGenre.FirstOrDefaultAsync(id);
+        var movieGenre = await _bll.MovieGenre.IncludeFirstOrDefaultAsync(id);
 
         if (movieGenre == null) return NotFound();
 

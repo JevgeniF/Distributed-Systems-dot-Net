@@ -164,8 +164,6 @@ public class CastInMoviesController : ControllerBase
 
         try
         {
-            castInMovie.CastRole!.Naming = new LangStr(castInMovie.CastRole.Naming, culture);
-            castInMovie.MovieDetails!.Title = new LangStr(castInMovie.MovieDetails.Title, culture);
             _public.CastInMovie.Update(castInMovie);
             await _public.SaveChangesAsync();
         }
@@ -197,8 +195,6 @@ public class CastInMoviesController : ControllerBase
     public async Task<ActionResult<object>> PostCast(CastInMovie castInMovie, string culture)
     {
         castInMovie.Id = Guid.NewGuid();
-        castInMovie.CastRole!.Naming = new LangStr(castInMovie.CastRole.Naming, culture);
-        castInMovie.MovieDetails!.Title = new LangStr(castInMovie.MovieDetails.Title, culture);
         _public.CastInMovie.Add(castInMovie);
         await _public.SaveChangesAsync();
 

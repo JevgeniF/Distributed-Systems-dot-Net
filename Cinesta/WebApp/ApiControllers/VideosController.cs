@@ -81,20 +81,18 @@ public class VideosController : ControllerBase
 
         if (video == null) return NotFound();
 
+        video.Title= video.Title.ToString();
+        video.Description = video.Description.ToString()!;
         return new
         {
             video.Id,
             video.Season,
-            Title = video.Title.Translate(culture),
             video.FileUri,
-            video.Duration,
+            Title = video.Title.Translate(culture),
             Description = video.Description.Translate(culture),
-            MovieDetails = new
-            {
-                Id = video.MovieDetailsId,
-                Title = video.MovieDetails!.Title.Translate(culture)
-            }
+            video.MovieDetailsId
         };
+
     }
 
     // PUT: api/Videos/5

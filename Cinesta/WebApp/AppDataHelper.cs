@@ -58,8 +58,7 @@ public static class AppDataHelper
 
             var users = new (string username, string name, string surname, string password, string roles)[]
             {
-                ("admin@cinesta.ee", "Admin", "Cinesta", "admincin", "user,admin"),
-                ("user@cinesta.ee", "User", "Cinesta", "usercin", "user")
+                ("admin@cinesta.ee", "Admin", "Cinesta", "admincin", "user,admin")
             };
 
             foreach (var userInfo in users)

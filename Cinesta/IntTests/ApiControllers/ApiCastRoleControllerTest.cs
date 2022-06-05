@@ -26,21 +26,21 @@ public class ApiCastRoleControllerTest: IClassFixture<CustomWebApplicationFactor
 
     //SCENARIO
     [Fact]
-    public async Task ApiAgeRatingsControllerIntTestingScenario()
+    public async Task ApiCastRolesControllerIntTestingScenario()
     {
-        await Test01_PostCastRole_Returns_Status_OK_And_CastRoleId_For_Admin();
+        await Test01_PostCastRole_Returns_Status_OK_And_CastRoleId();
         await Test02_GetCastRoles_Returns_Status_OK_And_IEnumerable_Of_CastRole();
-        await Test03_GetAgeRating_Returns_Status_OK_And_AgeRating_If_Id_Is_Right_For_Admin();
-        await Test04_GetAgeRating_Returns_Status_NotFound_When_Wrong_Id();
-        await Test05_PutAgeRating_Returns_Status_OK_In_Case_Of_Success_For_Admin();
-        await Test06_PutAgeRating_Returns_Status_BadRequest_If_Id_And_AgeRatingId_Different();
-        await Test07_PutAgeRating_Returns_Status_NotFound_If_Id_Not_In_Database();
-        await Test08_DeleteAgeRating_Returns_Status_OK_In_Case_Of_Success_For_Admin();
+        await Test03_GetCastRole_Returns_Status_OK_And_CastRole_If_Id_Is_Right();
+        await Test04_GetCastRole_Returns_Status_NotFound_When_Wrong_Id();
+        await Test05_PutCastRole_Returns_Status_OK_In_Case_Of_Success();
+        await Test06_PutCastRole_Returns_Status_BadRequest_If_Id_And_CastRoleId_Different();
+        await Test07_PutCastRole_Returns_Status_NotFound_If_Id_Not_In_Database();
+        await Test08_DeleteCastRole_Returns_Status_OK_In_Case_Of_Success();
     }
     
     //POST METHOD
     [Fact]
-    public async Task Test01_PostCastRole_Returns_Status_OK_And_CastRoleId_For_Admin()
+    public async Task Test01_PostCastRole_Returns_Status_OK_And_CastRoleId()
     {
         var loginData = IntTestsHelpers.LoginData("admin@cinesta.ee", "admincin");
         var response = await _client.PostAsync(ApiUrl + "identity/account/login", loginData);
@@ -84,141 +84,141 @@ public class ApiCastRoleControllerTest: IClassFixture<CustomWebApplicationFactor
     }
     
     //GET METHOD
-    [Fact] public async Task Test03_GetAgeRating_Returns_Status_OK_And_AgeRating_If_Id_Is_Right_For_Admin()
+    [Fact] public async Task Test03_GetCastRole_Returns_Status_OK_And_CastRole_If_Id_Is_Right()
     {
-        var loginData = IntTestsHelpers.LoginData("admin@cinesta.ee", "admincin");
+        var loginData = IntTestsHelpers.LoginData("user@cinesta.ee", "usercin");
         var response = await _client.PostAsync(ApiUrl + "identity/account/login", loginData);
         var resultJWT = await IntTestsHelpers.EntityFromResult<JwtResponse>(response);
 
         var apiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Get, resultJWT!.Token);
-        apiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/");
+        apiRequest.RequestUri = new Uri(ApiUrl + "castRoles" + Culture);
 
         var apiResponse = await _client.SendAsync(apiRequest);
 
         var apiContent = await apiResponse.Content.ReadAsStringAsync();
-        var resultData = JsonSerializer.Deserialize<List<AgeRating>>(apiContent,
+        var resultData = JsonSerializer.Deserialize<List<CastRole>>(apiContent,
             new JsonSerializerOptions() {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
-        var ageRatingId = resultData![0].Id;
+        var castRoleId = resultData![0].Id;
 
-        var newApiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Get, resultJWT!.Token);
-        newApiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/" + ageRatingId);
+        var newApiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Get, resultJWT.Token);
+        newApiRequest.RequestUri = new Uri(ApiUrl + "castRoles/" + castRoleId + Culture);
         apiResponse = await _client.SendAsync(newApiRequest);
         apiResponse.EnsureSuccessStatusCode();
         
         apiContent = await apiResponse.Content.ReadAsStringAsync();
-        var newResultData = JsonSerializer.Deserialize<AgeRating>(apiContent,
+        var newResultData = JsonSerializer.Deserialize<CastRole>(apiContent,
             new JsonSerializerOptions() {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
         Assert.NotNull(resultData);
-        Assert.Equal(ageRatingId, newResultData!.Id);
+        Assert.Equal(castRoleId, newResultData!.Id);
     }
     
     //GET METHOD
-    [Fact] public async Task Test04_GetAgeRating_Returns_Status_NotFound_When_Wrong_Id()
+    [Fact] public async Task Test04_GetCastRole_Returns_Status_NotFound_When_Wrong_Id()
     {
-        var loginData = IntTestsHelpers.LoginData("admin@cinesta.ee", "admincin");
+        var loginData = IntTestsHelpers.LoginData("user@cinesta.ee", "usercin");
         var response = await _client.PostAsync(ApiUrl + "identity/account/login", loginData);
         var resultJWT = await IntTestsHelpers.EntityFromResult<JwtResponse>(response);
 
-        var ageRatingId = Guid.NewGuid();
+        var castRoleId = Guid.NewGuid();
 
         var newApiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Get, resultJWT!.Token);
-        newApiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/" + ageRatingId);
+        newApiRequest.RequestUri = new Uri(ApiUrl + "castRoles/" + castRoleId + Culture);
         var apiResponse = await _client.SendAsync(newApiRequest);
         Assert.Equal(HttpStatusCode.NotFound, apiResponse.StatusCode);
     }
     
     //PUT METHOD
-    [Fact] public async Task Test05_PutAgeRating_Returns_Status_OK_In_Case_Of_Success_For_Admin()
+    [Fact] public async Task Test05_PutCastRole_Returns_Status_OK_In_Case_Of_Success()
     {
         var loginData = IntTestsHelpers.LoginData("admin@cinesta.ee", "admincin");
         var response = await _client.PostAsync(ApiUrl + "identity/account/login", loginData);
         var resultJWT = await IntTestsHelpers.EntityFromResult<JwtResponse>(response);
 
         var apiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Get, resultJWT!.Token);
-        apiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/");
+        apiRequest.RequestUri = new Uri(ApiUrl + "castRoles" + Culture);
 
         var apiResponse = await _client.SendAsync(apiRequest);
 
         var apiContent = await apiResponse.Content.ReadAsStringAsync();
-        var resultData = JsonSerializer.Deserialize<List<AgeRating>>(apiContent,
+        var resultData = JsonSerializer.Deserialize<List<CastRole>>(apiContent,
             new JsonSerializerOptions() {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
-        var ageRatingId = resultData![0].Id;
+        var castRoleId = resultData![0].Id;
 
-        var editedAgeRating = IntTestsHelpers.AgeRatingData(ageRatingId,"Test2", 10);
+        var editedCastRole = IntTestsHelpers.CastRoleData(castRoleId,"Test2");
 
         var newApiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Put, resultJWT.Token);
-        newApiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/" + ageRatingId);
-        newApiRequest.Content = editedAgeRating;
+        newApiRequest.RequestUri = new Uri(ApiUrl + "castRoles/" + castRoleId + Culture);
+        newApiRequest.Content = editedCastRole;
         apiResponse = await _client.SendAsync(newApiRequest);
         apiResponse.EnsureSuccessStatusCode();
     }
     
     //PUT METHOD
-    [Fact] public async Task Test06_PutAgeRating_Returns_Status_BadRequest_If_Id_And_AgeRatingId_Different()
+    [Fact] public async Task Test06_PutCastRole_Returns_Status_BadRequest_If_Id_And_CastRoleId_Different()
     {
         var loginData = IntTestsHelpers.LoginData("admin@cinesta.ee", "admincin");
         var response = await _client.PostAsync(ApiUrl + "identity/account/login", loginData);
         var resultJWT = await IntTestsHelpers.EntityFromResult<JwtResponse>(response);
 
         var apiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Get, resultJWT!.Token);
-        apiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/");
+        apiRequest.RequestUri = new Uri(ApiUrl + "castRoles" + Culture);
 
         var apiResponse = await _client.SendAsync(apiRequest);
 
         var apiContent = await apiResponse.Content.ReadAsStringAsync();
-        var resultData = JsonSerializer.Deserialize<List<AgeRating>>(apiContent,
+        var resultData = JsonSerializer.Deserialize<List<CastRole>>(apiContent,
             new JsonSerializerOptions() {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
-        var ageRatingId = resultData![0].Id;
+        var castRoleId = resultData![0].Id;
 
-        var editedAgeRating = IntTestsHelpers.AgeRatingData(Guid.NewGuid(),"Test2", 10);
+        var editedCastRole = IntTestsHelpers.CastRoleData(Guid.NewGuid(),"Test2");
 
         var newApiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Put, resultJWT.Token);
-        newApiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/" + ageRatingId);
-        newApiRequest.Content = editedAgeRating;
+        newApiRequest.RequestUri = new Uri(ApiUrl + "castRoles/" + castRoleId + Culture);
+        newApiRequest.Content = editedCastRole;
         apiResponse = await _client.SendAsync(newApiRequest);
         Assert.Equal(HttpStatusCode.BadRequest, apiResponse.StatusCode);
     }
     
     //PUT METHOD
-    [Fact] public async Task Test07_PutAgeRating_Returns_Status_NotFound_If_Id_Not_In_Database()
+    [Fact] public async Task Test07_PutCastRole_Returns_Status_NotFound_If_Id_Not_In_Database()
     {
         var loginData = IntTestsHelpers.LoginData("admin@cinesta.ee", "admincin");
         var response = await _client.PostAsync(ApiUrl + "identity/account/login", loginData);
         var resultJWT = await IntTestsHelpers.EntityFromResult<JwtResponse>(response);
         
-        var ageRatingId = Guid.NewGuid();
+        var castRoleId = Guid.NewGuid();
 
-        var editedAgeRating = IntTestsHelpers.AgeRatingData(ageRatingId,"Test2", 10);
+        var editedCastRole = IntTestsHelpers.CastRoleData(castRoleId,"Test2");
 
         var apiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Put, resultJWT!.Token);
-        apiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/" + ageRatingId);
-        apiRequest.Content = editedAgeRating;
+        apiRequest.RequestUri = new Uri(ApiUrl + "castRoles/" + castRoleId + Culture);
+        apiRequest.Content = editedCastRole;
         var apiResponse = await _client.SendAsync(apiRequest);
         Assert.Equal(HttpStatusCode.NotFound, apiResponse.StatusCode);
     }
     
-    //POST METHOD
+    //DELETE METHOD
     [Fact]
-    public async Task Test08_DeleteAgeRating_Returns_Status_OK_In_Case_Of_Success_For_Admin()
+    public async Task Test08_DeleteCastRole_Returns_Status_OK_In_Case_Of_Success()
     {
         var loginData = IntTestsHelpers.LoginData("admin@cinesta.ee", "admincin");
         var response = await _client.PostAsync(ApiUrl + "identity/account/login", loginData);
 
         var resultJWT = await IntTestsHelpers.EntityFromResult<JwtResponse>(response);
 
-        var data = IntTestsHelpers.AgeRatingData(null,"Test", 0);
+        var data = IntTestsHelpers.CastRoleData(null,"Test");
         
         var apiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Post, resultJWT!.Token);
         apiRequest.Content = data;
-        apiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/");
+        apiRequest.RequestUri = new Uri(ApiUrl + "castRoles/" + Culture);
 
         var apiResponse = await _client.SendAsync(apiRequest);
         var apiContent = await apiResponse.Content.ReadAsStringAsync();
-        var resultData = System.Text.Json.JsonSerializer.Deserialize<AgeRating>(apiContent,
+        var resultData = System.Text.Json.JsonSerializer.Deserialize<CastRole>(apiContent,
             new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
 
         var newApiRequest = IntTestsHelpers.ApiRequest(HttpMethod.Delete, resultJWT.Token);
-        newApiRequest.RequestUri = new Uri(ApiUrl + "ageRatings/" + resultData!.Id);
+        newApiRequest.RequestUri = new Uri(ApiUrl + "castRoles/" + resultData!.Id + Culture);
         var newApiResponse = await _client.SendAsync(newApiRequest);
         newApiResponse.EnsureSuccessStatusCode();
     }

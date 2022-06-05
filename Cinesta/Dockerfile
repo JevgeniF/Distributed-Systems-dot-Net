@@ -38,7 +38,6 @@ COPY Base.Contracts.Mapper/*.csproj ./Base.Contracts.Mapper/
 COPY Base.Contracts.Public/*.csproj ./Base.Contracts.Public/
 
 COPY IntTests/*.csproj ./IntTests/
-COPY UnitTests/*.csproj ./UnitTests/
 
 RUN dotnet restore
 
@@ -76,7 +75,6 @@ COPY Base.Contracts.Mapper/. ./Base.Contracts.Mapper/
 COPY Base.Contracts.Public/. ./Base.Contracts.Public/
 
 COPY IntTests/. ./IntTests/
-COPY UnitTests/. ./UnitTests
 
 WORKDIR /app/WebApp
 RUN dotnet publish -c Release -o out

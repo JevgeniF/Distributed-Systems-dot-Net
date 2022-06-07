@@ -1,0 +1,9 @@
+﻿**/bin
+**/obj
+**/ProjectProposalDocumentation
+**/out
+**/.vscode
+**/.vs
+**/.idea
+.dotnet
+.Microsoft.DotNet.ImageBuilder

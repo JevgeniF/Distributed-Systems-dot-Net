@@ -1,7 +1,4 @@
-# icd0021-21-22-s
+### Distributed Systems course project.
 
-Building Distributed Systems
-
-Jevgeni Fenko  
-uni-id: jefenk  
+Jevgeni Fenko   
 student code: 200810IADB  
